@@ -1,1 +1,1 @@
-export { default as LandingAnimation } from './LandingAnimation'
+export { default as Section } from './Section'

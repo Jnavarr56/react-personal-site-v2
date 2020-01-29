@@ -14,7 +14,8 @@ const Container = styled.div`
 	top: 0;
 	left: 0;
 	z-index: 1000;
-	transition: all 0.5s ease 1s;
+	transition: all ${({ fadeOutDuration }) => fadeOutDuration}ms ease
+		${({ fadeOutDelay }) => fadeOutDelay}ms;
 	opacity: ${({ pct }) => (pct < 100 ? 1 : 0)};
 	filter: blur(${({ pct }) => (pct < 100 ? 0 : 10)}px);
 `
@@ -31,30 +32,36 @@ const setSpeed = speed => (window.pJSDom[0].pJS.particles.move.speed = speed)
 const getSpeed = () => window.pJSDom[0].pJS.particles.move.speed
 
 const LandingAnimation = props => {
-	const { onAnimationEnd, interval } = props
+	const { onAnimationEnd, interval, fadeOutDelay, fadeOutDuration } = props
 
 	const [ pct, setPct ] = useState(0)
-	const handleIncrement = useCallback(() => setPct(prev => prev + 1), [])
+	const handleIncrement = useCallback(() => {
+		setTimeout(() => setPct(prev => prev + 1), interval)
+	}, [ interval ])
 
 	useEffect(() => {
-		window.particlesJS('particle-div', CONFIG)
-		setTimeout(handleIncrement, interval)
-	}, [ interval, handleIncrement ])
+		window.particlesJS('loading-particles', CONFIG)
+		handleIncrement()
+	}, [ handleIncrement ])
 
 	useEffect(() => {
 		if (pct === 0) return
 		if (pct < 100) {
 			if (pct < 50) setSpeed(pct * 2)
 			else setSpeed(getSpeed() - getSpeed() / (100 - pct))
-			setTimeout(handleIncrement, interval)
+			handleIncrement()
 		} else {
-			setTimeout(handleIncrement, 1000)
+			onAnimationEnd()
 		}
 	}, [ pct, interval, onAnimationEnd, handleIncrement ])
 
 	return (
-		<Container pct={pct}>
-			<ParticleDiv id="particle-div" />
+		<Container
+			fadeOutDelay={fadeOutDelay}
+			fadeOutDuration={fadeOutDuration}
+			pct={pct}
+		>
+			<ParticleDiv id="loading-particles" />
 			<p>{pct}%</p>
 		</Container>
 	)
@@ -62,12 +69,16 @@ const LandingAnimation = props => {
 
 LandingAnimation.propTypes = {
 	fadeOutDelay: PropTypes.number,
+	fadeOutDuration: PropTypes.number,
 	interval: PropTypes.number,
-	onAnimationEnd: PropTypes.func.isRequired
+	onAnimationEnd: PropTypes.func
 }
 
 LandingAnimation.defaultProps = {
-	interval: 1000
+	fadeOutDelay: 1000,
+	fadeOutDuration: 1000,
+	interval: 1000,
+	onAnimationEnd: () => null
 }
 
 export default LandingAnimation

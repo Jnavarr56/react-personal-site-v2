@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useCookies } from 'react-cookie'
 import styled from 'styled-components'
-import { LandingAnimation } from './components'
+import { LandingAnimation } from 'views'
+import { ViewsContainer } from 'layouts'
+import { BrowserRouter, Route } from 'react-router-dom'
 
 const COOKIE_CONFIG = { path: '/', maxAge: 60 * 60 }
 
@@ -13,8 +15,12 @@ const Main = styled.main`
 `
 
 const App = () => {
+	const [ showViews, setShowViews ] = useState(false)
 	const [ animationEnded, setAnimationEnded ] = useState(false)
-	const handleAnimationOver = useCallback(() => setAnimationEnded(true), [])
+	const handleAnimationEnd = useCallback(() => {
+		setShowViews(true)
+		setTimeout(() => setAnimationEnded(true), 2000)
+	}, [])
 
 	const [ cookies, setCookie ] = useCookies([])
 	const { visited } = cookies
@@ -24,16 +30,48 @@ const App = () => {
 		/*eslint-disable-next-line */
 	}, [])
 
+	const displayLoadingAnimation = !visited && !animationEnded
+	const displayViews = visited || showViews
+
+	const views = useMemo(
+		() => [
+			{ title: 'Home', component: 'hey', path: '' },
+			{ title: 'About Me', component: 'hey', path: 'about-me' }
+		],
+		[]
+	)
+
+	const renderApp = useCallback(
+		() => (
+			<Main>
+				{displayLoadingAnimation && (
+					<LandingAnimation
+						fadeOutDelay={1000}
+						fadeOutDuration={1000}
+						interval={50}
+						onAnimationEnd={handleAnimationEnd}
+					/>
+				)}
+				{displayViews && (
+					<ViewsContainer
+						fadeInDelay={1000}
+						fadeInDuration={1000}
+					>
+						{views}
+					</ViewsContainer>
+				)}
+			</Main>
+		),
+		[ views, displayViews, displayLoadingAnimation, handleAnimationEnd ]
+	)
+
 	return (
-		<Main>
-			{!visited && !animationEnded && (
-				<LandingAnimation onAnimationEnd={handleAnimationOver} />
-			)}
-			{(visited || animationEnded) && (
-				<h1>hi</h1>
-				// <LandingAnimation onAnimationEnd={handleAnimationOver} />
-			)}
-		</Main>
+		<BrowserRouter>
+			<Route
+				path="/:view?"
+				render={renderApp}
+			/>
+		</BrowserRouter>
 	)
 }
 
