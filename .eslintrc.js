@@ -3,8 +3,8 @@ module.exports = {
 	extends: [
 		'eslint:recommended',
 		'plugin:react/recommended',
-		'prettier',
-		'prettier/react'
+		'prettier/react',
+		'prettier'
 	],
 	plugins: ['react', 'react-hooks', 'json'],
 	parserOptions: {
