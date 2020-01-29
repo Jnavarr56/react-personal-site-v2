@@ -1,29 +1,39 @@
-import React from 'react'
-import logo from './logo.svg'
-import './App.css'
+import React, { useState, useEffect, useCallback } from 'react'
+import { useCookies } from 'react-cookie'
+import styled from 'styled-components'
+import { LandingAnimation } from './components'
 
-function App() {
+const COOKIE_CONFIG = { path: '/', maxAge: 60 * 60 }
+
+const Main = styled.main`
+	height: 100vh;
+	width: 100vw;
+	overflow: hidden;
+	position: relative;
+`
+
+const App = () => {
+	const [ animationEnded, setAnimationEnded ] = useState(false)
+	const handleAnimationOver = useCallback(() => setAnimationEnded(true), [])
+
+	const [ cookies, setCookie ] = useCookies([])
+	const { visited } = cookies
+
+	useEffect(() => {
+		if (!visited) setCookie('visited', Date.now(), COOKIE_CONFIG)
+		/*eslint-disable-next-line */
+	}, [])
+
 	return (
-		<div className="App">
-			<header className="App-header">
-				<img
-					alt="logo"
-					className="App-logo"
-					src={logo}
-				/>
-				<p>
-					Edit <code>src/App.js</code> and save to reload.
-				</p>
-				<a
-					className="App-link"
-					href="https://reactjs.org"
-					rel="noopener noreferrer"
-					target="_blank"
-				>
-					Learn React
-				</a>
-			</header>
-		</div>
+		<Main>
+			{!visited && !animationEnded && (
+				<LandingAnimation onAnimationEnd={handleAnimationOver} />
+			)}
+			{(visited || animationEnded) && (
+				<h1>hi</h1>
+				// <LandingAnimation onAnimationEnd={handleAnimationOver} />
+			)}
+		</Main>
 	)
 }
 
