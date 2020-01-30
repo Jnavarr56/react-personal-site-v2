@@ -35,19 +35,18 @@ const ViewsContainer = props => {
 
 	const [ scrolling, setScrolling ] = useState(false)
 
-	const { view: viewPath } = useParams()
+	const { view: viewPath = '' } = useParams()
 	const containerRef = useRef(null)
 
 	useEffect(() => {
 		const sectionIndex = children.findIndex(({ path }) => path === viewPath)
 
-		if (sectionIndex > 0) {
+		if (sectionIndex >= 0) {
 			const top = getVH() * sectionIndex
-
 			const { current: containerEl } = containerRef
 			setTimeout(() => {
 				setScrolling(true)
-				containerEl.scrollBy({ top, behavior: 'smooth' })
+				containerEl.scrollTo({ top, behavior: 'smooth' })
 				const doneCheck = setInterval(() => {
 					if (containerEl.scrollTop === top) {
 						clearInterval(doneCheck)

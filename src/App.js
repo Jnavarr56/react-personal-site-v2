@@ -36,7 +36,8 @@ const App = () => {
 	const views = useMemo(
 		() => [
 			{ title: 'Home', component: 'hey', path: '' },
-			{ title: 'About Me', component: 'hey', path: 'about-me' }
+			{ title: 'About Me', component: 'hey', path: 'about-me' },
+			{ title: 'Skills', component: 'hey', path: 'skills' }
 		],
 		[]
 	)
