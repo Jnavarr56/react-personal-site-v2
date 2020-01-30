@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Section } from 'components'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 const RootDiv = styled.div`
 	height: 100%;
@@ -26,42 +27,46 @@ const getSectionColors = index => ({
 	backgroundColor: index % 2 === 0 ? 'white' : 'red'
 })
 
+const getVH = () =>
+	Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+
 const ViewsContainer = props => {
 	const { children, fadeInDelay, fadeInDuration } = props
 
-	const params = useParams()
-	const location = useLocation()
+	const [ scrolling, setScrolling ] = useState(false)
 
-	const [ disableScroll, setDisableScroll ] = useState(true)
-
+	const { view: viewPath } = useParams()
 	const containerRef = useRef(null)
 
 	useEffect(() => {
-		const index = children.findIndex(view => view.path === params.view)
-		if (index > 0) {
-			const vh = Math.max(
-				document.documentElement.clientHeight,
-				window.innerHeight || 0
-			)
+		const sectionIndex = children.findIndex(({ path }) => path === viewPath)
+
+		if (sectionIndex > 0) {
+			const top = getVH() * sectionIndex
+
+			const { current: containerEl } = containerRef
 			setTimeout(() => {
-				containerRef.current.scrollBy({
-					top: vh * index,
-					behavior: 'smooth'
-				})
+				setScrolling(true)
+				containerEl.scrollBy({ top, behavior: 'smooth' })
+				const doneCheck = setInterval(() => {
+					if (containerEl.scrollTop === top) {
+						clearInterval(doneCheck)
+						setScrolling(false)
+					}
+				}, 100)
 			}, 1000)
 		}
-	}, [ children, params.view ])
+	}, [ children, viewPath ])
 
 	return (
 		<RootDiv
-			disableScroll={disableScroll}
+			disableScroll={!scrolling}
 			fadeInDelay={fadeInDelay}
 			fadeInDuration={fadeInDuration}
 			ref={containerRef}
 		>
 			{children.map((view, i) => (
 				<Section
-					className="pp"
 					key={`${view.title}-i`}
 					title={view.title}
 					{...getSectionColors(i)}
@@ -71,6 +76,12 @@ const ViewsContainer = props => {
 			))}
 		</RootDiv>
 	)
+}
+
+ViewsContainer.propTypes = {
+	children: PropTypes.node,
+	fadeInDelay: PropTypes.number,
+	fadeInDuration: PropTypes.number
 }
 
 export default ViewsContainer

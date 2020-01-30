@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
+import PieChart from 'react-minimal-pie-chart'
+
 import PropTypes from 'prop-types'
 
 import CONFIG from './ParticleConfig.json'
@@ -26,6 +28,18 @@ const ParticleDiv = styled.div`
 	position: absolute;
 	top: 0;
 	left: 0;
+	z-index: 998;
+`
+
+const PercentCount = styled.p`
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-family: Raleway;
+	font-size: 40px;
+	font-weight: 200;
+	z-index: 999;
 `
 
 const setSpeed = speed => (window.pJSDom[0].pJS.particles.move.speed = speed)
@@ -55,6 +69,10 @@ const LandingAnimation = props => {
 		}
 	}, [ pct, interval, onAnimationEnd, handleIncrement ])
 
+	const loadingIndicatorData = useMemo(
+		() => [ { value: 1, key: 1, color: 'red' } ],
+		[]
+	)
 	return (
 		<Container
 			fadeOutDelay={fadeOutDelay}
@@ -62,7 +80,14 @@ const LandingAnimation = props => {
 			pct={pct}
 		>
 			<ParticleDiv id="loading-particles" />
-			<p>{pct}%</p>
+			<PieChart
+				animate
+				animationEasing="ease"
+				data={loadingIndicatorData}
+				lineWidth={2.5}
+				reveal={pct}
+			/>
+			<PercentCount>{pct}%</PercentCount>
 		</Container>
 	)
 }
