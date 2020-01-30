@@ -67,6 +67,7 @@ const ViewsContainer = props => {
 			{children.map((view, i) => (
 				<Section
 					key={`${view.title}-i`}
+					showTitle={view.showTitle}
 					title={view.title}
 					{...getSectionColors(i)}
 				>

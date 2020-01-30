@@ -13,10 +13,10 @@ const SectionDiv = styled.div`
 `
 
 const Section = props => {
-	const { children, title, titleColor, backgroundColor } = props
+	const { children, title, titleColor, backgroundColor, showTitle } = props
 	return (
 		<SectionDiv backgroundColor={backgroundColor}>
-			<SectionTitle fontColor={titleColor}>{title}</SectionTitle>
+			{showTitle && <SectionTitle fontColor={titleColor}>{title}</SectionTitle>}
 			{children}
 		</SectionDiv>
 	)
@@ -25,6 +25,7 @@ const Section = props => {
 Section.propTypes = {
 	backgroundColor: PropTypes.string,
 	children: PropTypes.node,
+	showTitle: PropTypes.bool,
 	title: PropTypes.string,
 	titleColor: PropTypes.string
 }
