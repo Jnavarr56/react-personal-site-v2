@@ -4,6 +4,7 @@ import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import SectionTitle from './components/SectionTitle'
+import { Translateable } from 'components/Translateable'
 
 const SectionDiv = styled.div`
 	height: 100vh;
@@ -16,7 +17,12 @@ const Section = props => {
 	const { children, title, titleColor, backgroundColor, showTitle } = props
 	return (
 		<SectionDiv backgroundColor={backgroundColor}>
-			{showTitle && <SectionTitle fontColor={titleColor}>{title}</SectionTitle>}
+			{showTitle && (
+				<Translateable
+					en={<SectionTitle fontColor={titleColor}>{title.en}</SectionTitle>}
+					es={<SectionTitle fontColor={titleColor}>{title.es}</SectionTitle>}
+				/>
+			)}
 			{children}
 		</SectionDiv>
 	)

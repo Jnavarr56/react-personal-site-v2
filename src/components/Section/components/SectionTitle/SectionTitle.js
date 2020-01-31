@@ -3,6 +3,7 @@ import { Waypoint } from 'react-waypoint'
 import styled from 'styled-components'
 
 const Title = styled.h3`
+	display: flex;
 	font-family: Raleway;
 	font-size: 24px;
 	position: absolute;

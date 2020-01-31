@@ -8,11 +8,36 @@ import qs from 'querystring'
 import { TranslateableContext } from 'components/Translateable'
 
 const VIEWS = [
-	{ title: 'Home', showTitle: false, component: <Home />, path: 'home' },
-	{ title: 'About Me', showTitle: true, component: 'hey', path: 'about-me' },
-	{ title: 'Skills', showTitle: true, component: 'hey', path: 'skills' },
-	{ title: 'Portfolio', showTitle: true, component: 'hey', path: 'portfolio' },
-	{ title: 'Contact', showTitle: true, component: 'hey', path: 'contact' }
+	{
+		title: { en: 'Home', es: 'Página de Inicio' },
+		showTitle: false,
+		component: <Home />,
+		path: 'home'
+	},
+	{
+		title: { en: 'About Me', es: 'Sobre Mí' },
+		showTitle: true,
+		component: 'hey',
+		path: 'about-me'
+	},
+	{
+		title: { en: 'Skills', es: 'Habilidades' },
+		showTitle: true,
+		component: 'hey',
+		path: 'skills'
+	},
+	{
+		title: { en: 'Portfolio', es: 'Portafolio' },
+		showTitle: true,
+		component: 'hey',
+		path: 'portfolio'
+	},
+	{
+		title: { en: 'Contact', es: 'Información de Contacto' },
+		showTitle: true,
+		component: 'hey',
+		path: 'contact'
+	}
 ]
 
 const isInViews = urlParam =>
