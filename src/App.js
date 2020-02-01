@@ -3,38 +3,44 @@ import { useCookies } from 'react-cookie'
 import styled from 'styled-components'
 import { LandingAnimation, Home } from 'views'
 import { ViewsContainer } from 'layouts'
-import { BrowserRouter, Route, Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import qs from 'querystring'
+import { DesktopNav } from 'components'
 import { TranslateableContext } from 'components/Translateable'
 
 const VIEWS = [
 	{
 		title: { en: 'Home', es: 'Página de Inicio' },
 		showTitle: false,
+		showParticles: true,
 		component: <Home />,
 		path: 'home'
 	},
 	{
 		title: { en: 'About Me', es: 'Sobre Mí' },
 		showTitle: true,
+		showParticles: false,
 		component: 'hey',
 		path: 'about-me'
 	},
 	{
 		title: { en: 'Skills', es: 'Habilidades' },
 		showTitle: true,
+		showParticles: false,
 		component: 'hey',
 		path: 'skills'
 	},
 	{
 		title: { en: 'Portfolio', es: 'Portafolio' },
 		showTitle: true,
+		showParticles: false,
 		component: 'hey',
 		path: 'portfolio'
 	},
 	{
 		title: { en: 'Contact', es: 'Información de Contacto' },
 		showTitle: true,
+		showParticles: false,
 		component: 'hey',
 		path: 'contact'
 	}
@@ -89,6 +95,7 @@ const App = props => {
 			)}
 			{(visited || showViews) && (
 				<TranslateableContext lang={lang}>
+					<DesktopNav>{VIEWS}</DesktopNav>
 					<ViewsContainer
 						fadeInDelay={1000}
 						fadeInDuration={1000}

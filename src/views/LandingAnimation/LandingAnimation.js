@@ -16,7 +16,7 @@ const Container = styled.div`
 	top: 0;
 	left: 0;
 	z-index: 1000;
-	transition: all ${({ fadeOutDuration }) => fadeOutDuration}ms ease
+	transition: all ${({ fadeOutDuration }) => fadeOutDuration}ms linear
 		${({ fadeOutDelay }) => fadeOutDelay}ms;
 	opacity: ${({ pct }) => (pct < 100 ? 1 : 0)};
 	filter: blur(${({ pct }) => (pct < 100 ? 0 : 10)}px);

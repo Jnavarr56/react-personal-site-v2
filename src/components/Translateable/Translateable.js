@@ -8,7 +8,7 @@ const TranslateableWrapper = styled.span`
 	filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
 `
 const Translateable = props => {
-	const { lang, handleChangeLang } = useContext(Context)
+	const { lang } = useContext(Context)
 	const [ text, setText ] = useState(props[lang])
 	const [ fadeIn, setFadeIn ] = useState(true)
 	useEffect(() => {
@@ -17,16 +17,10 @@ const Translateable = props => {
 			setText(props[lang])
 			setFadeIn(true)
 		}, 500)
-	}, [ lang, props ])
+		/* eslint-disable-next-line */
+	}, [lang])
 
-	return (
-		<TranslateableWrapper
-			fadeIn={fadeIn}
-			onClick={() => handleChangeLang(lang === 'en' ? 'es' : 'en')}
-		>
-			{text}
-		</TranslateableWrapper>
-	)
+	return <TranslateableWrapper fadeIn={fadeIn}>{text}</TranslateableWrapper>
 }
 
 export default Translateable

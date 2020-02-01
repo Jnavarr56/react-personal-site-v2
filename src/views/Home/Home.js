@@ -39,11 +39,11 @@ const Subtitle = styled.h2`
 `
 
 const Home = () => {
-	useEffect(() => window.particlesJS('particle-background', CONFIG), [])
+	// useEffect(() => window.particlesJS('particle-background', CONFIG), [])
 
 	return (
 		<Container>
-			<ParticleBackground id="particle-background" />
+			{/* <ParticleBackground id="particle-background" /> */}
 			<Title>Jorge Navarro</Title>
 			<Subtitle>
 				<Translateable

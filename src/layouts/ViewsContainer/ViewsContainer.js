@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Section } from 'components'
+import { Section, DesktopNav } from 'components'
 import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
@@ -9,7 +9,6 @@ const RootDiv = styled.div`
 	width: 100%;
 	position: relative;
 	overflow-y: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'auto')};
-	transition: all ms ease ${({ fadeInDelay }) => fadeInDelay}ms;
 	opacity: 0;
 	filter: blur(10px);
 	animation: FadeIn ${({ fadeInDuration }) => fadeInDuration}ms ease
@@ -23,8 +22,8 @@ const RootDiv = styled.div`
 `
 
 const getSectionColors = index => ({
-	titleColor: index % 2 === 0 ? 'red' : 'white',
-	backgroundColor: index % 2 === 0 ? 'white' : 'red'
+	fontColor: index % 2 === 0 ? '#ff0000' : '#ffffff',
+	backgroundColor: index % 2 === 0 ? '#ffffff' : '#ff0000'
 })
 
 const getVH = () =>
@@ -64,9 +63,11 @@ const ViewsContainer = props => {
 			fadeInDuration={fadeInDuration}
 			ref={containerRef}
 		>
+			{/* <DesktopNav>{children}</DesktopNav> */}
 			{children.map((view, i) => (
 				<Section
-					key={`${view.title}-i`}
+					key={`${view.title.en}-i`}
+					showParticles={view.showParticles}
 					showTitle={view.showTitle}
 					title={view.title}
 					{...getSectionColors(i)}
@@ -79,7 +80,15 @@ const ViewsContainer = props => {
 }
 
 ViewsContainer.propTypes = {
-	children: PropTypes.node,
+	children: PropTypes.arrayOf(
+		PropTypes.shape({
+			title: { en: PropTypes.string, es: PropTypes.string },
+			showTitle: PropTypes.bool,
+			showParticles: PropTypes.bool,
+			component: PropTypes.node,
+			path: PropTypes.string
+		})
+	),
 	fadeInDelay: PropTypes.number,
 	fadeInDuration: PropTypes.number
 }
