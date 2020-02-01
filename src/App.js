@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useCookies } from 'react-cookie'
 import styled from 'styled-components'
-import { LandingAnimation, Home } from 'views'
+import { LandingAnimation, Home, AboutMe } from 'views'
 import { ViewsContainer } from 'layouts'
 import { Redirect } from 'react-router-dom'
 import qs from 'querystring'
@@ -23,7 +23,7 @@ const VIEWS = [
 		title: { en: 'About Me', es: 'Sobre Mí' },
 		showTitle: true,
 		showParticles: false,
-		component: 'hey',
+		component: <AboutMe />,
 		path: 'about-me'
 	},
 	{
@@ -34,11 +34,11 @@ const VIEWS = [
 		path: 'skills'
 	},
 	{
-		title: { en: 'Portfolio', es: 'Portafolio' },
+		title: { en: 'Projects', es: 'Proyectos' },
 		showTitle: true,
 		showParticles: false,
 		component: 'hey',
-		path: 'portfolio'
+		path: 'projects'
 	},
 	{
 		title: { en: 'Contact', es: 'Información de Contacto' },
@@ -99,12 +99,7 @@ const App = props => {
 			{(visited || showViews) && (
 				<TranslateableContext lang={lang}>
 					<LanguageSelector />
-					<DesktopNav
-						fadeInDelay={1000}
-						fadeInDuration={1000}
-					>
-						{VIEWS}
-					</DesktopNav>
+					<DesktopNav>{VIEWS}</DesktopNav>
 					<ViewsContainer
 						fadeInDelay={1000}
 						fadeInDuration={1000}

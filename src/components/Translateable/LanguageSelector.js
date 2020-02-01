@@ -4,9 +4,9 @@ import context from './context'
 import englishIcon from './images/eng-icon.png'
 import espanolIcon from './images/esp-icon.png'
 
-const SELECTOR_WIDTH = '5rem'
-const SELECTOR_HEIGHT = '2.5rem'
-const BUTTON_DIMENSION = '2rem'
+const SELECTOR_WIDTH = '4.5rem'
+const SELECTOR_HEIGHT = '2rem'
+const BUTTON_DIMENSION = '1.5rem'
 
 const Selector = styled.div`
 	z-index: 1000;
@@ -15,7 +15,7 @@ const Selector = styled.div`
 	right: 42px;
 	background-color: black;
 	border-radius: 2rem;
-
+	cursor: ${({ toggling }) => (toggling ? 'none' : 'pointer')};
 	box-shadow: ${({ toggling, direction }) => {
 		if (toggling) return 'none'
 		else return `0 ${direction === 'up' ? '' : '-'}20px 20px rgba(0,0,0,.20)`
@@ -24,13 +24,13 @@ const Selector = styled.div`
 	transition: transform 1.5s cubic-bezier(0.68, -0.15, 0.265, 1.35);
 	height: ${SELECTOR_HEIGHT};
 	width: ${SELECTOR_WIDTH};
+	border: white solid 2px;
 `
 
 const Button = styled.div`
 	width: ${BUTTON_DIMENSION};
 	height: ${BUTTON_DIMENSION};
 	position: absolute;
-	cursor: ${({ toggling }) => (toggling ? 'none' : 'pointer')};
 	top: calc(50% - ${BUTTON_DIMENSION} / 2);
 	left: calc(27% - ${BUTTON_DIMENSION} / 2);
 	background-image: url($english-flag-icon-url);

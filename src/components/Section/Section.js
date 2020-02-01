@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useContext } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { TranslateableSectionTitle } from 'components/Translateable'
@@ -8,7 +8,7 @@ const SectionDiv = styled.div`
 	height: 100vh;
 	width: 100vw;
 	position: relative;
-	background-color: ${({ backgroundColor }) => backgroundColor};
+	background: ${({ backgroundColor }) => backgroundColor};
 `
 
 const ChildrenContainer = styled.div`

@@ -22,16 +22,6 @@ const Nav = styled.nav`
 	justify-content: center;
 	align-items: center;
 	z-index: 200;
-	opacity: 0;
-	filter: blur(10px);
-	animation: FadeIn ${({ fadeInDuration }) => fadeInDuration}ms ease
-		${({ fadeInDelay }) => fadeInDelay}ms 1 forwards;
-	@keyframes FadeIn {
-		100% {
-			opacity: 1;
-			filter: blur(0px);
-		}
-	}
 `
 const NavList = styled.ul`
 	height: 100%;
@@ -130,7 +120,7 @@ const NavIcon = styled.div`
 `
 
 const DesktopNav = props => {
-	const { children, fadeInDelay, fadeInDuration } = props
+	const { children } = props
 	const [ open, setOpen ] = useState(false)
 	const { push, location } = useHistory()
 
@@ -144,8 +134,6 @@ const DesktopNav = props => {
 
 	return (
 		<Nav
-			fadeInDelay={fadeInDelay}
-			fadeInDuration={fadeInDuration}
 			open={open}
 			onClick={handleOpen}
 		>
@@ -189,8 +177,6 @@ DesktopNav.propTypes = {
 			component: PropTypes.node,
 			path: PropTypes.string
 		})
-	),
-	fadeInDelay: PropTypes.number,
-	fadeInDuration: PropTypes.number
+	)
 }
 export default DesktopNav

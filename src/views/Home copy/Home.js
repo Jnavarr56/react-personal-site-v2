@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Translateable } from 'components/Translateable'
+import { Translateable } from './node_modules/components/Translateable'
 
 const Container = styled.div`
 	height: 100%;

@@ -7,9 +7,10 @@ const Container = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: center;
 	position: relative;
+	padding: 32px;
 `
 
 const Title = styled.h1`
@@ -18,27 +19,18 @@ const Title = styled.h1`
 	font-size: 56px;
 	margin-bottom: 16px;
 `
-const Subtitle = styled.h2`
-	text-transform: uppercase;
-	font-weight: 200;
-	font-size: 36px;
-	font-family: Raleway;
-	font-color: black;
-	letter-spacing: 4px;
-`
 
-const Home = () => {
+const AboutMe = () => {
 	return (
 		<Container>
-			<Title>Jorge Navarro</Title>
-			<Subtitle>
+			<Title>
 				<Translateable
-					en="Full-Stack Developer"
-					es="Desarollador Full-Stack"
+					en="I'm a full-stack developer with 2 software development internships seeking a junior developer role."
+					es="Soy un desarrollador full-stack con 2 pasantías de desarrollo de software buscando un rol de desarrollador junior."
 				/>
-			</Subtitle>
+			</Title>
 		</Container>
 	)
 }
 
-export default Home
+export default AboutMe

@@ -4,6 +4,7 @@ import { Section } from 'components'
 import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { DesktopNav } from 'components'
+import { Helmet } from 'react-helmet'
 const RootDiv = styled.div`
 	height: 100%;
 	width: 100%;
@@ -23,7 +24,8 @@ const RootDiv = styled.div`
 
 const getSectionColors = index => ({
 	fontColor: index % 2 === 0 ? '#ff0000' : '#ffffff',
-	backgroundColor: index % 2 === 0 ? '#ffffff' : '#ff0000'
+	backgroundColor:
+		index % 2 === 0 ? '#ffffff' : 'linear-gradient(to right, #f00000, #dc281e)'
 })
 
 const getVH = () =>
@@ -34,7 +36,7 @@ const ViewsContainer = props => {
 
 	const [ scrolling, setScrolling ] = useState(false)
 
-	const { view: viewPath = '' } = useParams()
+	const { view: viewPath } = useParams()
 	const containerRef = useRef(null)
 
 	useEffect(() => {
@@ -57,25 +59,36 @@ const ViewsContainer = props => {
 	}, [ children, viewPath ])
 
 	return (
-		<RootDiv
-			disableScroll={!scrolling}
-			fadeInDelay={fadeInDelay}
-			fadeInDuration={fadeInDuration}
-			ref={containerRef}
-		>
-			<DesktopNav>{children}</DesktopNav>
-			{children.map((view, i) => (
-				<Section
-					key={`${view.title.en}-i`}
-					showParticles={view.showParticles}
-					showTitle={view.showTitle}
-					title={view.title}
-					{...getSectionColors(i)}
-				>
-					{view.component}
-				</Section>
-			))}
-		</RootDiv>
+		<>
+			<Helmet>
+				<title>
+					{viewPath
+						.replace(/-/g, ' ')
+						.split(' ')
+						.map(word => `${word[0].toUpperCase()}${word.slice(1)}`)
+						.join(' ')}
+				</title>
+			</Helmet>
+			<RootDiv
+				disableScroll={!scrolling}
+				fadeInDelay={fadeInDelay}
+				fadeInDuration={fadeInDuration}
+				ref={containerRef}
+			>
+				<DesktopNav>{children}</DesktopNav>
+				{children.map((view, i) => (
+					<Section
+						key={`${view.title.en}-i`}
+						showParticles={view.showParticles}
+						showTitle={view.showTitle}
+						title={view.title}
+						{...getSectionColors(i)}
+					>
+						{view.component}
+					</Section>
+				))}
+			</RootDiv>
+		</>
 	)
 }
 
