@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useContext, useEffect } from 'react'
 import { Waypoint } from 'react-waypoint'
 import styled from 'styled-components'
-import { Translateable } from 'components/Translateable'
+import context from './context'
 
 const Title = styled.h3`
 	display: flex;
@@ -10,8 +10,11 @@ const Title = styled.h3`
 	font-size: 24px;
 	position: absolute;
 	top: 16px;
-	left: 38px;
+	left: 56px;
 	color: ${({ fontColor }) => fontColor};
+	transition: all 1s ease;
+	opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
+	filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
 `
 
 const Letter = styled.span`
@@ -26,18 +29,33 @@ const Letter = styled.span`
 const SectionTitle = props => {
 	const { title, fontColor } = props
 
+	const { lang } = useContext(context)
+
 	const [ scrolledIntoView, setScrolledIntoView ] = useState(false)
+	const [ fadeIn, setFadeIn ] = useState(false)
+	const [ text, setText ] = useState(title[lang])
 
 	const handleEnter = useCallback(() => setScrolledIntoView(true), [])
 	const handleLeave = useCallback(() => setScrolledIntoView(false), [])
+
+	useEffect(() => {
+		setFadeIn(false)
+		setTimeout(() => {
+			setText(title[lang])
+			setFadeIn(true)
+		}, 1000)
+	}, [ lang, title ])
 
 	return (
 		<Waypoint
 			onEnter={handleEnter}
 			onLeave={handleLeave}
 		>
-			<Title fontColor={fontColor}>
-				{title.split('').map((letter, i) => (
+			<Title
+				fadeIn={fadeIn}
+				fontColor={fontColor}
+			>
+				{text.split('').map((letter, i) => (
 					<Letter
 						delay={i * 75}
 						key={`${title}-${i}`}

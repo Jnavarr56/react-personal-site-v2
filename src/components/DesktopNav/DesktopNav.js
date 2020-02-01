@@ -2,7 +2,12 @@ import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
+
+const CLOSED_NAV_WIDTH = 40
+const ICON_WIDTH = 20
+const ICON_HEIGHT = 15
+
 const Nav = styled.nav`
 	overflow: hidden;
 	position: fixed;
@@ -12,11 +17,21 @@ const Nav = styled.nav`
 	background-color: black;
 	transition: 0.5s width cubic-bezier(0.645, 0.045, 0.355, 1);
 	cursor: ${({ open }) => (open ? 'auto' : 'pointer')};
-	width: ${({ open }) => (open ? '100%' : '32px')};
+	width: ${({ open }) => (open ? '100%' : `${CLOSED_NAV_WIDTH}px`)};
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	z-index: 200;
+	opacity: 0;
+	filter: blur(10px);
+	animation: FadeIn ${({ fadeInDuration }) => fadeInDuration}ms ease
+		${({ fadeInDelay }) => fadeInDelay}ms 1 forwards;
+	@keyframes FadeIn {
+		100% {
+			opacity: 1;
+			filter: blur(0px);
+		}
+	}
 `
 const NavList = styled.ul`
 	height: 100%;
@@ -61,12 +76,12 @@ const NavItemText = styled.span`
 `
 
 const NavIcon = styled.div`
+    transform: translateY(-50%);
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
-    right: 16px;
-    height: 15px;
-    width: 20px;
+    right: ${(CLOSED_NAV_WIDTH - ICON_WIDTH) / 2}px;
+    height: ${ICON_HEIGHT}px;
+    width: ${ICON_WIDTH}px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -91,7 +106,11 @@ const NavIcon = styled.div`
                 & > div:nth-child(1) {
                     transform: rotate(45deg);
                     transform-origin: left center;
-                    width:16.7332005307px;
+                    width:${Math.pow(
+											Math.pow(ICON_HEIGHT, 2) + Math.pow(ICON_WIDTH, 2),
+											0.5
+										)}px;
+                    bottom: ${ICON_HEIGHT / 3 / 2}px;
                 }
                 & > div:nth-child(2) {
                     display: none;
@@ -99,7 +118,11 @@ const NavIcon = styled.div`
                 & > div:nth-child(3) {
                     transform: rotate(-45deg);
                     transform-origin: left center;
-                    width: 16.7332005307px;
+                    width: ${Math.pow(
+											Math.pow(ICON_HEIGHT, 2) + Math.pow(ICON_WIDTH, 2),
+											0.5
+										)}px;
+                    top: ${ICON_HEIGHT / 3 / 2}px;
                 }
             `
 			}
@@ -107,7 +130,7 @@ const NavIcon = styled.div`
 `
 
 const DesktopNav = props => {
-	const { children } = props
+	const { children, fadeInDelay, fadeInDuration } = props
 	const [ open, setOpen ] = useState(false)
 	const { push, location } = useHistory()
 
@@ -121,6 +144,8 @@ const DesktopNav = props => {
 
 	return (
 		<Nav
+			fadeInDelay={fadeInDelay}
+			fadeInDuration={fadeInDuration}
 			open={open}
 			onClick={handleOpen}
 		>
@@ -164,6 +189,8 @@ DesktopNav.propTypes = {
 			component: PropTypes.node,
 			path: PropTypes.string
 		})
-	)
+	),
+	fadeInDelay: PropTypes.number,
+	fadeInDuration: PropTypes.number
 }
 export default DesktopNav

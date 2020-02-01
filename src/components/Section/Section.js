@@ -1,9 +1,7 @@
 import React, { useEffect, useMemo, useContext } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import SectionTitle from './components/SectionTitle'
-import { Translateable } from 'components/Translateable'
-import TranslateableContext from 'components/Translateable/context'
+import { TranslateableSectionTitle } from 'components/Translateable'
 import getParticleConfig from './getParticleConfig'
 
 const SectionDiv = styled.div`
@@ -41,25 +39,6 @@ const Section = props => {
 
 	const titleKey = useMemo(() => title.en.replace(/ /g, '-'), [ title.en ])
 
-	const engTitle = useMemo(
-		() => (
-			<SectionTitle
-				fontColor={fontColor}
-				title={title.en}
-			/>
-),
-		[ title.en, fontColor ]
-	)
-	const esTitle = useMemo(
-		() => (
-			<SectionTitle
-				fontColor={fontColor}
-				title={title.es}
-			/>
-),
-		[ title.es, fontColor ]
-	)
-
 	useEffect(() => {
 		if (showParticles)
 			window.particlesJS(`${titleKey}-background`, getParticleConfig(fontColor))
@@ -67,10 +46,12 @@ const Section = props => {
 
 	return (
 		<SectionDiv backgroundColor={backgroundColor}>
-			{showTitle && <Translateable
-				en={engTitle}
-				es={esTitle}
-			              />}
+			{showTitle && (
+				<TranslateableSectionTitle
+					fontColor={fontColor}
+					title={title}
+				/>
+			)}
 			<ChildrenContainer>{children}</ChildrenContainer>
 			{showParticles && <ParticleBackground id={`${titleKey}-background`} />}
 		</SectionDiv>

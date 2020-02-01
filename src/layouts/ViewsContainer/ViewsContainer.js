@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Section, DesktopNav } from 'components'
+import { Section } from 'components'
 import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
-
+import { DesktopNav } from 'components'
 const RootDiv = styled.div`
 	height: 100%;
 	width: 100%;
@@ -63,7 +63,7 @@ const ViewsContainer = props => {
 			fadeInDuration={fadeInDuration}
 			ref={containerRef}
 		>
-			{/* <DesktopNav>{children}</DesktopNav> */}
+			<DesktopNav>{children}</DesktopNav>
 			{children.map((view, i) => (
 				<Section
 					key={`${view.title.en}-i`}

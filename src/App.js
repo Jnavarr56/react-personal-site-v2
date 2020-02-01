@@ -6,7 +6,10 @@ import { ViewsContainer } from 'layouts'
 import { Redirect } from 'react-router-dom'
 import qs from 'querystring'
 import { DesktopNav } from 'components'
-import { TranslateableContext } from 'components/Translateable'
+import {
+	TranslateableContext,
+	LanguageSelector
+} from 'components/Translateable'
 
 const VIEWS = [
 	{
@@ -95,7 +98,13 @@ const App = props => {
 			)}
 			{(visited || showViews) && (
 				<TranslateableContext lang={lang}>
-					<DesktopNav>{VIEWS}</DesktopNav>
+					<LanguageSelector />
+					<DesktopNav
+						fadeInDelay={1000}
+						fadeInDuration={1000}
+					>
+						{VIEWS}
+					</DesktopNav>
 					<ViewsContainer
 						fadeInDelay={1000}
 						fadeInDuration={1000}

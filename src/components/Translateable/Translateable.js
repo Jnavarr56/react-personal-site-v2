@@ -3,7 +3,7 @@ import Context from './context'
 import styled from 'styled-components'
 
 const TranslateableWrapper = styled.span`
-	transition: all 0.5s ease;
+	transition: all 1s ease;
 	opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
 	filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
 `
@@ -16,7 +16,7 @@ const Translateable = props => {
 		setTimeout(() => {
 			setText(props[lang])
 			setFadeIn(true)
-		}, 500)
+		}, 1000)
 		/* eslint-disable-next-line */
 	}, [lang])
 
