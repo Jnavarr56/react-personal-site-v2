@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import context from './context'
 import englishIcon from './images/eng-icon.png'
 import espanolIcon from './images/esp-icon.png'
+import breakpoint from 'styled-components-breakpoint'
 
 const SELECTOR_WIDTH = '4.5rem'
 const SELECTOR_HEIGHT = '2rem'
@@ -11,8 +12,12 @@ const BUTTON_DIMENSION = '1.5rem'
 const Selector = styled.div`
 	z-index: 1000;
 	position: fixed;
-	top: 16px;
-	right: 42px;
+	top: 12px;
+	right: 32px;
+	${breakpoint('tablet')`
+		top: 16px;
+		right: 42px;
+	`}
 	background-color: black;
 	border-radius: 2rem;
 	cursor: ${({ toggling }) => (toggling ? 'none' : 'pointer')};
@@ -50,7 +55,7 @@ const Button = styled.div`
 const LanguageSelector = props => {
 	const { lang, handleChangeLang } = useContext(context)
 	const [ toggling, setToggling ] = useState(false)
-	const [ direction, setDirection ] = useState('up')
+	const [ direction, setDirection ] = useState(lang === 'en' ? 'up' : 'down')
 
 	const handleToggle = useCallback(() => {
 		if (toggling) return

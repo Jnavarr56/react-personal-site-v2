@@ -5,12 +5,14 @@ import { LandingAnimation, Home, AboutMe } from 'views'
 import { ViewsContainer } from 'layouts'
 import { Redirect } from 'react-router-dom'
 import qs from 'querystring'
-import { DesktopNav } from 'components'
+import { DesktopNav, MobileNav } from 'components'
 import {
 	TranslateableContext,
 	LanguageSelector
 } from 'components/Translateable'
 import PropTypes from 'prop-types'
+import { ThemeProvider } from 'styled-components'
+import theme from './theme'
 
 const VIEWS = [
 	{
@@ -98,16 +100,19 @@ const App = props => {
 				/>
 			)}
 			{(visited || showViews) && (
-				<TranslateableContext lang={lang}>
-					<LanguageSelector />
-					<DesktopNav>{VIEWS}</DesktopNav>
-					<ViewsContainer
-						fadeInDelay={1000}
-						fadeInDuration={1000}
-					>
-						{VIEWS}
-					</ViewsContainer>
-				</TranslateableContext>
+				<ThemeProvider theme={theme}>
+					<TranslateableContext lang={lang}>
+						<LanguageSelector />
+						<MobileNav>{VIEWS}</MobileNav>
+						<DesktopNav>{VIEWS}</DesktopNav>
+						<ViewsContainer
+							fadeInDelay={1000}
+							fadeInDuration={1000}
+						>
+							{VIEWS}
+						</ViewsContainer>
+					</TranslateableContext>
+				</ThemeProvider>
 			)}
 		</Main>
 	)

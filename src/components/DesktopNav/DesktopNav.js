@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
 import { useHistory } from 'react-router-dom'
+import breakpoint from 'styled-components-breakpoint'
 
 const CLOSED_NAV_WIDTH = 40
 const ICON_WIDTH = 20
@@ -18,10 +19,13 @@ const Nav = styled.nav`
 	transition: 0.5s width cubic-bezier(0.645, 0.045, 0.355, 1);
 	cursor: ${({ open }) => (open ? 'auto' : 'pointer')};
 	width: ${({ open }) => (open ? '100%' : `${CLOSED_NAV_WIDTH}px`)};
-	display: flex;
+	z-index: 200;
+	display: none;
 	justify-content: center;
 	align-items: center;
-	z-index: 200;
+	${breakpoint('desktop')`
+		display: flex;
+	`}
 `
 const NavList = styled.ul`
 	height: 100%;

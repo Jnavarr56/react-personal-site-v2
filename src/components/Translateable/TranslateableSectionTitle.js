@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react'
 import { Waypoint } from 'react-waypoint'
 import styled from 'styled-components'
+import breakpoint from 'styled-components-breakpoint'
 import context from './context'
 import PropTypes from 'prop-types'
 
@@ -10,21 +11,25 @@ const Title = styled.h3`
 	font-family: Raleway;
 	position: absolute;
 	top: 16px;
-	left: 56px;
+	left: 32px;
 	color: ${({ fontColor }) => fontColor};
 	transition: opacity 1s ease, filter 1s ease;
 	opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
 	filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
-	font-size: 16px;
-	max-width: 35%;
 	flex-wrap: wrap;
 	word-wrap: break-word;
-	@media (min-width: 400px) {
+	font-size: 18px;
+	max-width: 40%;
+	${breakpoint('phone')`
 		font-size: 24px;
-	}
-	@media (min-width: 850px) {
+	`}
+	${breakpoint('tablet')`
+		font-size: 32px;
+	`}
+	${breakpoint('desktop')`
 		font-size: 36px;
-	}
+		left: 56px;
+	`}	
 `
 
 const Letter = styled.span`

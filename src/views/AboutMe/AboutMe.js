@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Translateable } from 'components/Translateable'
 import PropTypes from 'prop-types'
-import { MobileText } from './components'
+import { MobileText, Text } from './components'
 
 const BREAKPOINT = 850
 
@@ -14,16 +14,6 @@ const Container = styled.div`
 	@media (max-width: ${BREAKPOINT}px) {
 		padding: 56px 28px 16px 28px;
 	}
-`
-
-const Text = styled.p`
-	font-weight: 200;
-	font-family: Raleway;
-	color: ${({ fontColor }) => fontColor};
-	margin-bottom: 16px;
-	font-size: 24px;
-	line-height: 1.5;
-	word-wrap: break-word;
 `
 
 const DesktopWrapper = styled.div`
