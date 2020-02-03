@@ -21,7 +21,7 @@ const Title = styled.h1`
 const Subtitle = styled.h2`
 	text-transform: uppercase;
 	font-weight: 200;
-	font-size: 36px;
+	font-size: 42px;
 	font-family: Raleway;
 	font-color: black;
 	letter-spacing: 4px;

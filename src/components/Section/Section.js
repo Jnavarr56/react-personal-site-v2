@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, cloneElement } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { TranslateableSectionTitle } from 'components/Translateable'
@@ -9,6 +9,7 @@ const SectionDiv = styled.div`
 	width: 100vw;
 	position: relative;
 	background: ${({ backgroundColor }) => backgroundColor};
+	padding: 56px;
 `
 
 const ChildrenContainer = styled.div`
@@ -52,7 +53,9 @@ const Section = props => {
 					title={title}
 				/>
 			)}
-			<ChildrenContainer>{children}</ChildrenContainer>
+			<ChildrenContainer>
+				{cloneElement(children, { fontColor, backgroundColor })}
+			</ChildrenContainer>
 			{showParticles && <ParticleBackground id={`${titleKey}-background`} />}
 		</SectionDiv>
 	)

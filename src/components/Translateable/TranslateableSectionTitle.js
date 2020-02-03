@@ -2,27 +2,37 @@ import React, { useState, useCallback, useContext, useEffect } from 'react'
 import { Waypoint } from 'react-waypoint'
 import styled from 'styled-components'
 import context from './context'
+import PropTypes from 'prop-types'
 
 const Title = styled.h3`
 	display: flex;
 	overflow: hidden;
 	font-family: Raleway;
-	font-size: 24px;
 	position: absolute;
 	top: 16px;
 	left: 56px;
 	color: ${({ fontColor }) => fontColor};
-	transition: all 1s ease;
+	transition: opacity 1s ease, filter 1s ease;
 	opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
 	filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
+	font-size: 16px;
+	max-width: 35%;
+	flex-wrap: wrap;
+	word-wrap: break-word;
+	@media (min-width: 400px) {
+		font-size: 24px;
+	}
+	@media (min-width: 850px) {
+		font-size: 36px;
+	}
 `
 
 const Letter = styled.span`
 	display: block;
-	transition: all 0.25s ease;
+	transition: transform 0.25s ease;
 	transition-delay: ${({ delay }) => delay + 250}ms;
 	transform: translate(
-		${({ scrolledIntoView }) => (scrolledIntoView ? '0,0' : '0, -150%')}
+		${({ scrolledIntoView }) => (scrolledIntoView ? '0,0' : '0, -200%')}
 	);
 `
 
@@ -67,6 +77,11 @@ const SectionTitle = props => {
 			</Title>
 		</Waypoint>
 	)
+}
+
+SectionTitle.propTypes = {
+	fontColor: PropTypes.string,
+	title: PropTypes.string
 }
 
 export default SectionTitle

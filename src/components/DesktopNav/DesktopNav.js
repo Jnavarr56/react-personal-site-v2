@@ -26,8 +26,7 @@ const Nav = styled.nav`
 const NavList = styled.ul`
 	height: 100%;
 	width: 100%;
-	padding-top: 256px;
-	padding-left: 128px;
+	padding: 128px;
 	& li {
 		color: white;
 		font-size: 72px;

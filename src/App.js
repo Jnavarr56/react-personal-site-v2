@@ -10,6 +10,7 @@ import {
 	TranslateableContext,
 	LanguageSelector
 } from 'components/Translateable'
+import PropTypes from 'prop-types'
 
 const VIEWS = [
 	{
@@ -30,21 +31,21 @@ const VIEWS = [
 		title: { en: 'Skills', es: 'Habilidades' },
 		showTitle: true,
 		showParticles: false,
-		component: 'hey',
+		component: <h1>hey</h1>,
 		path: 'skills'
 	},
 	{
 		title: { en: 'Projects', es: 'Proyectos' },
 		showTitle: true,
 		showParticles: false,
-		component: 'hey',
+		component: <h1>hey</h1>,
 		path: 'projects'
 	},
 	{
 		title: { en: 'Contact', es: 'Información de Contacto' },
 		showTitle: true,
 		showParticles: false,
-		component: 'hey',
+		component: <h1>hey</h1>,
 		path: 'contact'
 	}
 ]
@@ -112,4 +113,14 @@ const App = props => {
 	)
 }
 
+App.defaultProps = {
+	location: PropTypes.shape({
+		search: PropTypes.string
+	}),
+	match: PropTypes.shape({
+		params: PropTypes.shape({
+			view: PropTypes.string
+		})
+	})
+}
 export default App

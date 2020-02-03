@@ -3,13 +3,12 @@ import styled from 'styled-components'
 import { Section } from 'components'
 import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { DesktopNav } from 'components'
 import { Helmet } from 'react-helmet'
 const RootDiv = styled.div`
 	height: 100%;
 	width: 100%;
 	position: relative;
-	overflow-y: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'auto')};
+	overflow: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'auto')};
 	opacity: 0;
 	filter: blur(10px);
 	animation: FadeIn ${({ fadeInDuration }) => fadeInDuration}ms ease
@@ -31,6 +30,15 @@ const getSectionColors = index => ({
 const getVH = () =>
 	Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
+const getSectionNameFromPath = path => {
+	return path
+		.replace(/-/g, ' ')
+		.split(' ')
+		.map(word => `${word[0].toUpperCase()}${word.slice(1)}`)
+		.join(' ')
+}
+
+Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 const ViewsContainer = props => {
 	const { children, fadeInDelay, fadeInDuration } = props
 
@@ -40,34 +48,37 @@ const ViewsContainer = props => {
 	const containerRef = useRef(null)
 
 	useEffect(() => {
-		const sectionIndex = children.findIndex(({ path }) => path === viewPath)
-
-		if (sectionIndex >= 0) {
-			const top = getVH() * sectionIndex
+		const scrollToCurrentSection = resizeResponse => {
+			if (scrolling) return
 			const { current: containerEl } = containerRef
-			setTimeout(() => {
-				setScrolling(true)
-				containerEl.scrollTo({ top, behavior: 'smooth' })
-				const doneCheck = setInterval(() => {
-					if (containerEl.scrollTop === top) {
-						clearInterval(doneCheck)
-						setScrolling(false)
-					}
-				}, 100)
-			}, 1000)
+			const sectionIndex = children.findIndex(({ path }) => path === viewPath)
+			if (sectionIndex >= 0) {
+				const top = getVH() * sectionIndex
+				if (!resizeResponse) {
+					setTimeout(() => {
+						setScrolling(true)
+						containerEl.scrollTo({ top, behavior: 'smooth' })
+						const doneCheck = setInterval(() => {
+							if (containerEl.scrollTop === top) {
+								clearInterval(doneCheck)
+								setScrolling(false)
+							}
+						}, 100)
+					}, 1000)
+				} else {
+					containerEl.scrollTo({ top })
+				}
+			}
 		}
-	}, [ children, viewPath ])
+		scrollToCurrentSection()
+		window.addEventListener('resize', () => scrollToCurrentSection(true))
+		/* eslint-disable-next-line */
+	}, [children, viewPath])
 
 	return (
 		<>
 			<Helmet>
-				<title>
-					{viewPath
-						.replace(/-/g, ' ')
-						.split(' ')
-						.map(word => `${word[0].toUpperCase()}${word.slice(1)}`)
-						.join(' ')}
-				</title>
+				<title>{getSectionNameFromPath(viewPath)}</title>
 			</Helmet>
 			<RootDiv
 				disableScroll={!scrolling}
@@ -75,7 +86,6 @@ const ViewsContainer = props => {
 				fadeInDuration={fadeInDuration}
 				ref={containerRef}
 			>
-				<DesktopNav>{children}</DesktopNav>
 				{children.map((view, i) => (
 					<Section
 						key={`${view.title.en}-i`}
