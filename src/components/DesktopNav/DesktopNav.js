@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
 import { useHistory } from 'react-router-dom'
 import breakpoint from 'styled-components-breakpoint'
-
+import theme from 'theme'
 const CLOSED_NAV_WIDTH = 40
 const ICON_WIDTH = 20
 const ICON_HEIGHT = 15
@@ -134,6 +134,14 @@ const DesktopNav = props => {
 	const handleClose = useCallback(() => {
 		if (open) setOpen(false)
 	}, [ open ])
+
+	useEffect(() => {
+		window.addEventListener('resize', e => {
+			if (e.target.innerWidth < theme.breakpoints.desktop) {
+				setOpen(false)
+			}
+		})
+	}, [])
 
 	return (
 		<Nav

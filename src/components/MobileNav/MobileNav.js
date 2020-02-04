@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import { FaTimes, FaPlus } from 'react-icons/fa'
 import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
-
+import theme from 'theme'
 const calcDimensions = (open, size) => {
 	const dimensions = {
 		small: `
@@ -25,19 +25,27 @@ const calcDimensions = (open, size) => {
 
 	const openSizing = {
 		small: `
-            padding: 128px 64px;
+            padding: 128px 56px;
             & * {
                 font-size: 32px;
             }
         `,
-		large: `
-            padding: 256px 128px;
+		medium: `
+            padding: 128px 64px;
             & li {
                 & * {
-                    font-size: 56px;
+                    font-size: 42px;
                 }
             }
-        `
+		`,
+		large: `
+			padding: 156px 72px;
+			& li {
+				& * {
+					font-size: 56px;
+				}
+			}	
+		`
 	}
 
 	return open
@@ -62,9 +70,12 @@ const Nav = styled.nav`
 	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 	transition: all 1s cubic-bezier(0.645, 0.045, 0.355, 1);
 	${({ open }) => calcDimensions(open, 'small')}
+	${breakpoint('phone')`
+        ${({ open }) => calcDimensions(open, 'medium')}
+	`}
 	${breakpoint('tablet')`
-        ${({ open }) => calcDimensions(open, 'large')}
-    `}
+		${({ open }) => calcDimensions(open, 'large')}
+	`}
     display: flex;
 	justify-content: center;
 	align-items: center;
@@ -144,6 +155,14 @@ const MobileNav = props => {
 	const handleCloseNav = useCallback(() => {
 		if (open) setOpen(false)
 	}, [ open ])
+
+	useEffect(() => {
+		window.addEventListener('resize', e => {
+			if (e.target.innerWidth >= theme.breakpoints.desktop) {
+				setOpen(false)
+			}
+		})
+	}, [])
 	return (
 		<Nav
 			open={open}
