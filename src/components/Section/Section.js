@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, cloneElement } from 'react'
 import styled from 'styled-components'
+import breakpoint from 'styled-components-breakpoint'
 import PropTypes from 'prop-types'
 import { TranslateableSectionTitle } from 'components/Translateable'
 import getParticleConfig from './getParticleConfig'
@@ -9,7 +10,10 @@ const SectionDiv = styled.div`
 	width: 100vw;
 	position: relative;
 	background: ${({ backgroundColor }) => backgroundColor};
-	padding: 56px;
+	padding: 32px 24px;
+	${breakpoint('tablet')`
+		padding: 56px;
+	`}
 `
 
 const ChildrenContainer = styled.div`
