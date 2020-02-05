@@ -5,6 +5,7 @@ import { FaTimes, FaPlus } from 'react-icons/fa'
 import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
 import theme from 'theme'
+import { useHistory, useLocation } from 'react-router-dom'
 const calcDimensions = (open, size) => {
 	const dimensions = {
 		small: `
@@ -108,6 +109,19 @@ const NavListItemText = styled.span`
 	color: white;
 	font-weight: 200;
 	font-family: Raleway;
+	${({ selected }) => {
+		if (!selected) {
+			return `
+				cursor: pointer;
+				&:hover * {
+					color: #ff726f;
+					transition: .15s color ease;
+				}
+			`
+		} else {
+			return 'color: red;'
+		}
+	}}
 `
 
 const calcIconPosition = (closed, size) => {
@@ -148,6 +162,8 @@ const Icon = styled.span`
 
 const MobileNav = props => {
 	const { children: views } = props
+	const location = useLocation()
+	const history = useHistory()
 	const [ open, setOpen ] = useState(false)
 	const handleOpenNav = useCallback(() => {
 		if (!open) setOpen(true)
@@ -169,19 +185,29 @@ const MobileNav = props => {
 			onClick={handleOpenNav}
 		>
 			<NavList>
-				{views.map((view, i) => (
-					<NavListItem key={view.title.en}>
-						<NavListItemText
-							delay={1000 + i * 100}
-							open={open}
-						>
-							<Translateable
-								en={view.title.en}
-								es={view.title.es}
-							/>
-						</NavListItemText>
-					</NavListItem>
-				))}
+				{views.map((view, i) => {
+					const selected = `/${view.path}` === location.pathname
+					return (
+						<NavListItem key={view.title.en}>
+							<NavListItemText
+								delay={1000 + i * 100}
+								open={open}
+								selected={selected}
+								onClick={() => {
+									if (!selected) {
+										setOpen(false)
+										history.push(`${view.path}${location.search}`)
+									}
+								}}
+							>
+								<Translateable
+									en={view.title.en}
+									es={view.title.es}
+								/>
+							</NavListItemText>
+						</NavListItem>
+					)
+				})}
 			</NavList>
 			<Icon
 				open={open}
