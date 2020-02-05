@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
+import breakpoint from 'styled-components-breakpoint'
 import { Translateable } from 'components/Translateable'
 import PropTypes from 'prop-types'
 import SwipeableViews from 'react-swipeable-views'
@@ -20,9 +21,9 @@ const MobileWrapper = styled.div`
 			width: 100%;
 		}
 	}
-	@media (min-width: ${({ breakpointHide }) => breakpointHide}px) {
+	${breakpoint(`tablet`)`
 		display: none;
-	}
+	`}
 `
 const Slide = styled.div`
 	height: 100%;
@@ -38,20 +39,29 @@ const SwipeableBubbles = styled.div`
 `
 
 const Bubble = styled.div`
-	height: 20px;
-	width: 20px;
 	flex-shrink: 0;
 	border-radius: 100%;
 	cursor: pointer;
 	background-color: ${({ bubbleColor, selected }) =>
 		selected ? bubbleColor : 'rgba(0, 0, 0, .5)'};
-	&:not(:last-child):not(first-child) {
+	&:not(:first-child),
+	&:not(:last-child) {
 		margin: 0 8px;
 	}
+	height: 15px;
+	width: 15px;
+	${breakpoint(`phone`)`
+		margin: 0 12px;
+	`}
+	${breakpoint(`tablet`)`
+		height: 20px;
+		width: 20px;
+		margin: 0 16px;
+	`}
 `
 
 const MobileText = props => {
-	const { fontColor, englishText, spanishText, breakpointHide } = props
+	const { fontColor, englishText, spanishText } = props
 
 	const [ index, setIndex ] = useState(0)
 	const handleChangeIndex = useCallback(i => setIndex(i), [])
@@ -67,7 +77,7 @@ const MobileText = props => {
 	}, [view])
 
 	return (
-		<MobileWrapper breakpointHide={breakpointHide}>
+		<MobileWrapper>
 			<SwipeableViews
 				enableMouseEvents
 				index={index}
@@ -104,7 +114,6 @@ const MobileText = props => {
 }
 
 MobileText.propTypes = {
-	breakpointHide: PropTypes.number,
 	bubbleColor: PropTypes.string,
 	englishText: PropTypes.arrayOf(PropTypes.string),
 	spanishText: PropTypes.arrayOf(PropTypes.string)

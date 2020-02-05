@@ -1,32 +1,34 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
+import breakpoint from 'styled-components-breakpoint'
 import { Translateable } from 'components/Translateable'
 import PropTypes from 'prop-types'
 import { MobileText, Text } from './components'
-
-const BREAKPOINT = 850
 
 const Container = styled.div`
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
-	padding: 128px 128px 32px 56px;
-	@media (max-width: ${BREAKPOINT}px) {
-		padding: 56px 28px 16px 28px;
-	}
+	padding: 56px 16px 36px 8px;
+	${breakpoint(`tablet`)`
+		padding: 80px 48px 36px 24px;
+	`}
+	${breakpoint(`tablet`)`
+		padding: 116px 48px 36px 32px;
+`}
 `
 
 const DesktopWrapper = styled.div`
 	height: 100%;
 	width: 100%;
-	display: flex;
+	display: none;
 	justify-content: center;
 	align-items: flex-start;
 	overflow-y: auto;
 	padding-right: 8px;
-	@media (max-width: ${BREAKPOINT}px) {
-		display: none;
-	}
+	${breakpoint(`tablet`)`
+		display: flex;
+	`}
 	&::-webkit-scrollbar {
 		border-radius: 6px;
 		background-color: rgba(0, 0, 0, 0.5);
@@ -120,7 +122,6 @@ const AboutMe = props => {
 				</Text>
 			</DesktopWrapper>
 			<MobileText
-				breakpointHide={BREAKPOINT}
 				englishText={englishText}
 				fontColor={fontColor}
 				spanishText={spanishText}
