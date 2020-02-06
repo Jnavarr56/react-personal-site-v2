@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useCookies } from 'react-cookie'
 import styled from 'styled-components'
-import { LandingAnimation, Home, AboutMe } from 'views'
+import { LandingAnimation, Home, AboutMe, Skills } from 'views'
 import { ViewsContainer } from 'layouts'
 import { Redirect } from 'react-router-dom'
 import qs from 'querystring'
@@ -33,7 +33,7 @@ const VIEWS = [
 		title: { en: 'Skills', es: 'Habilidades' },
 		showTitle: true,
 		showParticles: false,
-		component: <h1>hey</h1>,
+		component: <Skills />,
 		path: 'skills'
 	},
 	{
