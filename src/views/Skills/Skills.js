@@ -18,14 +18,14 @@ const Container = styled.div`
     overflow: hidden;
     display: flex;
     justify-content: center;
-    align-items: center;
-	// padding: 56px 16px 36px 8px;
+	align-items: flex-start;
+	& * {
+		font-family: Raleway;
+	}
+	padding: 56px 0 0 0;
 	// ${breakpoint(`tablet`)`
 	// 	padding: 80px 48px 36px 24px;
 	// `}
-	// ${breakpoint(`tablet`)`
-	// 	padding: 116px 48px 36px 32px;
-    // `}
 `
 const SkillCard = styled.div`
 	box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
@@ -41,10 +41,10 @@ const SkillCard = styled.div`
 			? `filter: blur(0px);
          opacity: 1;`
 			: `filter: blur(10px);
-        opacity: 0;`}
+		opacity: 0;`}
 `
 const SkillCardHeader = styled.div`
-	// justify-content: flex-start;
+	padding: 16px 24px;
 	width: 100%;
 `
 const SkillCardDivider = styled.div`
@@ -54,8 +54,21 @@ const SkillCardDivider = styled.div`
 `
 const SkillCardContent = styled.div`
 	// justify-content: flex-start;
+	padding: 24px;
 	flex-grow: 1;
 	width: 100%;
+`
+const SkillItem = styled.li`
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	&:not(:last-child) {
+		margin-bottom: 12px;
+	}
+`
+const SkillLogo = styled.img`
+	margin-right: 8px;
+	width: 35px;
 `
 
 setConfiguration({
@@ -70,42 +83,120 @@ setConfiguration({
 const categories = [
 	{
 		label: {
-			en: 'Programming Languages'
+			en: 'Programming Languages',
+			es: 'Lenguajes de Programación'
+		},
+		skills: [
+			{
+				label: 'JavaScript',
+				src: '/skills-logos/programming-languages/javascript.png'
+			},
+			{
+				label: 'Python',
+				src: '/skills-logos/programming-languages/python.png'
+			},
+			{ label: 'Ruby', src: '/skills-logos/programming-languages/ruby.png' },
+			{ label: 'Java', src: '/skills-logos/programming-languages/java.png' },
+			{ label: 'MATLAB', src: '/skills-logos/programming-languages/matlab.png' }
+		]
+	},
+	{
+		label: {
+			en: 'Front End Frameworks/Libraries',
+			es: 'Frameworks/Bibliotecas Front End'
+		},
+		skills: [
+			{
+				label: 'React.js',
+				src: '/skills-logos/front-end-frameworks-libraries/reactjs.png'
+			},
+			{
+				label: 'React-Native',
+				src: '/skills-logos/front-end-frameworks-libraries/reactjs.png'
+			},
+			{
+				label: 'Next.js',
+				src: '/skills-logos/front-end-frameworks-libraries/nextjs.png'
+			},
+			{
+				label: 'styled-components',
+				src:
+					'/skills-logos/front-end-frameworks-libraries/styled-components.png'
+			},
+			{
+				label: 'JSS',
+				src: '/skills-logos/front-end-frameworks-libraries/jss.png'
+			},
+			{
+				label: 'Material-UI',
+				src: '/skills-logos/front-end-frameworks-libraries/material-ui.png'
+			},
+			{
+				label: 'TailwindCSS',
+				src: '/skills-logos/front-end-frameworks-libraries/tailwindcss.png'
+			},
+			{
+				label: 'Bootstrap',
+				src: '/skills-logos/front-end-frameworks-libraries/bootstrap.png'
+			},
+			{
+				label: 'jQuery',
+				src: '/skills-logos/front-end-frameworks-libraries/jquery.gif'
+			}
+		]
+	},
+	{
+		label: {
+			en: 'Back End Frameworks/Libraries',
+			es: 'Frameworks/Bibliotecas Back End'
+		},
+		skills: [
+			{
+				label: 'Express.js',
+				src: '/skills-logos/back-end-frameworks-libraries/express.png'
+			},
+			{
+				label: 'Ruby on Rails',
+				src: '/skills-logos/back-end-frameworks-libraries/ruby-on-rails.png'
+			},
+			{
+				label: 'Flask',
+				src: '/skills-logos/back-end-frameworks-libraries/flask.png'
+			}
+		]
+	},
+	{
+		label: {
+			en: 'Databases',
+			es: 'Bases de Datos'
+		},
+		skills: [
+			{ label: 'PostgreSQL', src: '/skills-logos/databases/postgresql.png' },
+			{ label: 'MongoDB', src: '/skills-logos/databases/mongodb.png' }
+		]
+	},
+	{
+		label: {
+			en: 'DevOps/Cloud',
+			es: 'DevOps/Nube'
 		}
 	},
 	{
 		label: {
-			en: 'Front End Frameworks/Libraries'
+			en: 'Tools',
+			es: 'Herramientas'
 		}
 	},
 	{
 		label: {
-			en: 'Back End Frameworks/Libraries'
+			en: 'Other Engineering',
+			es: 'Otros Technologicos'
 		}
 	},
 	{
 		label: {
-			en: 'Databases'
-		}
-	},
-	{
-		label: {
-			en: 'DevOps/Cloud'
-		}
-	},
-	{
-		label: {
-			en: 'Tools'
-		}
-	},
-	{
-		label: {
-			en: 'Other Engineering'
-		}
-	},
-	{
-		label: {
-			en: 'Misc.'
+			en: 'Misc.',
+			es: 'Misceláneo'
 		}
 	}
 ]
@@ -133,10 +224,24 @@ const Skills = props => {
 								fadeIn={fadeIn}
 							>
 								<SkillCardHeader>
-									<span>{cat.label.en}</span>
+									<Translateable
+										en={cat.label.en}
+										es={cat.label.es}
+									/>
 								</SkillCardHeader>
 								<SkillCardDivider fontColor={fontColor} />
-								<SkillCardContent>asd</SkillCardContent>
+								<SkillCardContent>
+									{cat.skills && (
+										<ul>
+											{cat.skills.map(skill => (
+												<SkillItem key={skill.label}>
+													<SkillLogo src={skill.src} />
+													<span>{skill.label}</span>
+												</SkillItem>
+											))}
+										</ul>
+									)}
+								</SkillCardContent>
 							</SkillCard>
 						</Col>
 					))}
