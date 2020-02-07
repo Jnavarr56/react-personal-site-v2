@@ -35,7 +35,7 @@ const SkillCard = styled.div`
 	flex-direction: column;
 	justify-content: flex-start;
 	transition: all 0.75s ease;
-	transition-delay: ${({ delay }) => 500 + delay}ms;
+	transition-delay: ${({ delay }) => 250 + delay}ms;
 	${({ fadeIn }) =>
 		fadeIn
 			? `filter: blur(0px);
