@@ -22,7 +22,7 @@ const Container = styled.div`
 	& * {
 		font-family: Raleway;
 	}
-	padding: 56px 0 0 0;
+	padding: 100px 0 0 0;
 	// ${breakpoint(`tablet`)`
 	// 	padding: 80px 48px 36px 24px;
 	// `}
@@ -42,6 +42,7 @@ const SkillCard = styled.div`
          opacity: 1;`
 			: `filter: blur(10px);
 		opacity: 0;`}
+	overflow:
 `
 const SkillCardHeader = styled.div`
 	padding: 16px 24px;
@@ -53,10 +54,12 @@ const SkillCardDivider = styled.div`
 	background-color: ${({ fontColor }) => fontColor};
 `
 const SkillCardContent = styled.div`
-	// justify-content: flex-start;
-	padding: 24px;
+	padding: 64px 24px;
 	flex-grow: 1;
 	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 `
 const SkillItem = styled.li`
 	display: flex;
@@ -202,7 +205,7 @@ const categories = [
 ]
 
 const Skills = props => {
-	const { fontColor } = props
+	const { fontColor, backgroundColor } = props
 	const [ fadeIn, setFadeIn ] = useState(false)
 
 	return (
@@ -223,24 +226,11 @@ const Skills = props => {
 								delay={i * 250}
 								fadeIn={fadeIn}
 							>
-								<SkillCardHeader>
+								<SkillCardContent>
 									<Translateable
 										en={cat.label.en}
 										es={cat.label.es}
 									/>
-								</SkillCardHeader>
-								<SkillCardDivider fontColor={fontColor} />
-								<SkillCardContent>
-									{cat.skills && (
-										<ul>
-											{cat.skills.map(skill => (
-												<SkillItem key={skill.label}>
-													<SkillLogo src={skill.src} />
-													<span>{skill.label}</span>
-												</SkillItem>
-											))}
-										</ul>
-									)}
 								</SkillCardContent>
 							</SkillCard>
 						</Col>
