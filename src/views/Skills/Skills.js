@@ -15,51 +15,33 @@ import { Translateable } from 'components/Translateable'
 const Container = styled.div`
 	height: 100%;
 	width: 100%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
+	overflow: auto;
+	padding: 12.5% 0 0 0;
+	display: flex;
+	justify-content: center;
 	align-items: flex-start;
 	& * {
 		font-family: Raleway;
 	}
-	padding: 100px 0 0 0;
-	// ${breakpoint(`tablet`)`
-	// 	padding: 80px 48px 36px 24px;
-	// `}
 `
 const SkillCard = styled.div`
+	cursor: pointer;
 	box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
 		0 1px 3px 0 rgba(63, 63, 68, 0.15);
 	border-radius: 4px;
+	padding: 64px 0px;
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
+	justify-content: center;
+	align-items: center;
 	transition: all 0.75s ease;
 	transition-delay: ${({ delay }) => 250 + delay}ms;
+	margin: 8px 0;
 	${({ fadeIn }) =>
 		fadeIn
 			? `filter: blur(0px);
          opacity: 1;`
 			: `filter: blur(10px);
 		opacity: 0;`}
-	overflow:
-`
-const SkillCardHeader = styled.div`
-	padding: 16px 24px;
-	width: 100%;
-`
-const SkillCardDivider = styled.div`
-	height: 2px;
-	width: 100%;
-	background-color: ${({ fontColor }) => fontColor};
-`
-const SkillCardContent = styled.div`
-	padding: 64px 24px;
-	flex-grow: 1;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
 `
 const SkillItem = styled.li`
 	display: flex;
@@ -212,9 +194,9 @@ const Skills = props => {
 		<Container>
 			<GridContainer
 				fluid
-				style={{ height: '60%' }}
+				// style={{ backgroundColor: 'rgba(0, 0, 0, .25)', padding: '12px', borderRadius: '4px' }}
 			>
-				<Row style={{ height: '100%' }}>
+				<Row>
 					{categories.map((cat, i) => (
 						<Col
 							key={cat.label.en}
@@ -226,18 +208,17 @@ const Skills = props => {
 								delay={i * 250}
 								fadeIn={fadeIn}
 							>
-								<SkillCardContent>
-									<Translateable
-										en={cat.label.en}
-										es={cat.label.es}
-									/>
-								</SkillCardContent>
+								<Translateable
+									en={cat.label.en}
+									es={cat.label.es}
+								/>
 							</SkillCard>
 						</Col>
 					))}
 				</Row>
 			</GridContainer>
 			<Waypoint
+				scrollableAncestor={window}
 				onEnter={() => setFadeIn(true)}
 				onLeave={() => setFadeIn(false)}
 			/>
