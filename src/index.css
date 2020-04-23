@@ -7,4 +7,6 @@ html {
 * {
     box-sizing:border-box;  
 }
-
+::-webkit-scrollbar {
+    width: 8px;
+}

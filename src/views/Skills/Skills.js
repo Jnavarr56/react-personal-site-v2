@@ -13,47 +13,67 @@ import { Waypoint } from 'react-waypoint'
 import { Translateable } from 'components/Translateable'
 
 const Container = styled.div`
-	height: 100%;
-	width: 100%;
-	overflow: auto;
-	padding: 12.5% 0 0 0;
-	display: flex;
-	justify-content: center;
-	align-items: flex-start;
 	& * {
 		font-family: Raleway;
 	}
+	height: 100%;
+	width: 100%;
+	padding: 7.5% 0;
 `
+const GridShadow = styled.div`
+	border-radius: 4px;
+	height: 100%;
+	width: 100%;
+	padding: 2px 6px 6px 6px;
+	display: flex;
+	align-items: flex-start;
+	overflow-y: auto;
+	&::-webkit-scrollbar {
+		border-radius: 4px;
+		background-color: black;
+	}
+	&::-webkit-scrollbar-thumb {
+		border-radius: 6px;
+		background-color: white;
+		border: 2px solid black;
+	}
+`
+
 const SkillCard = styled.div`
 	cursor: pointer;
-	box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05),
-		0 1px 3px 0 rgba(63, 63, 68, 0.15);
+	background-color: white;
+	box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15);
 	border-radius: 4px;
 	padding: 64px 0px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	transition: all 0.75s ease;
-	transition-delay: ${({ delay }) => 250 + delay}ms;
-	margin: 8px 0;
+	transition: 
+		opacity 0.75s ease ${({ delay }) => 250 + delay}ms,
+		filter 0.75s ease ${({ delay }) => 250 + delay}ms, 
+		background-color .75s ease;
+		box-shadow .75s ease; 
+	& * {
+		transition: color .325s ease;
+	}
+	margin: 10px 0;
 	${({ fadeIn }) =>
 		fadeIn
 			? `filter: blur(0px);
          opacity: 1;`
 			: `filter: blur(10px);
 		opacity: 0;`}
-`
-const SkillItem = styled.li`
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	&:not(:last-child) {
-		margin-bottom: 12px;
+	&:hover {
+		${({ fadeIn }) =>
+			fadeIn &&
+			`
+			background-color: rgba(255,0,0, .75);
+			box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+			& * {
+				color: white;
+			}
+		`}
 	}
-`
-const SkillLogo = styled.img`
-	margin-right: 8px;
-	width: 35px;
 `
 
 setConfiguration({
@@ -187,42 +207,42 @@ const categories = [
 ]
 
 const Skills = props => {
-	const { fontColor, backgroundColor } = props
+	const { backgroundColor, fontColor } = props
 	const [ fadeIn, setFadeIn ] = useState(false)
 
 	return (
-		<Container>
-			<GridContainer
-				fluid
-				// style={{ backgroundColor: 'rgba(0, 0, 0, .25)', padding: '12px', borderRadius: '4px' }}
-			>
-				<Row>
-					{categories.map((cat, i) => (
-						<Col
-							key={cat.label.en}
-							lg={4}
-							md={6}
-							sm={12}
-						>
-							<SkillCard
-								delay={i * 250}
-								fadeIn={fadeIn}
-							>
-								<Translateable
-									en={cat.label.en}
-									es={cat.label.es}
-								/>
-							</SkillCard>
-						</Col>
-					))}
-				</Row>
-			</GridContainer>
+		<>
+			<Container>
+				<GridShadow>
+					<GridContainer fluid>
+						<Row>
+							{categories.map((cat, i) => (
+								<Col
+									key={cat.label.en}
+									lg={4}
+									md={6}
+									sm={12}
+								>
+									<SkillCard
+										delay={i * 250}
+										fadeIn={fadeIn}
+									>
+										<Translateable
+											en={cat.label.en}
+											es={cat.label.es}
+										/>
+									</SkillCard>
+								</Col>
+							))}
+						</Row>
+					</GridContainer>
+				</GridShadow>
+			</Container>
 			<Waypoint
-				scrollableAncestor={window}
 				onEnter={() => setFadeIn(true)}
 				onLeave={() => setFadeIn(false)}
 			/>
-		</Container>
+		</>
 	)
 }
 

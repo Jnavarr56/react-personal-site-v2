@@ -30,12 +30,13 @@ const DesktopWrapper = styled.div`
 		display: flex;
 	`}
 	&::-webkit-scrollbar {
-		border-radius: 6px;
-		background-color: rgba(0, 0, 0, 0.5);
+		border-radius: 4px;
+		background-color: rgba(0, 0, 0, 1);
 	}
 	&::-webkit-scrollbar-thumb {
 		border-radius: 6px;
 		background-color: white;
+		border: 2px solid rgba(0, 0, 0, 1);
 	}
 `
 
