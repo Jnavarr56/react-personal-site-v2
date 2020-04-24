@@ -3,7 +3,7 @@ import Context from './context'
 import styled from 'styled-components'
 
 const TranslateableWrapper = styled.span`
-	transition: all 1s ease;
+	transition: opacity 1s ease, filter 1s ease;
 	opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
 	filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
 `

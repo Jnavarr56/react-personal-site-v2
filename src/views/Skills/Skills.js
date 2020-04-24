@@ -11,20 +11,20 @@ import PropTypes from 'prop-types'
 import theme from 'theme'
 import { Waypoint } from 'react-waypoint'
 import { Translateable } from 'components/Translateable'
-
+import { SkillCard } from './components'
 const Container = styled.div`
 	& * {
 		font-family: Raleway;
 	}
 	height: 100%;
 	width: 100%;
-	padding: 7.5% 0;
+	padding: 7.25% 0;
 `
 const GridShadow = styled.div`
 	border-radius: 4px;
 	height: 100%;
 	width: 100%;
-	padding: 2px 6px 6px 6px;
+	padding: 0px 6px;
 	display: flex;
 	align-items: flex-start;
 	overflow-y: auto;
@@ -39,42 +39,42 @@ const GridShadow = styled.div`
 	}
 `
 
-const SkillCard = styled.div`
-	cursor: pointer;
-	background-color: white;
-	box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15);
-	border-radius: 4px;
-	padding: 64px 0px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	transition: 
-		opacity 0.75s ease ${({ delay }) => 250 + delay}ms,
-		filter 0.75s ease ${({ delay }) => 250 + delay}ms, 
-		background-color .75s ease;
-		box-shadow .75s ease; 
-	& * {
-		transition: color .325s ease;
-	}
-	margin: 10px 0;
-	${({ fadeIn }) =>
-		fadeIn
-			? `filter: blur(0px);
-         opacity: 1;`
-			: `filter: blur(10px);
-		opacity: 0;`}
-	&:hover {
-		${({ fadeIn }) =>
-			fadeIn &&
-			`
-			background-color: rgba(255,0,0, .75);
-			box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
-			& * {
-				color: white;
-			}
-		`}
-	}
-`
+// const SkillCard = styled.div`
+// 	cursor: pointer;
+// 	background-color: white;
+// 	box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15);
+// 	border-radius: 4px;
+// 	padding: 64px 0px;
+// 	display: flex;
+// 	justify-content: center;
+// 	align-items: center;
+// 	transition:
+// 		opacity 0.75s ease ${({ delay }) => 250 + delay}ms,
+// 		filter 0.75s ease ${({ delay }) => 250 + delay}ms,
+// 		background-color .75s ease;
+// 		box-shadow .75s ease;
+// 	& * {
+// 		transition: color .325s ease;
+// 	}
+// 	margin: 10px 0;
+// 	${({ fadeIn }) =>
+// 		fadeIn
+// 			? `filter: blur(0px);
+//          opacity: 1;`
+// 			: `filter: blur(10px);
+// 		opacity: 0;`}
+// 	&:hover {
+// 		${({ fadeIn }) =>
+// 			fadeIn &&
+// 			`
+// 			background-color: rgba(255,0,0, .75);
+// 			box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
+// 			& * {
+// 				color: white;
+// 			}
+// 		`}
+// 	}
+// `
 
 setConfiguration({
 	breakpoints: [
@@ -224,14 +224,12 @@ const Skills = props => {
 									sm={12}
 								>
 									<SkillCard
-										delay={i * 250}
+										backgroundColor={backgroundColor}
+										engCategory={cat.label.en}
+										esCategory={cat.label.es}
 										fadeIn={fadeIn}
-									>
-										<Translateable
-											en={cat.label.en}
-											es={cat.label.es}
-										/>
-									</SkillCard>
+										index={i}
+									/>
 								</Col>
 							))}
 						</Row>

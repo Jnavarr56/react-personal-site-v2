@@ -4,6 +4,8 @@ import { Section } from 'components'
 import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import theme from 'theme'
+
 const RootDiv = styled.div`
 	height: 100%;
 	width: 100%;
@@ -21,11 +23,13 @@ const RootDiv = styled.div`
 	}
 `
 
-const getSectionColors = index => ({
-	fontColor: index % 2 === 0 ? '#ff0000' : '#ffffff',
-	backgroundColor:
-		index % 2 === 0 ? '#ffffff' : 'linear-gradient(to right, #f00000, #dc281e)'
-})
+const getSectionColors = index => {
+	const { font, background } = theme.colors
+	const even = index % 2 === 0
+	const fontColor = even ? font.red : font.white
+	const backgroundColor = even ? background.white : background.red
+	return { fontColor, backgroundColor }
+}
 
 const getVH = () =>
 	Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
