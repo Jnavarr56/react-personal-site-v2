@@ -9,11 +9,10 @@ const baseShadow =
 	'0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15)'
 const selectedShadow =
 	'0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)'
-const transitionMSLong = 750
-const transitionMSShort = transitionMSLong / 2
-const getMSDelay = ({ index }) => `${250 + index * 250}`
+const getTransitionMSLong = ({ fadeDuration }) => fadeDuration
+const getTransitionMSShort = ({ fadeDuration }) => fadeDuration / 2
 
-const getSelectedBgColor = ({ backgroundColor }) => {
+const getSelectedBgColor = backgroundColor => {
 	const {
 		colors: {
 			background: { red, white }
@@ -21,7 +20,7 @@ const getSelectedBgColor = ({ backgroundColor }) => {
 	} = theme
 	return backgroundColor === white ? 'rgba(255,0,0, .75)' : white
 }
-const getSelectedFontColor = ({ backgroundColor }) => {
+const getSelectedFontColor = backgroundColor => {
 	const {
 		colors: {
 			background: { red, white }
@@ -43,18 +42,44 @@ const SkillCardDiv = styled.div`
     align-items: center;
     ${fadeIn} 
     box-shadow: ${baseShadow};
-    &:hover {
-        background-color: ${getSelectedBgColor};
-        box-shadow: ${selectedShadow};
-        & .skillCategory { color: ${getSelectedFontColor}; }
+    & .skillCategory {
+        color: black;
+        &:after {    
+            bottom: -8px;
+            content: "";
+            display: block;
+            height: 2px;
+            left: 50%;
+            position: relative;
+            background: #fff;
+            transition: width 0.3s ease 0s, left 0.3s ease 0s;
+            width: 0;
+        }
     }
+    ${({ hoverable, backgroundColor }) => {
+			if (hoverable) {
+				return `
+                &:hover {
+                    background-color: ${getSelectedBgColor(backgroundColor)};
+                    box-shadow: ${selectedShadow};
+                    & .skillCategory { 
+                        color: ${getSelectedFontColor(backgroundColor)}; 
+                        &:after { 
+                            width: 125%; 
+                            left: -12.5%; 
+                        }
+                    }
+                }
+            `
+			}
+		}}
     transition: 
-        opacity ${transitionMSLong}ms ease ${getMSDelay}ms,
-        filter ${transitionMSLong}ms ease ${getMSDelay}ms, 
-        background-color ${transitionMSLong}ms ease,
-        box-shadow ${transitionMSLong}ms ease;
+        opacity ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms,
+        filter ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms, 
+        background-color ${getTransitionMSLong}ms ease,
+        box-shadow ${getTransitionMSLong}ms ease;
     & .skillCategory { 
-        transition: color ${transitionMSShort}ms ease; 
+        transition: color ${getTransitionMSShort}ms ease; 
         font-size: 12px;
     }
     margin: 5px 0;
@@ -76,13 +101,22 @@ const SkillCardDiv = styled.div`
 `
 
 const SkillCard = props => {
-	const { backgroundColor, esCategory, engCategory, fadeIn, index } = props
-
+	const {
+		backgroundColor,
+		esCategory,
+		engCategory,
+		fadeIn,
+		fadeDelay,
+		fadeDuration,
+		hoverable
+	} = props
 	return (
 		<SkillCardDiv
 			backgroundColor={backgroundColor}
+			fadeDelay={fadeDelay}
+			fadeDuration={fadeDuration}
 			fadeIn={fadeIn}
-			index={index}
+			hoverable={hoverable}
 		>
 			<span className="skillCategory">
 				<Translateable
@@ -96,7 +130,6 @@ const SkillCard = props => {
 
 export default SkillCard
 
-// hover permission
 // add underline
 // create modal (black background white font)
 // separate skills

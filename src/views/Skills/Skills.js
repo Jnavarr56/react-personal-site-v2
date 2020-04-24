@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import {
@@ -206,9 +206,18 @@ const categories = [
 	}
 ]
 
+const getMSDelay = idx => 250 + idx * 250
+
 const Skills = props => {
-	const { backgroundColor, fontColor } = props
+	const { backgroundColor } = props
 	const [ fadeIn, setFadeIn ] = useState(false)
+	const [ hoverable, setHoverable ] = useState(false)
+
+	useEffect(() => {
+		if (fadeIn)
+			setTimeout(() => setHoverable(true), getMSDelay(categories.length - 1))
+		else setHoverable(false)
+	}, [ fadeIn ])
 
 	return (
 		<>
@@ -227,7 +236,10 @@ const Skills = props => {
 										backgroundColor={backgroundColor}
 										engCategory={cat.label.en}
 										esCategory={cat.label.es}
+										fadeDelay={getMSDelay(i)}
+										fadeDuration={750}
 										fadeIn={fadeIn}
+										hoverable={hoverable}
 										index={i}
 									/>
 								</Col>
