@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import theme from 'theme'
 import breakpoint from 'styled-components-breakpoint'
+import Modal from 'styled-react-modal'
 import { Translateable } from 'components/Translateable'
+import { IoMdCloseCircle } from 'react-icons/io'
+import Ripples from 'react-ripples'
 
 const baseShadow =
 	'0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15)'
@@ -12,7 +15,7 @@ const selectedShadow =
 const getTransitionMSLong = ({ fadeDuration }) => fadeDuration
 const getTransitionMSShort = ({ fadeDuration }) => fadeDuration / 2
 
-const getSelectedBgColor = backgroundColor => {
+const getSelectedBgColor = ({ backgroundColor }) => {
 	const {
 		colors: {
 			background: { red, white }
@@ -20,7 +23,7 @@ const getSelectedBgColor = backgroundColor => {
 	} = theme
 	return backgroundColor === white ? 'rgba(255,0,0, .75)' : white
 }
-const getSelectedFontColor = backgroundColor => {
+const getSelectedFontColor = ({ backgroundColor }) => {
 	const {
 		colors: {
 			background: { red, white }
@@ -37,9 +40,14 @@ const fadeIn = ({ fadeIn }) => {
 const SkillCardDiv = styled.div`
     cursor: pointer;
     border-radius: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    & .skill-card-ripple {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 32px 0px;
+    }
     ${fadeIn} 
     box-shadow: ${baseShadow};
     & .skillCategory {
@@ -56,48 +64,65 @@ const SkillCardDiv = styled.div`
             width: 0;
         }
     }
-    ${({ hoverable, backgroundColor }) => {
-			if (hoverable) {
-				return `
-                &:hover {
-                    background-color: ${getSelectedBgColor(backgroundColor)};
-                    box-shadow: ${selectedShadow};
-                    & .skillCategory { 
-                        color: ${getSelectedFontColor(backgroundColor)}; 
-                        &:after { 
-                            width: 125%; 
-                            left: -12.5%; 
-                        }
-                    }
-                }
-            `
-			}
-		}}
+    &:hover {
+        background-color: ${getSelectedBgColor};
+        box-shadow: ${selectedShadow};
+        & .skillCategory { 
+            color: ${getSelectedFontColor}; 
+            &:after { 
+                width: 125%; 
+                left: -12.5%; 
+            }
+        }
+    }
+    ${({ hoverable }) => (hoverable ? '' : 'pointer-events: none;')}
     transition: 
         opacity ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms,
         filter ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms, 
         background-color ${getTransitionMSLong}ms ease,
         box-shadow ${getTransitionMSLong}ms ease;
     & .skillCategory { 
-        transition: color ${getTransitionMSShort}ms ease; 
         font-size: 12px;
+        transition: color ${getTransitionMSShort}ms ease; 
     }
     margin: 5px 0;
-    padding: 32px 0px;
     ${breakpoint('phone')`
         margin: 7.5px 0;
-        padding: 44px 0px;
         & .skillCategory { 
             font-size: 16px;
+        }
+        & .skill-card-ripple {
+            padding: 44px 0px;
         }
     `}
     ${breakpoint('tablet')`
         margin: 10px 0;
-        padding: 64px 0px;
         & .skillCategory { 
             font-size: 18px;
         }
+        & .skill-card-ripple {
+            padding: 64px 0px;
+        }
     `}
+`
+
+const StyledModal = Modal.styled`
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-family: Raleway;
+    position: relative;
+    & .close-modal-btn {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        cursor: pointer;
+    }
 `
 
 const SkillCard = props => {
@@ -110,29 +135,50 @@ const SkillCard = props => {
 		fadeDuration,
 		hoverable
 	} = props
+
+	const [ open, setOpen ] = useState(false)
+	const handleOpenModal = useCallback(() => setOpen(true), [])
+	const handleCloseModal = useCallback(() => setOpen(false), [])
+
 	return (
-		<SkillCardDiv
-			backgroundColor={backgroundColor}
-			fadeDelay={fadeDelay}
-			fadeDuration={fadeDuration}
-			fadeIn={fadeIn}
-			hoverable={hoverable}
-		>
-			<span className="skillCategory">
-				<Translateable
-					en={engCategory}
-					es={esCategory}
+		<>
+			<SkillCardDiv
+				backgroundColor={backgroundColor}
+				fadeDelay={fadeDelay}
+				fadeDuration={fadeDuration}
+				fadeIn={fadeIn}
+				hoverable={hoverable}
+				onClickCapture={handleOpenModal}
+			>
+				<Ripples className="skill-card-ripple">
+					<span className="skillCategory">
+						<Translateable
+							en={engCategory}
+							es={esCategory}
+						/>
+					</span>
+				</Ripples>
+			</SkillCardDiv>
+			<StyledModal
+				isOpen={open}
+				onBackgroundClick={handleCloseModal}
+			>
+				<h1>Modal Content!!!</h1>
+				<IoMdCloseCircle
+					className="close-modal-btn"
+					onClick={handleCloseModal}
 				/>
-			</span>
-		</SkillCardDiv>
+			</StyledModal>
+		</>
 	)
 }
 
 export default SkillCard
 
-// add underline
 // create modal (black background white font)
+// --> fade in modal
 // separate skills
 
 // other:
-// fade in
+// fade in sections?
+// add ripples to menus?

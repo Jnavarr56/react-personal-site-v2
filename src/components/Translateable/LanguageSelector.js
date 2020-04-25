@@ -10,7 +10,7 @@ const SELECTOR_HEIGHT = '2rem'
 const BUTTON_DIMENSION = '1.5rem'
 
 const Selector = styled.div`
-	z-index: 1000;
+	z-index: 10000;
 	position: fixed;
 	top: 12px;
 	right: 32px;

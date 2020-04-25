@@ -13,6 +13,7 @@ import {
 import PropTypes from 'prop-types'
 import { ThemeProvider } from 'styled-components'
 import theme from './theme'
+import { ModalProvider, BaseModalBackground } from 'styled-react-modal'
 
 const VIEWS = [
 	{
@@ -62,6 +63,11 @@ const Main = styled.main`
 	overflow: hidden;
 	position: relative;
 `
+const ModalBackground = styled(BaseModalBackground)`
+	z-index: 9999;
+	opacity: 0;
+	filter: blur(10px);
+`
 
 const App = props => {
 	const { search: query } = props.location
@@ -101,17 +107,19 @@ const App = props => {
 			)}
 			{(visited || showViews) && (
 				<ThemeProvider theme={theme}>
-					<TranslateableContext lang={lang}>
-						<LanguageSelector />
-						<MobileNav>{VIEWS}</MobileNav>
-						<DesktopNav>{VIEWS}</DesktopNav>
-						<ViewsContainer
-							fadeInDelay={1000}
-							fadeInDuration={1000}
-						>
-							{VIEWS}
-						</ViewsContainer>
-					</TranslateableContext>
+					<ModalProvider backgroundComponent={ModalBackground}>
+						<TranslateableContext lang={lang}>
+							<LanguageSelector />
+							<MobileNav>{VIEWS}</MobileNav>
+							<DesktopNav>{VIEWS}</DesktopNav>
+							<ViewsContainer
+								fadeInDelay={1000}
+								fadeInDuration={1000}
+							>
+								{VIEWS}
+							</ViewsContainer>
+						</TranslateableContext>
+					</ModalProvider>
 				</ThemeProvider>
 			)}
 		</Main>
