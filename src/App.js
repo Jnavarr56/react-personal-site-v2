@@ -65,8 +65,6 @@ const Main = styled.main`
 `
 const ModalBackground = styled(BaseModalBackground)`
 	z-index: 9999;
-	opacity: 0;
-	filter: blur(10px);
 `
 
 const App = props => {

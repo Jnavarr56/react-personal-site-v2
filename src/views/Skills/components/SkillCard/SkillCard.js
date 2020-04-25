@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import theme from 'theme'
@@ -7,6 +7,7 @@ import Modal from 'styled-react-modal'
 import { Translateable } from 'components/Translateable'
 import { IoMdCloseCircle } from 'react-icons/io'
 import Ripples from 'react-ripples'
+import { FullScreenModal } from 'components'
 
 const baseShadow =
 	'0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15)'
@@ -106,6 +107,8 @@ const SkillCardDiv = styled.div`
     `}
 `
 
+const modalFadeDuration = 500
+
 const StyledModal = Modal.styled`
     height: 100%;
     width: 100%;
@@ -123,6 +126,9 @@ const StyledModal = Modal.styled`
         left: 10px;
         cursor: pointer;
     }
+    opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
+    filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
+    transition: opacity ${modalFadeDuration}ms ease, filter ${modalFadeDuration}ms ease;
 `
 
 const SkillCard = props => {
@@ -130,15 +136,24 @@ const SkillCard = props => {
 		backgroundColor,
 		esCategory,
 		engCategory,
-		fadeIn,
+		fadeIn: fadeInCard,
 		fadeDelay,
 		fadeDuration,
 		hoverable
 	} = props
 
 	const [ open, setOpen ] = useState(false)
-	const handleOpenModal = useCallback(() => setOpen(true), [])
-	const handleCloseModal = useCallback(() => setOpen(false), [])
+	const [ fadeInModal, setFadeInModal ] = useState(false)
+
+	const handleOpenModal = useCallback(() => {
+		setOpen(true)
+		// setTimeout(() => setFadeInModal(true), modalFadeDuration)
+	}, [])
+	const handleCloseModal = useCallback(() => {
+		setOpen(false)
+		// setFadeInModal(false)
+		// setTimeout(() => setOpen(false), modalFadeDuration)
+	}, [])
 
 	return (
 		<>
@@ -146,7 +161,7 @@ const SkillCard = props => {
 				backgroundColor={backgroundColor}
 				fadeDelay={fadeDelay}
 				fadeDuration={fadeDuration}
-				fadeIn={fadeIn}
+				fadeIn={fadeInCard}
 				hoverable={hoverable}
 				onClickCapture={handleOpenModal}
 			>
@@ -159,16 +174,15 @@ const SkillCard = props => {
 					</span>
 				</Ripples>
 			</SkillCardDiv>
-			<StyledModal
-				isOpen={open}
-				onBackgroundClick={handleCloseModal}
+			<FullScreenModal
+				open={open}
+				onClose={handleCloseModal}
 			>
-				<h1>Modal Content!!!</h1>
-				<IoMdCloseCircle
-					className="close-modal-btn"
-					onClick={handleCloseModal}
+				<Translateable
+					en={engCategory}
+					es={esCategory}
 				/>
-			</StyledModal>
+			</FullScreenModal>
 		</>
 	)
 }
