@@ -69,7 +69,7 @@ const Nav = styled.nav`
 	position: fixed;
 	cursor: ${({ open }) => (open ? 'auto' : 'pointer')};
 	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-	transition: all 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition: all .5s cubic-bezier(0.645, 0.045, 0.355, 1);
 	${({ open }) => calcDimensions(open, 'small')}
 	${breakpoint('phone')`
         ${({ open }) => calcDimensions(open, 'medium')}
@@ -190,7 +190,7 @@ const MobileNav = props => {
 					return (
 						<NavListItem key={view.title.en}>
 							<NavListItemText
-								delay={1000 + i * 100}
+								delay={500 + i * 100}
 								open={open}
 								selected={selected}
 								onClick={() => {

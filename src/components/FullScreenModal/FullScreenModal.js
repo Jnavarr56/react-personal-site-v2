@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Modal from 'styled-react-modal'
-import Ripples from 'react-ripples'
 import { IconButton } from 'components'
 import { IoMdCloseCircle } from 'react-icons/io'
 import PropTypes from 'prop-types'
@@ -22,13 +21,13 @@ const StyledModal = Modal.styled`
         filter ${({ fadeDuration }) => fadeDuration}ms ease;
     position: relative;
     & .close-modal-icon-btn {
-        position: absolute;
-        top: 2rem;
-        left: 2rem;
         border-radius: 100%;
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
         & .close-modal-icon {
             color: black;
-            font-size: 24px;
+            font-size: 32px;
         }
     }
 `
@@ -75,7 +74,7 @@ const FullScreenModal = props => {
 }
 
 FullScreenModal.defaultProps = {
-	fadeDuration: 500,
+	fadeDuration: 350,
 	open: false
 }
 

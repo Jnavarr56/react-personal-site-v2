@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import breakpoint from 'styled-components-breakpoint'
 import {
 	Container as GridContainer,
 	Row,
@@ -10,7 +9,6 @@ import {
 import PropTypes from 'prop-types'
 import theme from 'theme'
 import { Waypoint } from 'react-waypoint'
-import { Translateable } from 'components/Translateable'
 import { SkillCard } from './components'
 const Container = styled.div`
 	& * {
@@ -38,43 +36,6 @@ const GridShadow = styled.div`
 		border: 2px solid black;
 	}
 `
-
-// const SkillCard = styled.div`
-// 	cursor: pointer;
-// 	background-color: white;
-// 	box-shadow: 0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15);
-// 	border-radius: 4px;
-// 	padding: 64px 0px;
-// 	display: flex;
-// 	justify-content: center;
-// 	align-items: center;
-// 	transition:
-// 		opacity 0.75s ease ${({ delay }) => 250 + delay}ms,
-// 		filter 0.75s ease ${({ delay }) => 250 + delay}ms,
-// 		background-color .75s ease;
-// 		box-shadow .75s ease;
-// 	& * {
-// 		transition: color .325s ease;
-// 	}
-// 	margin: 10px 0;
-// 	${({ fadeIn }) =>
-// 		fadeIn
-// 			? `filter: blur(0px);
-//          opacity: 1;`
-// 			: `filter: blur(10px);
-// 		opacity: 0;`}
-// 	&:hover {
-// 		${({ fadeIn }) =>
-// 			fadeIn &&
-// 			`
-// 			background-color: rgba(255,0,0, .75);
-// 			box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);
-// 			& * {
-// 				color: white;
-// 			}
-// 		`}
-// 	}
-// `
 
 setConfiguration({
 	breakpoints: [
@@ -177,32 +138,76 @@ const categories = [
 		},
 		skills: [
 			{ label: 'PostgreSQL', src: '/skills-logos/databases/postgresql.png' },
-			{ label: 'MongoDB', src: '/skills-logos/databases/mongodb.png' }
+			{ label: 'MongoDB', src: '/skills-logos/databases/mongodb.png' },
+			{ label: 'Mongoose', src: '/skills-logos/databases/mongoose.png' },
+			{ label: 'node-postgres', src: '' }
 		]
 	},
 	{
 		label: {
 			en: 'DevOps/Cloud',
 			es: 'DevOps/Nube'
-		}
+		},
+		skills: [
+			{ label: 'Docker', src: '/skills-logos/devops-cloud/docker.png' },
+			{ label: 'Git', src: '/skills-logos/devops-cloud/git.png' },
+			{ label: 'GitHub', src: '/skills-logos/devops-cloud/github.png' },
+			{ label: 'Gitlab', src: '/skills-logos/devops-cloud/gitlab.png' },
+			{ label: 'NGINX', src: '/skills-logos/devops-cloud/nginx.png' },
+			{
+				label: 'AWS (S3/EC2/Cognito)',
+				src: '/skills-logos/devops-cloud/aws.png'
+			},
+			{
+				label: 'MongoDB Atlas',
+				src: '/skills-logos/devops-cloud/mongodb-atlas.png'
+			},
+			{ label: 'Netlify', src: '/skills-logos/devops-cloud/netlify.png' },
+			{ label: 'Heroku', src: '/skills-logos/devops-cloud/heroku.png' }
+		]
 	},
 	{
 		label: {
 			en: 'Tools',
 			es: 'Herramientas'
-		}
+		},
+		skills: [
+			{ label: 'iTerm2', src: '/skills-logos/tools/iterm2.png' },
+			{ label: 'Oh My Zsh', src: '/skills-logos/tools/oh-my-zsh.png' },
+			{ label: 'Visual Studio Code', src: '/skills-logos/tools/vs-code.png' },
+			{ label: 'Robo3T', src: '/skills-logos/tools/robo3t.png' },
+			{ label: 'Postico', src: '/skills-logos/tools/postico.png' },
+			{ label: 'Android Studio', src: '/skills-logos/tools/android-studio.png' }
+		]
 	},
 	{
 		label: {
-			en: 'Other Engineering',
-			es: 'Otros Technologicos'
-		}
+			en: 'Previously Used',
+			es: 'Usado Previamente'
+		},
+		skills: [
+			{
+				label: 'Apollo/GraphQL',
+				src: '/skills-logos/previously-used/apollo-graphql.png'
+			},
+			{ label: 'Vagrant', src: '/skills-logos/previously-used/vagrant.png' },
+			{
+				label: 'VirtualBox',
+				src: '/skills-logos/previously-used/virtualbox.png'
+			},
+			{ label: 'Ubuntu', src: '/skills-logos/previously-used/ubuntu.png' }
+		]
 	},
 	{
 		label: {
-			en: 'Misc.',
-			es: 'Misceláneo'
-		}
+			en: 'Other',
+			es: 'Otro'
+		},
+		skills: [
+			{ label: 'Spanish Languag (native)', src: '' },
+			{ label: 'French Language (intermediate)', src: '' },
+			{ label: 'MS Excel', src: '' }
+		]
 	}
 ]
 
@@ -241,6 +246,7 @@ const Skills = props => {
 										fadeIn={fadeIn}
 										hoverable={hoverable}
 										index={i}
+										skills={cat.skills}
 									/>
 								</Col>
 							))}

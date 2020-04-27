@@ -107,28 +107,74 @@ const SkillCardDiv = styled.div`
     `}
 `
 
-const modalFadeDuration = 500
+const ScrollableListContainer = styled.div`
+	height: 100%;
+	width: 100%;
+	padding: 3.5rem;
+`
 
-const StyledModal = Modal.styled`
+const ScrollableList = styled.ul`
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+	padding: 24px 16px 8px 0px;
+	${breakpoint('tablet')`
+        padding: 24px 20px 16px 0px;
+    `}
+	&::-webkit-scrollbar {
+		border-radius: 4px;
+		background-color: black;
+	}
+	&::-webkit-scrollbar-thumb {
+		border-radius: 6px;
+		background-color: white;
+		border: 2px solid black;
+	}
+`
+
+const ScrollableListItem = styled.li`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    ${({ marginIndex }) => `margin: ${marginIndex ? '2rem 0' : '0 0 2rem 0'};`}
+    & > p { font-size: 14px; }
+    & > img { height: 26px; }
+    ${breakpoint('phone')`
+        & > p { font-size: 16px; }
+        & > img { height: 32px; }
+    `}
+    ${breakpoint('tablet')`
+        & > p { font-size: 18px; }
+        & > img { height: 42px; }
+    `}
+    ${breakpoint('desktop')`
+        & > p { font-size: 22px; }
+        & > img { height: 52px; }
+    `}
+
+`
+
+const ListPlaceholder = styled.div`
     height: 100%;
     width: 100%;
-    background-color: white;
-    color: black;
     display: flex;
-    align-items: center;
     justify-content: center;
-    border-radius: 4px;
-    font-family: Raleway;
-    position: relative;
-    & .close-modal-btn {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        cursor: pointer;
+    align-items: center;
+    & h1 {
+        font-size: 14px;
     }
-    opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
-    filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
-    transition: opacity ${modalFadeDuration}ms ease, filter ${modalFadeDuration}ms ease;
+    ${breakpoint('phone')`
+    & > h1 { font-size: 16px; }
+
+    `}
+${breakpoint('tablet')`
+    & > h1 { font-size: 18px; }
+
+    `}
+${breakpoint('desktop')`
+    & > h1 { font-size: 22px; }
+
+    `}
 `
 
 const SkillCard = props => {
@@ -139,22 +185,17 @@ const SkillCard = props => {
 		fadeIn: fadeInCard,
 		fadeDelay,
 		fadeDuration,
-		hoverable
+		hoverable,
+		skills
 	} = props
 
 	const [ open, setOpen ] = useState(false)
-	const [ fadeInModal, setFadeInModal ] = useState(false)
-
 	const handleOpenModal = useCallback(() => {
 		setOpen(true)
-		// setTimeout(() => setFadeInModal(true), modalFadeDuration)
 	}, [])
 	const handleCloseModal = useCallback(() => {
 		setOpen(false)
-		// setFadeInModal(false)
-		// setTimeout(() => setOpen(false), modalFadeDuration)
 	}, [])
-
 	return (
 		<>
 			<SkillCardDiv
@@ -178,20 +219,33 @@ const SkillCard = props => {
 				open={open}
 				onClose={handleCloseModal}
 			>
-				<Translateable
-					en={engCategory}
-					es={esCategory}
-				/>
+				<ScrollableListContainer>
+					{skills && skills.length > 0 ? (
+						<ScrollableList>
+							{skills.map(({ label, src }, i) => {
+									return (
+										<ScrollableListItem
+											key={label + i}
+											marginIndex={i}
+										>
+											<p>{label}</p>
+											{src && <img src={src} />}
+										</ScrollableListItem>
+									)
+								})}
+						</ScrollableList>
+					) : (
+						<ListPlaceholder>
+							<h1>Coming Soon!</h1>
+						</ListPlaceholder>
+					)}
+				</ScrollableListContainer>
 			</FullScreenModal>
 		</>
 	)
 }
 
 export default SkillCard
-
-// create modal (black background white font)
-// --> fade in modal
-// separate skills
 
 // other:
 // fade in sections?

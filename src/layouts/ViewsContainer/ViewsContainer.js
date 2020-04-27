@@ -68,6 +68,7 @@ const ViewsContainer = props => {
 								setScrolling(false)
 							}
 						}, 100)
+						//fix timing based path
 					}, 1000)
 				} else {
 					containerEl.scrollTo({ top })
