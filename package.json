@@ -21,6 +21,7 @@
 		"react-router-dom": "^5.1.2",
 		"react-scripts": "3.3.0",
 		"react-swipeable-views": "^0.13.7",
+		"react-tilt": "^0.1.4",
 		"react-waypoint": "^9.0.2",
 		"reset-css": "^5.0.1",
 		"styled-components": "^5.0.0",

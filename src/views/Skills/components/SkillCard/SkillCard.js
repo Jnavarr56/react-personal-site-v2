@@ -8,6 +8,7 @@ import { Translateable } from 'components/Translateable'
 import { IoMdCloseCircle } from 'react-icons/io'
 import Ripples from 'react-ripples'
 import { FullScreenModal } from 'components'
+import Tilt from 'react-tilt'
 
 const baseShadow =
 	'0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15)'
@@ -76,7 +77,6 @@ const SkillCardDiv = styled.div`
             }
         }
     }
-    ${({ hoverable }) => (hoverable ? '' : 'pointer-events: none;')}
     transition: 
         opacity ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms,
         filter ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms, 
@@ -177,6 +177,18 @@ ${breakpoint('desktop')`
     `}
 `
 
+const TiltWrapper = styled.div`
+	pointer-events: none;
+	${breakpoint('tablet')`
+        pointer-events: ${({ hoverable }) => (hoverable ? 'all' : 'none')}
+        `}
+`
+
+const tiltOptions = {
+	max: 25,
+	scale: 1.1
+}
+
 const SkillCard = props => {
 	const {
 		backgroundColor,
@@ -198,23 +210,26 @@ const SkillCard = props => {
 	}, [])
 	return (
 		<>
-			<SkillCardDiv
-				backgroundColor={backgroundColor}
-				fadeDelay={fadeDelay}
-				fadeDuration={fadeDuration}
-				fadeIn={fadeInCard}
-				hoverable={hoverable}
-				onClickCapture={handleOpenModal}
-			>
-				<Ripples className="skill-card-ripple">
-					<span className="skillCategory">
-						<Translateable
-							en={engCategory}
-							es={esCategory}
-						/>
-					</span>
-				</Ripples>
-			</SkillCardDiv>
+			<TiltWrapper hoverable={hoverable}>
+				<Tilt options={tiltOptions}>
+					<SkillCardDiv
+						backgroundColor={backgroundColor}
+						fadeDelay={fadeDelay}
+						fadeDuration={fadeDuration}
+						fadeIn={fadeInCard}
+						onClickCapture={handleOpenModal}
+					>
+						<Ripples className="skill-card-ripple">
+							<span className="skillCategory">
+								<Translateable
+									en={engCategory}
+									es={esCategory}
+								/>
+							</span>
+						</Ripples>
+					</SkillCardDiv>
+				</Tilt>
+			</TiltWrapper>
 			<FullScreenModal
 				open={open}
 				onClose={handleCloseModal}
@@ -223,16 +238,16 @@ const SkillCard = props => {
 					{skills && skills.length > 0 ? (
 						<ScrollableList>
 							{skills.map(({ label, src }, i) => {
-									return (
-										<ScrollableListItem
-											key={label + i}
-											marginIndex={i}
-										>
-											<p>{label}</p>
-											{src && <img src={src} />}
-										</ScrollableListItem>
-									)
-								})}
+								return (
+									<ScrollableListItem
+										key={label + i}
+										marginIndex={i}
+									>
+										<p>{label}</p>
+										{src && <img src={src} />}
+									</ScrollableListItem>
+								)
+							})}
 						</ScrollableList>
 					) : (
 						<ListPlaceholder>
@@ -246,7 +261,3 @@ const SkillCard = props => {
 }
 
 export default SkillCard
-
-// other:
-// fade in sections?
-// add ripples to menus?
