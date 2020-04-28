@@ -63,6 +63,7 @@ const SectionTitle = props => {
 
 	return (
 		<Waypoint
+			scrollableAncestor={window}
 			onEnter={handleEnter}
 			onLeave={handleLeave}
 		>

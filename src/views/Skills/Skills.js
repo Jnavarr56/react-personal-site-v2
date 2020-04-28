@@ -255,6 +255,7 @@ const Skills = props => {
 				</GridShadow>
 			</Container>
 			<Waypoint
+				scrollableAncestor={window}
 				onEnter={() => setFadeIn(true)}
 				onLeave={() => setFadeIn(false)}
 			/>
