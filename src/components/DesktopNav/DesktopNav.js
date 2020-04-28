@@ -5,6 +5,7 @@ import { Translateable } from 'components/Translateable'
 import { useHistory } from 'react-router-dom'
 import breakpoint from 'styled-components-breakpoint'
 import theme from 'theme'
+import Ripples from 'react-ripples'
 const CLOSED_NAV_WIDTH = 40
 const ICON_WIDTH = 20
 const ICON_HEIGHT = 15
@@ -26,6 +27,15 @@ const Nav = styled.nav`
 	${breakpoint('desktop')`
 		display: flex;
 	`}
+	opacity: 0;
+	filter: blur(10px);
+	animation: FadeIn 1s linear 1 forwards;
+	@keyframes FadeIn {
+		100%: {
+			opacity: 1;
+			filter: blur(0px);
+		}
+	}
 `
 const NavList = styled.ul`
 	height: 100%;
@@ -80,17 +90,17 @@ const NavIcon = styled.div`
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    & > div {
+    & > .bar {
         height: 20%;
         width: 100%;
         position: relative;
         background-color: white;
         flex-shrink;
         &:nth-child(1) {
-            transition: 0.5s all ease;
+            transition: 0.5s width ease, 0.5s bottom ease, 0.5s top ease, 0.5s transform ease;
         }
         &:nth-child(3) {
-            transition: 0.5s all ease;
+            transition: 0.5s width ease, 0.5s bottom ease, 0.5s top ease, 0.5s transform ease;
         }
     }
     ${({ open }) => {
@@ -122,18 +132,29 @@ const NavIcon = styled.div`
 		}}
 `
 
+const RippleArea = styled.div`
+	transition: background-color 0.25s ease;
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.15);
+	}
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: ${ICON_WIDTH * 2.25}px;
+	& .ripples {
+		height: 100%;
+		width: 100%;
+	}
+`
+
 const DesktopNav = props => {
 	const { children } = props
 	const [ open, setOpen ] = useState(false)
 	const { push, location } = useHistory()
 
-	const handleOpen = useCallback(() => {
-		if (!open) setOpen(true)
-	}, [ open ])
-
-	const handleClose = useCallback(() => {
-		if (open) setOpen(false)
-	}, [ open ])
+	const handleToggle = useCallback(() => setOpen(prev => !prev), [])
 
 	useEffect(() => {
 		window.addEventListener('resize', e => {
@@ -144,10 +165,7 @@ const DesktopNav = props => {
 	}, [])
 
 	return (
-		<Nav
-			open={open}
-			onClick={handleOpen}
-		>
+		<Nav open={open}>
 			<NavList open={open}>
 				{children.map((view, i) => (
 					<NavListItem key={view.title.en}>
@@ -167,14 +185,19 @@ const DesktopNav = props => {
 					</NavListItem>
 				))}
 			</NavList>
-			<NavIcon
-				open={open}
-				onClick={handleClose}
-			>
-				<div />
-				<div />
-				<div />
-			</NavIcon>
+			<RippleArea>
+				<Ripples
+					className="ripples"
+					color="white"
+					onClickCapture={handleToggle}
+				>
+					<NavIcon open={open}>
+						<div className="bar" />
+						<div className="bar" />
+						<div className="bar" />
+					</NavIcon>
+				</Ripples>
+			</RippleArea>
 		</Nav>
 	)
 }

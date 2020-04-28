@@ -50,6 +50,15 @@ const Button = styled.div`
 	background-image: url(${({ direction: dir }) =>
 		dir === 'up' ? englishIcon : espanolIcon});
 	border-radius: 2rem;
+	opacity: 0;
+	filter: blur(10px);
+	animation: FadeIn 1s linear 1 forwards;
+	@keyframes FadeIn {
+		100%: {
+			opacity: 1;
+			filter: blur(0px);
+		}
+	}
 `
 
 const LanguageSelector = props => {

@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
 import theme from 'theme'
 import { useHistory, useLocation } from 'react-router-dom'
+import Ripples from 'react-ripples'
 const calcDimensions = (open, size) => {
 	const dimensions = {
 		small: `
@@ -63,13 +64,34 @@ const calcDimensions = (open, size) => {
 }
 
 const Nav = styled.nav`
+
+overflow: hidden;
 	box-sizing: border-box;
 	background-color: black;
+	&:hover {
+		${({ open }) => {
+			if (!open) {
+				return `
+					background-color: rgba(0, 0, 0, .75);
+				`
+			}
+		}}
+	}
 	z-index: 100;
 	position: fixed;
 	cursor: ${({ open }) => (open ? 'auto' : 'pointer')};
 	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-	transition: all .5s cubic-bezier(0.645, 0.045, 0.355, 1);
+	transition: 
+		border-radius .5s cubic-bezier(0.645, 0.045, 0.355, 1),
+		height .5s cubic-bezier(0.645, 0.045, 0.355, 1),
+		width .5s cubic-bezier(0.645, 0.045, 0.355, 1),
+		right .5s cubic-bezier(0.645, 0.045, 0.355, 1),
+		padding .5s cubic-bezier(0.645, 0.045, 0.355, 1),
+		bottom .5s cubic-bezier(0.645, 0.045, 0.355, 1),
+		background-color .25s ease;
+	
+	
+
 	${({ open }) => calcDimensions(open, 'small')}
 	${breakpoint('phone')`
         ${({ open }) => calcDimensions(open, 'medium')}
@@ -82,7 +104,38 @@ const Nav = styled.nav`
 	align-items: center;
 	${breakpoint('desktop')`
         display: none;
-    `}
+	`}
+	opacity: 0;
+	filter: blur(10px);
+	animation: FadeIn 1s linear 1 forwards; 
+	@keyframes FadeIn {
+		100%: {
+			opacity: 1;
+			filter: blur(0px);
+		}
+	}
+	& .ripples {
+		position: absolute !important;
+		border-radius: 100%;
+		padding: 16px 18px;
+		overflow: hidden !important;
+		
+
+		${({ open }) => {
+			if (!open) {
+				return `height: 100%;
+					width: 100%;
+				`
+			} else {
+				return `
+					${calcIconPosition('small')}
+					${breakpoint('tablet')`
+						${calcIconPosition('large')}
+					`}
+				`
+			}
+		}}
+	}
 `
 
 const NavList = styled.ul`
@@ -124,7 +177,7 @@ const NavListItemText = styled.span`
 	}}
 `
 
-const calcIconPosition = (closed, size) => {
+const calcIconPosition = size => {
 	const iconPosition = {
 		small: `
             top: 16px;
@@ -135,27 +188,27 @@ const calcIconPosition = (closed, size) => {
             left: 24px;
         `
 	}
-	return closed
-		? `
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-    `
-		: iconPosition[size]
+	return iconPosition[size]
 }
 const Icon = styled.span`
-    z-index: 101;
-    color: white;
-    display: inline-block;
-    position: absolute;
-    transition: all 0.3s; 
-    ${({ open }) => calcIconPosition(!open, 'small')}
-    ${breakpoint('tablet')`
-        ${({ open }) => calcIconPosition(!open, 'large')}
-    `}
-    ${({ open }) => open && 'cursor: pointer;'}
-    font-size: 16px;
-    ${breakpoint('tablet')`
+	z-index: 101;
+	color: white;
+	display: inline-block;
+
+	transition: all 0.3s;
+	${({ open }) => {
+		if (!open) {
+			return `
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			`
+		}
+	}}
+	cursor: pointer;
+	font-size: 16px;
+	${breakpoint('tablet')`
         font-size: 28px;
     `}
 `
@@ -166,10 +219,10 @@ const MobileNav = props => {
 	const history = useHistory()
 	const [ open, setOpen ] = useState(false)
 	const handleOpenNav = useCallback(() => {
-		if (!open) setOpen(true)
+		if (!open) setTimeout(() => setOpen(true), 250)
 	}, [ open ])
 	const handleCloseNav = useCallback(() => {
-		if (open) setOpen(false)
+		if (open) setTimeout(() => setOpen(false), 250)
 	}, [ open ])
 
 	useEffect(() => {
@@ -180,10 +233,7 @@ const MobileNav = props => {
 		})
 	}, [])
 	return (
-		<Nav
-			open={open}
-			onClick={handleOpenNav}
-		>
+		<Nav open={open}>
 			<NavList>
 				{views.map((view, i) => {
 					const selected = `/${view.path}` === location.pathname
@@ -209,12 +259,13 @@ const MobileNav = props => {
 					)
 				})}
 			</NavList>
-			<Icon
-				open={open}
-				onClick={handleCloseNav}
+			<Ripples
+				className="ripples"
+				color="white"
+				onClick={open ? handleCloseNav : handleOpenNav}
 			>
-				{open ? <FaTimes /> : <FaPlus />}
-			</Icon>
+				<Icon open={open}>{open ? <FaTimes /> : <FaPlus />}</Icon>
+			</Ripples>
 		</Nav>
 	)
 }

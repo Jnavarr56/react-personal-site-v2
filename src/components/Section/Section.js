@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { TranslateableSectionTitle } from 'components/Translateable'
 import getParticleConfig from './getParticleConfig'
 
-const SectionDiv = styled.div`
+const SectionComp = styled.section`
 	height: 100vh;
 	width: 100vw;
 	position: relative;
@@ -50,7 +50,7 @@ const Section = props => {
 	}, [ titleKey, fontColor, showParticles ])
 
 	return (
-		<SectionDiv backgroundColor={backgroundColor}>
+		<SectionComp backgroundColor={backgroundColor}>
 			{showTitle && (
 				<TranslateableSectionTitle
 					fontColor={fontColor}
@@ -61,7 +61,7 @@ const Section = props => {
 				{cloneElement(children, { fontColor, backgroundColor })}
 			</ChildrenContainer>
 			{showParticles && <ParticleBackground id={`${titleKey}-background`} />}
-		</SectionDiv>
+		</SectionComp>
 	)
 }
 

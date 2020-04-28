@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useCookies } from 'react-cookie'
 import styled from 'styled-components'
-import { LandingAnimation, Home, AboutMe, Skills } from 'views'
+import { LandingAnimation, Home, AboutMe, Skills, Projects } from 'views'
 import { ViewsContainer } from 'layouts'
 import { Redirect } from 'react-router-dom'
 import qs from 'querystring'
@@ -41,7 +41,7 @@ const VIEWS = [
 		title: { en: 'Projects', es: 'Proyectos' },
 		showTitle: true,
 		showParticles: false,
-		component: <h1>hey</h1>,
+		component: <Projects />,
 		path: 'projects'
 	},
 	{
@@ -99,7 +99,7 @@ const App = props => {
 				<LandingAnimation
 					fadeOutDelay={1000}
 					fadeOutDuration={1000}
-					interval={50}
+					interval={25}
 					onAnimationEnd={handleAnimationEnd}
 				/>
 			)}
