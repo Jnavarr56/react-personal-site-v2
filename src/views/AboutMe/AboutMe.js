@@ -21,14 +21,16 @@ const Container = styled.div`
 const DesktopWrapper = styled.div`
 	height: 100%;
 	width: 100%;
-	display: none;
+	// display: none;
+	// ${breakpoint(`tablet`)`
+	// 	display: flex;
+	// `}
+	display: flex;
 	justify-content: center;
 	align-items: flex-start;
 	overflow-y: auto;
 	padding-right: 8px;
-	${breakpoint(`tablet`)`
-		display: flex;
-	`}
+
 	&::-webkit-scrollbar {
 		border-radius: 4px;
 		background-color: rgba(0, 0, 0, 1);
@@ -122,11 +124,11 @@ const AboutMe = props => {
 					/>
 				</Text>
 			</DesktopWrapper>
-			<MobileText
+			{/* <MobileText
 				englishText={englishText}
 				fontColor={fontColor}
 				spanishText={spanishText}
-			/>
+			/> */}
 		</Container>
 	)
 }
