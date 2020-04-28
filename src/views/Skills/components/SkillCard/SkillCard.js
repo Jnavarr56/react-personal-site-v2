@@ -11,7 +11,7 @@ import { FullScreenModal } from 'components'
 import Tilt from 'react-tilt'
 
 const baseShadow =
-	'0 8px 20px -8px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)'
+	'0 6px 20px -8px rgba(0,0,0,0.19), 0 3px 6px rgba(0,0,0,0.23)'
 
 const selectedShadow =
 	'0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)'
