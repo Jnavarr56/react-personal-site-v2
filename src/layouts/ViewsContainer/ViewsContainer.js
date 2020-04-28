@@ -8,9 +8,9 @@ import theme from 'theme'
 
 const RootDiv = styled.div`
 	height: 100%;
-	width: 100%;
+	width: 100vw;
 	position: relative;
-	overflow: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'auto')};
+	overflow: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'scroll')};
 	opacity: 0;
 	filter: blur(10px);
 	animation: FadeIn ${({ fadeInDuration }) => fadeInDuration}ms ease
@@ -20,6 +20,10 @@ const RootDiv = styled.div`
 			opacity: 1;
 			filter: blur(0px);
 		}
+	}
+	&::-webkit-scrollbar {
+		height: 0 !important;
+		width: 0 !important;
 	}
 `
 
@@ -61,13 +65,14 @@ const ViewsContainer = props => {
 				if (!resizeResponse) {
 					setTimeout(() => {
 						setScrolling(true)
-						containerEl.scrollTo({ top, behavior: 'smooth' })
+						containerEl.scroll({ top, behavior: 'smooth' })
 						const doneCheck = setInterval(() => {
 							if (containerEl.scrollTop === top) {
 								clearInterval(doneCheck)
 								setScrolling(false)
 							}
 						}, 100)
+
 						//fix timing based path
 					}, 1000)
 				} else {

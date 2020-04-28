@@ -28,7 +28,7 @@ const DesktopWrapper = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
-	overflow-y: auto;
+	overflow: auto;
 	padding-right: 8px;
 
 	&::-webkit-scrollbar {

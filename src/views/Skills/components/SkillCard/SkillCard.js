@@ -117,7 +117,7 @@ const ScrollableListContainer = styled.div`
 const ScrollableList = styled.ul`
 	height: 100%;
 	width: 100%;
-	overflow-y: auto;
+	overflow: auto;
 	padding: 24px 16px 8px 0px;
 	${breakpoint('tablet')`
         padding: 24px 20px 16px 0px;
