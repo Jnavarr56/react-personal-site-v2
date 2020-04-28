@@ -99,7 +99,7 @@ const App = props => {
 				<LandingAnimation
 					fadeOutDelay={1000}
 					fadeOutDuration={1000}
-					interval={25}
+					interval={37.5}
 					onAnimationEnd={handleAnimationEnd}
 				/>
 			)}

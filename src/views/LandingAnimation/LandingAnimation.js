@@ -40,6 +40,7 @@ const PercentCount = styled.p`
 	font-size: 40px;
 	font-weight: 200;
 	z-index: 999;
+	background-color: rgba(255, 255, 255, 0.75);
 `
 
 const setSpeed = speed => (window.pJSDom[0].pJS.particles.move.speed = speed)
@@ -83,6 +84,7 @@ const LandingAnimation = props => {
 			<PieChart
 				animate
 				animationEasing="ease"
+				background="white"
 				data={loadingIndicatorData}
 				lineWidth={2.5}
 				reveal={pct}

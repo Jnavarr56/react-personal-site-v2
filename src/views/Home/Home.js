@@ -14,6 +14,7 @@ const Container = styled.div`
 `
 
 const Title = styled.h1`
+	background-color: rgba(255, 255, 255, .75);
 	margin-bottom: 16px;
 	font-family: Raleway;
 	font-color: black;
@@ -31,6 +32,7 @@ const Title = styled.h1`
 	`}
 `
 const Subtitle = styled.h2`
+	background-color: rgba(255, 255, 255, .75);
 	text-transform: uppercase;
 	font-weight: 200;
 	font-family: Raleway;
