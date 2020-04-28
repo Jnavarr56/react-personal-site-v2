@@ -11,7 +11,8 @@ import { FullScreenModal } from 'components'
 import Tilt from 'react-tilt'
 
 const baseShadow =
-	'0 0 0 1px rgba(63, 63, 68, 0.05), 0 1px 3px 0 rgba(63, 63, 68, 0.15)'
+	'0 8px 20px -8px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)'
+
 const selectedShadow =
 	'0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)'
 const getTransitionMSLong = ({ fadeDuration }) => fadeDuration
@@ -41,7 +42,7 @@ const fadeIn = ({ fadeIn }) => {
 
 const SkillCardDiv = styled.div`
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 8px;
     & .skill-card-ripple {
         height: 100%;
         width: 100%;
@@ -80,8 +81,8 @@ const SkillCardDiv = styled.div`
     transition: 
         opacity ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms,
         filter ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms, 
-        background-color ${getTransitionMSLong}ms ease,
-        box-shadow ${getTransitionMSLong}ms ease;
+        background-color ${getTransitionMSShort}ms ease,
+        box-shadow ${getTransitionMSShort}ms ease;
     & .skillCategory { 
         font-size: 12px;
         transition: color ${getTransitionMSShort}ms ease; 
