@@ -27,15 +27,6 @@ const Nav = styled.nav`
 	${breakpoint('desktop')`
 		display: flex;
 	`}
-	opacity: 0;
-	filter: blur(10px);
-	animation: FadeIn 1s linear 1 forwards;
-	@keyframes FadeIn {
-		100%: {
-			opacity: 1;
-			filter: blur(0px);
-		}
-	}
 `
 const NavList = styled.ul`
 	height: 100%;
@@ -150,7 +141,7 @@ const RippleArea = styled.div`
 `
 
 const DesktopNav = props => {
-	const { children } = props
+	const { children, fadeInDelay, fadeInDuration, className } = props
 	const [ open, setOpen ] = useState(false)
 	const { push, location } = useHistory()
 
@@ -165,7 +156,10 @@ const DesktopNav = props => {
 	}, [])
 
 	return (
-		<Nav open={open}>
+		<Nav
+			className={className}
+			open={open}
+		>
 			<NavList open={open}>
 				{children.map((view, i) => (
 					<NavListItem key={view.title.en}>

@@ -12,16 +12,6 @@ const RootDiv = styled.div`
 	position: relative;
 	// overflow: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'scroll')};
 	overflow: hidden;
-	opacity: 0;
-	filter: blur(10px);
-	animation: FadeIn ${({ fadeInDuration }) => fadeInDuration}ms ease
-		${({ fadeInDelay }) => fadeInDelay}ms 1 forwards;
-	@keyframes FadeIn {
-		100% {
-			opacity: 1;
-			filter: blur(0px);
-		}
-	}
 	&::-webkit-scrollbar {
 		height: 0 !important;
 		width: 0 !important;
@@ -49,7 +39,7 @@ const getSectionNameFromPath = path => {
 
 Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 const ViewsContainer = props => {
-	const { children, fadeInDelay, fadeInDuration } = props
+	const { children, fadeInDelay, fadeInDuration, className } = props
 
 	const [ scrolling, setScrolling ] = useState(false)
 
@@ -92,6 +82,7 @@ const ViewsContainer = props => {
 				<title>{getSectionNameFromPath(viewPath)}</title>
 			</Helmet>
 			<RootDiv
+				className={className}
 				disableScroll={!scrolling}
 				fadeInDelay={fadeInDelay}
 				fadeInDuration={fadeInDuration}
@@ -123,6 +114,7 @@ ViewsContainer.propTypes = {
 			path: PropTypes.string
 		})
 	),
+	className: PropTypes.string,
 	fadeInDelay: PropTypes.number,
 	fadeInDuration: PropTypes.number
 }

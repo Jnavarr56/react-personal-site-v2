@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
+import theme from 'theme'
 import PieChart from 'react-minimal-pie-chart'
-
 import PropTypes from 'prop-types'
-
 import CONFIG from './ParticleConfig.json'
 
 const Container = styled.div`
@@ -16,8 +15,13 @@ const Container = styled.div`
 	top: 0;
 	left: 0;
 	z-index: 1000;
-	transition: all ${({ fadeOutDuration }) => fadeOutDuration}ms linear
-		${({ fadeOutDelay }) => fadeOutDelay}ms;
+	transition: ${({ fadeOutDuration, fadeOutDelay }) => {
+		const { loadingAnimation } = theme.timing
+		return `
+				opacity ${fadeOutDuration}ms ${loadingAnimation} ${fadeOutDelay}ms,
+				filter ${fadeOutDuration}ms ${loadingAnimation} ${fadeOutDelay}ms
+			`
+	}};
 	opacity: ${({ pct }) => (pct < 100 ? 1 : 0)};
 	filter: blur(${({ pct }) => (pct < 100 ? 0 : 10)}px);
 `

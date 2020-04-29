@@ -16,6 +16,9 @@ const theme = {
 			red: 'linear-gradient(to right, #f00000, #dc281e)',
 			white: '#ffffff'
 		}
+	},
+	timing: {
+		loadingAnimation: 'ease'
 	}
 }
 

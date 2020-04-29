@@ -7,6 +7,7 @@ import { Translateable } from 'components/Translateable'
 import theme from 'theme'
 import { useHistory, useLocation } from 'react-router-dom'
 import Ripples from 'react-ripples'
+
 const calcDimensions = (open, size) => {
 	const dimensions = {
 		small: `
@@ -65,18 +66,22 @@ const calcDimensions = (open, size) => {
 
 const Nav = styled.nav`
 
-overflow: hidden;
+	overflow: hidden;
 	box-sizing: border-box;
 	background-color: black;
-	&:hover {
-		${({ open }) => {
-			if (!open) {
-				return `
-					background-color: rgba(0, 0, 0, .75);
-				`
-			}
-		}}
+	@media (hover: hover) {
+		&:hover {
+			${({ open }) => {
+				if (!open) {
+					return `
+						background-color: rgba(0, 0, 0, .75);
+					`
+				}
+			}}
+		}
 	}
+
+
 	z-index: 100;
 	position: fixed;
 	cursor: ${({ open }) => (open ? 'auto' : 'pointer')};
@@ -89,9 +94,6 @@ overflow: hidden;
 		padding .5s cubic-bezier(0.645, 0.045, 0.355, 1),
 		bottom .5s cubic-bezier(0.645, 0.045, 0.355, 1),
 		background-color .25s ease;
-	
-	
-
 	${({ open }) => calcDimensions(open, 'small')}
 	${breakpoint('phone')`
         ${({ open }) => calcDimensions(open, 'medium')}
@@ -105,15 +107,7 @@ overflow: hidden;
 	${breakpoint('desktop')`
         display: none;
 	`}
-	opacity: 0;
-	filter: blur(10px);
-	animation: FadeIn 1s linear 1 forwards; 
-	@keyframes FadeIn {
-		100%: {
-			opacity: 1;
-			filter: blur(0px);
-		}
-	}
+
 	& .ripples {
 		position: absolute !important;
 		border-radius: 100%;
@@ -213,16 +207,18 @@ const Icon = styled.span`
     `}
 `
 
+const RIPPLE_DELAY = 250
+
 const MobileNav = props => {
-	const { children: views } = props
+	const { children: views, className } = props
 	const location = useLocation()
 	const history = useHistory()
 	const [ open, setOpen ] = useState(false)
 	const handleOpenNav = useCallback(() => {
-		if (!open) setTimeout(() => setOpen(true), 250)
+		if (!open) setTimeout(() => setOpen(true), RIPPLE_DELAY)
 	}, [ open ])
 	const handleCloseNav = useCallback(() => {
-		if (open) setTimeout(() => setOpen(false), 250)
+		if (open) setTimeout(() => setOpen(false), RIPPLE_DELAY)
 	}, [ open ])
 
 	useEffect(() => {
@@ -233,7 +229,10 @@ const MobileNav = props => {
 		})
 	}, [])
 	return (
-		<Nav open={open}>
+		<Nav
+			className={className}
+			open={open}
+		>
 			<NavList>
 				{views.map((view, i) => {
 					const selected = `/${view.path}` === location.pathname

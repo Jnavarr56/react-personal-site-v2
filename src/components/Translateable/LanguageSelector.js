@@ -62,6 +62,7 @@ const Button = styled.div`
 `
 
 const LanguageSelector = props => {
+	const { className } = props
 	const { lang, handleChangeLang } = useContext(context)
 	const [ toggling, setToggling ] = useState(false)
 	const [ direction, setDirection ] = useState(lang === 'en' ? 'up' : 'down')
@@ -76,6 +77,7 @@ const LanguageSelector = props => {
 
 	return (
 		<Selector
+			className={className}
 			direction={direction}
 			toggling={toggling}
 			onClick={handleToggle}

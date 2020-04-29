@@ -1,120 +1,116 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import styled, { ThemeProvider, keyframes } from 'styled-components'
+import { ModalProvider } from 'styled-react-modal'
 import { useCookies } from 'react-cookie'
-import styled from 'styled-components'
-import { LandingAnimation, Home, AboutMe, Skills, Projects } from 'views'
-import { ViewsContainer } from 'layouts'
-import { Redirect } from 'react-router-dom'
 import qs from 'querystring'
-import { DesktopNav, MobileNav } from 'components'
+import { Redirect } from 'react-router-dom'
+import { ViewsContainer } from 'layouts'
+import { LandingAnimation } from 'views'
+import { DesktopNav, MobileNav, ModalBackground } from 'components'
 import {
 	TranslateableContext,
 	LanguageSelector
 } from 'components/Translateable'
-import PropTypes from 'prop-types'
-import { ThemeProvider } from 'styled-components'
 import theme from './theme'
-import { ModalProvider, BaseModalBackground } from 'styled-react-modal'
+import routes from './routes'
+import PropTypes from 'prop-types'
 
-const VIEWS = [
-	{
-		title: { en: 'Home', es: 'Página de Inicio' },
-		showTitle: false,
-		showParticles: true,
-		component: <Home />,
-		path: 'home'
-	},
-	{
-		title: { en: 'About Me', es: 'Sobre Mí' },
-		showTitle: true,
-		showParticles: false,
-		component: <AboutMe />,
-		path: 'about-me'
-	},
-	{
-		title: { en: 'Skills', es: 'Habilidades' },
-		showTitle: true,
-		showParticles: false,
-		component: <Skills />,
-		path: 'skills'
-	},
-	{
-		title: { en: 'Projects', es: 'Proyectos' },
-		showTitle: true,
-		showParticles: false,
-		component: <Projects />,
-		path: 'projects'
-	},
-	{
-		title: { en: 'Contact', es: 'Información de Contacto' },
-		showTitle: true,
-		showParticles: false,
-		component: <h1>hey</h1>,
-		path: 'contact'
-	}
-]
+// const Style = styled.style
+// const DIV  = styled.div`
+// 	& > * {
+// 		opacity: 0;
+// 		filter: blur(10px);
+// 		animation: ${({ fadeInDuration, fadeInDelay }) => {
+// 			return `FadeIn ${fadeInDuration}ms ${theme.timing.loadingAnimation} ${fadeInDelay}ms 1 forwards`
+// 		}};
 
-const isInViews = urlParam =>
-	urlParam ? VIEWS.find(({ path }) => path === urlParam) : false
-const getLang = query => qs.parse(query.slice(1)).lang
+// 	}
+
+// `
+
+const FADE_DELAY_MS = 1000
+const FADE_DURATION_MS = 1000
+const VISTED_COOKIE_AGE_MINS = 60 * 30
+const LANGUAGES = [ 'en', 'es' ]
+const DEFAULT_REDIRECT = () => <Redirect to={`/${routes[0].path}?lang=en`} />
 
 const Main = styled.main`
 	height: 100vh;
 	width: 100vw;
 	overflow: hidden;
 	position: relative;
-`
-const ModalBackground = styled(BaseModalBackground)`
-	z-index: 9999;
+	& .loading-animation-fade-in {
+		opacity: 0;
+		filter: blur(10px);
+		animation: FadeIn ${FADE_DURATION_MS}ms ${theme.timing.loadingAnimation}
+			${FADE_DELAY_MS}ms 1 forwards;
+	}
+	@keyframes FadeIn {
+		100% {
+			opacity: 1;
+			filter: blur(0px);
+		}
+	}
 `
 
 const App = props => {
-	const { search: query } = props.location
-	const { view } = props.match.params
+	const { location, match } = props
+
+	const { search: query } = location
+	const { view: providedPath } = match.params
 
 	const [ showViews, setShowViews ] = useState(false)
 	const [ animationEnded, setAnimationEnded ] = useState(false)
 	const handleAnimationEnd = useCallback(() => {
 		setShowViews(true)
-		setTimeout(() => setAnimationEnded(true), 2000)
+		setTimeout(() => setAnimationEnded(true), FADE_DELAY_MS + FADE_DURATION_MS)
 	}, [])
 
 	const [ cookies, setCookie ] = useCookies([])
-	const { visited } = cookies
 	useEffect(() => {
-		if (!visited)
-			setCookie('visited', Date.now(), { path: '/', maxAge: 60 * 60 })
+		if (!cookies.visited)
+			setCookie('visited', Date.now(), {
+				path: '/',
+				maxAge: VISTED_COOKIE_AGE_MINS
+			})
 		/*eslint-disable-next-line */
 	}, [])
 
-	if (!isInViews(view)) return <Redirect to="/home?lang=en" />
+	const isInViews =
+		providedPath && routes.find(({ path }) => path === providedPath)
+	if (!isInViews) return <DEFAULT_REDIRECT />
 
-	const lang = getLang(query)
-	if (!lang) return <Redirect to="/home?lang=en" />
-	else if (![ 'en', 'es' ].includes(lang))
-		return <Redirect to={`/${view}?lang=en`} />
+	const lang = qs.parse(query.slice(1)).lang
+	if (!lang) return <DEFAULT_REDIRECT />
+	else if (!LANGUAGES.includes(lang))
+		return <Redirect to={`/${providedPath}?lang=en`} />
+
+	const shouldRenderAnimation = !cookies.visited && !animationEnded
+	const shouldRenderViews = cookies.visited || showViews
 
 	return (
 		<Main>
-			{!visited && !animationEnded && (
+			{shouldRenderAnimation && (
 				<LandingAnimation
-					fadeOutDelay={1000}
-					fadeOutDuration={1000}
+					fadeOutDelay={FADE_DELAY_MS}
+					fadeOutDuration={FADE_DURATION_MS}
 					interval={37.5}
 					onAnimationEnd={handleAnimationEnd}
 				/>
 			)}
-			{(visited || showViews) && (
+			{shouldRenderViews && (
 				<ThemeProvider theme={theme}>
 					<ModalProvider backgroundComponent={ModalBackground}>
 						<TranslateableContext lang={lang}>
-							<LanguageSelector />
-							<MobileNav>{VIEWS}</MobileNav>
-							<DesktopNav>{VIEWS}</DesktopNav>
-							<ViewsContainer
-								fadeInDelay={1000}
-								fadeInDuration={1000}
-							>
-								{VIEWS}
+							<LanguageSelector className="loading-animation-fade-in" />
+							<MobileNav className="loading-animation-fade-in">
+								{routes}
+							</MobileNav>
+							<DesktopNav className="loading-animation-fade-in">
+								{routes}
+							</DesktopNav>
+							<ViewsContainer className="loading-animation-fade-in">
+								{routes}
 							</ViewsContainer>
 						</TranslateableContext>
 					</ModalProvider>
@@ -124,7 +120,7 @@ const App = props => {
 	)
 }
 
-App.defaultProps = {
+App.propTypes = {
 	location: PropTypes.shape({
 		search: PropTypes.string
 	}),
@@ -134,4 +130,5 @@ App.defaultProps = {
 		})
 	})
 }
+
 export default App
