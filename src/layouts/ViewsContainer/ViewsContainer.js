@@ -10,7 +10,8 @@ const RootDiv = styled.div`
 	height: 100%;
 	width: 100vw;
 	position: relative;
-	overflow: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'scroll')};
+	// overflow: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'scroll')};
+	overflow: hidden;
 	opacity: 0;
 	filter: blur(10px);
 	animation: FadeIn ${({ fadeInDuration }) => fadeInDuration}ms ease
