@@ -39,7 +39,8 @@ const Section = props => {
 		fontColor,
 		backgroundColor,
 		showTitle,
-		showParticles
+		showParticles,
+		id
 	} = props
 
 	const titleKey = useMemo(() => title.en.replace(/ /g, '-'), [ title.en ])
@@ -50,7 +51,10 @@ const Section = props => {
 	}, [ titleKey, fontColor, showParticles ])
 
 	return (
-		<SectionComp backgroundColor={backgroundColor}>
+		<SectionComp
+			backgroundColor={backgroundColor}
+			id={id}
+		>
 			{showTitle && (
 				<TranslateableSectionTitle
 					fontColor={fontColor}

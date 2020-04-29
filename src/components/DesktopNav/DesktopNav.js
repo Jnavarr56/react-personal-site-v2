@@ -141,7 +141,7 @@ const RippleArea = styled.div`
 `
 
 const DesktopNav = props => {
-	const { children, fadeInDelay, fadeInDuration, className } = props
+	const { children, className } = props
 	const [ open, setOpen ] = useState(false)
 	const { push, location } = useHistory()
 

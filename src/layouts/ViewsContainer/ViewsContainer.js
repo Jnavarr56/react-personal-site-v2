@@ -5,13 +5,13 @@ import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import theme from 'theme'
+import { scroller, Events } from 'react-scroll'
 
 const RootDiv = styled.div`
 	height: 100%;
 	width: 100vw;
 	position: relative;
-	// overflow: ${({ disableScroll }) => (disableScroll ? 'hidden' : 'scroll')};
-	overflow: hidden;
+	overflow: ${({ scrolling }) => (scrolling ? 'auto' : 'hidden')};
 	&::-webkit-scrollbar {
 		height: 0 !important;
 		width: 0 !important;
@@ -37,59 +37,59 @@ const getSectionNameFromPath = path => {
 		.join(' ')
 }
 
-Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 const ViewsContainer = props => {
-	const { children, fadeInDelay, fadeInDuration, className } = props
+	const { children, className } = props
 
-	const [ scrolling, setScrolling ] = useState(false)
+	const { view: providedPath } = useParams()
 
-	const { view: viewPath } = useParams()
 	const containerRef = useRef(null)
 
-	useEffect(() => {
-		const scrollToCurrentSection = resizeResponse => {
-			if (scrolling) return
-			const { current: containerEl } = containerRef
-			const sectionIndex = children.findIndex(({ path }) => path === viewPath)
-			if (sectionIndex >= 0) {
-				const top = getVH() * sectionIndex
-				if (!resizeResponse) {
-					setTimeout(() => {
-						setScrolling(true)
-						containerEl.scroll({ top, behavior: 'smooth' })
-						const doneCheck = setInterval(() => {
-							if (containerEl.scrollTop === top) {
-								clearInterval(doneCheck)
-								setScrolling(false)
-							}
-						}, 100)
+	const [ scrolling, setScrolling ] = useState(false)
+	const [ lastSectionIndex, setLastSectionIndex ] = useState(null)
 
-						//fix timing based path
-					}, 1000)
-				} else {
-					containerEl.scrollTo({ top })
-				}
-			}
-		}
-		scrollToCurrentSection()
-		window.addEventListener('resize', () => scrollToCurrentSection(true))
-		/* eslint-disable-next-line */
-	}, [children, viewPath])
+	useEffect(() => {
+		Events.scrollEvent.register('begin', () => setScrolling(true))
+	}, [])
+
+	useEffect(() => {
+		const currentScrollIndex = children.findIndex(
+			({ path }) => path === providedPath
+		)
+
+		if (currentScrollIndex === null && lastSectionIndex === 0) return
+
+		const delay = lastSectionIndex === null ? 2250 : 750
+
+		Events.scrollEvent.register('end', () => {
+			setScrolling(false)
+			setLastSectionIndex(currentScrollIndex)
+			Events.scrollEvent.remove('end')
+		})
+
+		scroller.scrollTo(providedPath, {
+			duration: 1000,
+			delay,
+			smooth: true,
+			containerId: 'view-container',
+			ignoreCancelEvents: true
+		})
+		/*eslint-disable-next-line */
+	}, [providedPath])
 
 	return (
 		<>
 			<Helmet>
-				<title>{getSectionNameFromPath(viewPath)}</title>
+				<title>{getSectionNameFromPath(providedPath)}</title>
 			</Helmet>
 			<RootDiv
 				className={className}
-				disableScroll={!scrolling}
-				fadeInDelay={fadeInDelay}
-				fadeInDuration={fadeInDuration}
+				id="view-container"
 				ref={containerRef}
+				scrolling={scrolling}
 			>
 				{children.map((view, i) => (
 					<Section
+						id={view.path}
 						key={`${view.title.en}-i`}
 						showParticles={view.showParticles}
 						showTitle={view.showTitle}
@@ -114,9 +114,7 @@ ViewsContainer.propTypes = {
 			path: PropTypes.string
 		})
 	),
-	className: PropTypes.string,
-	fadeInDelay: PropTypes.number,
-	fadeInDuration: PropTypes.number
+	className: PropTypes.string
 }
 
 export default ViewsContainer
