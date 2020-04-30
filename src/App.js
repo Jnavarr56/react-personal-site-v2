@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import styled, { ThemeProvider, keyframes } from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import { ModalProvider } from 'styled-react-modal'
 import { useCookies } from 'react-cookie'
 import qs from 'querystring'
@@ -15,24 +15,11 @@ import theme from './theme'
 import routes from './routes'
 import PropTypes from 'prop-types'
 
-// const Style = styled.style
-// const DIV  = styled.div`
-// 	& > * {
-// 		opacity: 0;
-// 		filter: blur(10px);
-// 		animation: ${({ fadeInDuration, fadeInDelay }) => {
-// 			return `FadeIn ${fadeInDuration}ms ${theme.timing.loadingAnimation} ${fadeInDelay}ms 1 forwards`
-// 		}};
-
-// 	}
-
-// `
-
 const FADE_DELAY_MS = 1000
 const FADE_DURATION_MS = 1000
 const VISTED_COOKIE_AGE_MINS = 60 * 30
 const LANGUAGES = [ 'en', 'es' ]
-const DEFAULT_REDIRECT = () => <Redirect to={`/${routes[0].path}?lang=en`} />
+const DEFAULT_REDIRECT = <Redirect to={`/${routes[0].path}?lang=en`} />
 
 const Main = styled.main`
 	height: 100vh;
@@ -78,10 +65,10 @@ const App = props => {
 
 	const isInViews =
 		providedPath && routes.find(({ path }) => path === providedPath)
-	if (!isInViews) return <DEFAULT_REDIRECT />
+	if (!isInViews) return DEFAULT_REDIRECT
 
 	const lang = qs.parse(query.slice(1)).lang
-	if (!lang) return <DEFAULT_REDIRECT />
+	if (!lang) return DEFAULT_REDIRECT
 	else if (!LANGUAGES.includes(lang))
 		return <Redirect to={`/${providedPath}?lang=en`} />
 

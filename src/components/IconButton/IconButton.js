@@ -2,6 +2,7 @@ import React from 'react'
 import Ripples from 'react-ripples'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
+import PropTypes from 'prop-types'
 const RippleWrapper = styled.div`
 	border-radius: 100%;
 	overflow: hidden;
@@ -48,6 +49,13 @@ const IconButton = props => {
 IconButton.defaultProps = {
 	active: true,
 	onClick: () => {}
+}
+
+IconButton.propTypes = {
+	active: PropTypes.bool,
+	children: PropTypes.node,
+	className: PropTypes.string,
+	onClick: PropTypes.func
 }
 
 export default IconButton

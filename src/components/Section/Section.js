@@ -62,7 +62,7 @@ const Section = props => {
 				/>
 			)}
 			<ChildrenContainer>
-				{cloneElement(children, { fontColor, backgroundColor })}
+				{children && cloneElement(children, { fontColor, backgroundColor })}
 			</ChildrenContainer>
 			{showParticles && <ParticleBackground id={`${titleKey}-background`} />}
 		</SectionComp>

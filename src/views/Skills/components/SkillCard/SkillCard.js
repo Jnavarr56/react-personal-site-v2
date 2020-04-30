@@ -1,11 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import PropTypes from 'prop-types'
 import theme from 'theme'
 import breakpoint from 'styled-components-breakpoint'
-import Modal from 'styled-react-modal'
 import { Translateable } from 'components/Translateable'
-import { IoMdCloseCircle } from 'react-icons/io'
 import Ripples from 'react-ripples'
 import { FullScreenModal } from 'components'
 import Tilt from 'react-tilt'
@@ -21,7 +18,7 @@ const getTransitionMSShort = ({ fadeDuration }) => fadeDuration / 2
 const getSelectedBgColor = ({ backgroundColor }) => {
 	const {
 		colors: {
-			background: { red, white }
+			background: { white }
 		}
 	} = theme
 	return backgroundColor === white ? 'rgba(255,0,0, .75)' : white
@@ -32,7 +29,7 @@ const getSelectedFontColor = ({ backgroundColor }) => {
 			background: { red, white }
 		}
 	} = theme
-	return backgroundColor === white ? white : 'red'
+	return backgroundColor === white ? white : red
 }
 const fadeIn = ({ fadeIn }) => {
 	return fadeIn
@@ -179,10 +176,7 @@ ${breakpoint('desktop')`
 `
 
 const TiltWrapper = styled.div`
-	pointer-events: none;
-	${breakpoint('tablet')`
-        pointer-events: ${({ hoverable }) => (hoverable ? 'all' : 'none')}
-        `}
+	pointer-events: ${({ hoverable }) => (hoverable ? 'all' : 'none')};
 `
 
 const tiltOptions = {
@@ -209,27 +203,30 @@ const SkillCard = props => {
 	const handleCloseModal = useCallback(() => {
 		setOpen(false)
 	}, [])
+
+	const skillCard = (
+		<SkillCardDiv
+			backgroundColor={backgroundColor}
+			fadeDelay={fadeDelay}
+			fadeDuration={fadeDuration}
+			fadeIn={fadeInCard}
+			onClickCapture={handleOpenModal}
+		>
+			<Ripples className="skill-card-ripple">
+				<span className="skillCategory">
+					<Translateable
+						en={engCategory}
+						es={esCategory}
+					/>
+				</span>
+			</Ripples>
+		</SkillCardDiv>
+	)
+
 	return (
 		<>
 			<TiltWrapper hoverable={hoverable}>
-				<Tilt options={tiltOptions}>
-					<SkillCardDiv
-						backgroundColor={backgroundColor}
-						fadeDelay={fadeDelay}
-						fadeDuration={fadeDuration}
-						fadeIn={fadeInCard}
-						onClickCapture={handleOpenModal}
-					>
-						<Ripples className="skill-card-ripple">
-							<span className="skillCategory">
-								<Translateable
-									en={engCategory}
-									es={esCategory}
-								/>
-							</span>
-						</Ripples>
-					</SkillCardDiv>
-				</Tilt>
+				<Tilt options={tiltOptions}>{skillCard}</Tilt>
 			</TiltWrapper>
 			<FullScreenModal
 				open={open}
@@ -245,7 +242,10 @@ const SkillCard = props => {
 										marginIndex={i}
 									>
 										<p>{label}</p>
-										{src && <img src={src} />}
+										{src && <img
+											alt={label}
+											src={src}
+										        />}
 									</ScrollableListItem>
 								)
 							})}

@@ -41,7 +41,7 @@ const FullScreenModal = props => {
 	const openModal = useCallback(() => {
 		setOpen(true)
 		setTimeout(() => setFadeIn(true), fadeDuration)
-	})
+	}, [ fadeDuration ])
 
 	useEffect(() => {
 		if (openProp) openModal()

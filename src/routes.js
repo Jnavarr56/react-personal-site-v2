@@ -33,7 +33,7 @@ const routes = [
 		title: { en: 'Contact', es: 'Información de Contacto' },
 		showTitle: true,
 		showParticles: false,
-		component: <h1>hey</h1>,
+		component: null,
 		path: 'contact'
 	}
 ]

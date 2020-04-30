@@ -11,7 +11,7 @@ const RootDiv = styled.div`
 	height: 100%;
 	width: 100vw;
 	position: relative;
-	overflow: ${({ scrolling }) => (scrolling ? 'auto' : 'hidden')};
+	overflow: ${({ isScrolling }) => (isScrolling ? 'auto' : 'hidden')};
 	&::-webkit-scrollbar {
 		height: 0 !important;
 		width: 0 !important;
@@ -25,9 +25,6 @@ const getSectionColors = index => {
 	const backgroundColor = even ? background.white : background.red
 	return { fontColor, backgroundColor }
 }
-
-const getVH = () =>
-	Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 
 const getSectionNameFromPath = path => {
 	return path
@@ -84,8 +81,8 @@ const ViewsContainer = props => {
 			<RootDiv
 				className={className}
 				id="view-container"
+				isScrolling={scrolling}
 				ref={containerRef}
-				scrolling={scrolling}
 			>
 				{children.map((view, i) => (
 					<Section

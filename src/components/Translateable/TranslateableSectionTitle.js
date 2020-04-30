@@ -87,7 +87,7 @@ const SectionTitle = props => {
 
 SectionTitle.propTypes = {
 	fontColor: PropTypes.string,
-	title: PropTypes.string
+	title: PropTypes.object
 }
 
 export default SectionTitle

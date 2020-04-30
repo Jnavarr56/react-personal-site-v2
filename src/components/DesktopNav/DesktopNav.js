@@ -205,6 +205,7 @@ DesktopNav.propTypes = {
 			component: PropTypes.node,
 			path: PropTypes.string
 		})
-	)
+	),
+	className: PropTypes.string
 }
 export default DesktopNav

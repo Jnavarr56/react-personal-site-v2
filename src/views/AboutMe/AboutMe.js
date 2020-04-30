@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import { Translateable } from 'components/Translateable'
 import PropTypes from 'prop-types'
-import { MobileText, Text } from './components'
+import { Text } from './components'
+// import { MobileText, Text } from './components'
 
 const Container = styled.div`
 	height: 100%;
@@ -21,10 +22,6 @@ const Container = styled.div`
 const DesktopWrapper = styled.div`
 	height: 100%;
 	width: 100%;
-	// display: none;
-	// ${breakpoint(`tablet`)`
-	// 	display: flex;
-	// `}
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
