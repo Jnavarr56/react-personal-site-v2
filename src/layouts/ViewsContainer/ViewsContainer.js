@@ -46,30 +46,46 @@ const ViewsContainer = props => {
 
 	useEffect(() => {
 		Events.scrollEvent.register('begin', () => setScrolling(true))
+		window.addEventListener('resize', () => {
+			if (window.resizeHandler) window.resizeHandler(true)
+		})
 	}, [])
 
 	useEffect(() => {
-		const currentScrollIndex = children.findIndex(
-			({ path }) => path === providedPath
-		)
+		const scrollToSection = resizeResponse => {
+			const currentScrollIndex = children.findIndex(
+				({ path }) => path === providedPath
+			)
 
-		if (currentScrollIndex === null && lastSectionIndex === 0) return
+			if (currentScrollIndex === null && lastSectionIndex === 0) return
 
-		const delay = lastSectionIndex === null ? 2250 : 750
+			let delay, duration
+			if (resizeResponse) {
+				delay = 0
+				duration = 10
+			} else {
+				delay = lastSectionIndex === null ? 2250 : 750
+				duration = 1000
+			}
 
-		Events.scrollEvent.register('end', () => {
-			setScrolling(false)
-			setLastSectionIndex(currentScrollIndex)
-			Events.scrollEvent.remove('end')
-		})
+			Events.scrollEvent.register('end', () => {
+				setScrolling(false)
+				setLastSectionIndex(currentScrollIndex)
+				Events.scrollEvent.remove('end')
+			})
 
-		scroller.scrollTo(providedPath, {
-			duration: 1000,
-			delay,
-			smooth: true,
-			containerId: 'view-container',
-			ignoreCancelEvents: true
-		})
+			scroller.scrollTo(providedPath, {
+				duration,
+				delay,
+				smooth: true,
+				containerId: 'view-container',
+				ignoreCancelEvents: true
+			})
+		}
+
+		scrollToSection()
+
+		window.resizeHandler = scrollToSection
 		/*eslint-disable-next-line */
 	}, [providedPath])
 
