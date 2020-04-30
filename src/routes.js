@@ -13,7 +13,8 @@ const routes = [
 		showTitle: true,
 		showParticles: false,
 		component: <AboutMe />,
-		path: 'about-me'
+		path: 'about-me',
+		fadeInContent: true
 	},
 	{
 		title: { en: 'Skills', es: 'Habilidades' },

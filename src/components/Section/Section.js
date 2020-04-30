@@ -1,10 +1,16 @@
-import React, { useEffect, useMemo, cloneElement } from 'react'
+import React, {
+	useEffect,
+	useMemo,
+	cloneElement,
+	useState,
+	useCallback
+} from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import PropTypes from 'prop-types'
 import { TranslateableSectionTitle } from 'components/Translateable'
 import getParticleConfig from './getParticleConfig'
-
+import { Waypoint } from 'react-waypoint'
 const SectionComp = styled.section`
 	height: 100vh;
 	width: 100vw;
@@ -21,6 +27,14 @@ const ChildrenContainer = styled.div`
 	width: 100%;
 	position: relative;
 	z-index: 100;
+	transition: all 500ms ease;
+	${({ fadeable, fadeIn }) => {
+		if (fadeable) {
+			return fadeIn
+				? 'transform: scale(1); opacity: 1; filter: blur(0px)'
+				: 'transform: scale(.75); opacity: 0; filter: blur(10px);'
+		}
+	}}
 `
 
 const ParticleBackground = styled.div`
@@ -40,8 +54,11 @@ const Section = props => {
 		backgroundColor,
 		showTitle,
 		showParticles,
-		id
+		id,
+		fadeInContent
 	} = props
+
+	const [ fadeIn, setFadeIn ] = useState(false)
 
 	const titleKey = useMemo(() => title.en.replace(/ /g, '-'), [ title.en ])
 
@@ -55,13 +72,23 @@ const Section = props => {
 			backgroundColor={backgroundColor}
 			id={id}
 		>
+			{fadeInContent && (
+				<Waypoint
+					scrollableAncestor={window}
+					onEnter={() => setFadeIn(true)}
+					onLeave={() => setFadeIn(false)}
+				/>
+			)}
 			{showTitle && (
 				<TranslateableSectionTitle
 					fontColor={fontColor}
 					title={title}
 				/>
 			)}
-			<ChildrenContainer>
+			<ChildrenContainer
+				fadeable={fadeInContent}
+				fadeIn={fadeIn}
+			>
 				{children && cloneElement(children, { fontColor, backgroundColor })}
 			</ChildrenContainer>
 			{showParticles && <ParticleBackground id={`${titleKey}-background`} />}
@@ -72,6 +99,7 @@ const Section = props => {
 Section.propTypes = {
 	backgroundColor: PropTypes.string,
 	children: PropTypes.node,
+	fadeInContent: PropTypes.bool,
 	fontColor: PropTypes.string,
 	showParticles: PropTypes.bool,
 	showTitle: PropTypes.bool,

@@ -104,6 +104,7 @@ const ViewsContainer = props => {
 			>
 				{children.map((view, i) => (
 					<Section
+						fadeInContent={view.fadeInContent}
 						id={view.path}
 						key={`${view.title.en}-i`}
 						showParticles={view.showParticles}
