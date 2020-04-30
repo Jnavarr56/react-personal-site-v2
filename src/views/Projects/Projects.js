@@ -1,130 +1,106 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
+import theme from 'theme'
+import { MobileCards } from './components'
 
 const ProjectsPage = styled.div`
 	height: 100%;
 	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	position: relative;
 `
-// const CardContainer = styled.div`
-//     width: 90vw;
-//     max-width: 260px;
-//     height: 300px;
-
-//     & .swipe {
-//         position: absolute;
-//     }
-// `
-
-// const CardDiv = styled.div`
-//   position: relative;
-//   background-color: #fff;
-//   width: 80vw;
-//   max-width: 260px;
-//   height: 300px;
-//   box-shadow: 0px 0px 60px 0px rgba(0,0,0,0.30);
-//   border-radius: 20px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-// `
 
 const CardContainer = styled.div`
 	position: relative;
 	height: 100%;
-	width: 80%;
+	width: 100%;
 `
 
 const Card = styled.div`
-	height: 50%;
-	border-radius: 2px;
+	height: 60%;
+	border-radius: 4px;
 	position: absolute;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	padding: 64px 0px;
 	box-shadow: 0 1px 4px 1px rgba(0, 0, 0, 0.5);
 	left: 50%;
 	transform: translate(-50%, 0);
 	transition: all 100ms ease-in-out;
 	top: ${({ top }) => top};
 	width: ${({ width }) => width};
-	background-color: ${({ color }) => color};
+	background-color: ${({ backgroundColor }) => backgroundColor};
+	& .title {
+		color: ${({ color }) => color};
+	}
 	${({ nexting }) => nexting && `animation: scaleDown 500ms;`}
 	@keyframes scaleDown {
-		0% {
-			//   transform: scale(1) translateY(0);
-			//   opacity: 1;
-		}
-		20% {
-			//   transform: scale(1.01) translateY(20px);
-			//   opacity: 0.8;
-		}
-		40% {
-			//   transform: scale(1.05) translateY(40px);
-			//   opacity: 0.4;
-		}
-		60% {
-			//   transform: scale(1.1) translateY(60px);
-			//   opacity: 0.2;
-		}
-		80% {
-			//   transform: scale(1.15) translateY(80px);
-			//   opacity: 0.1;
-		}
 		100% {
 			transform: scale(1.2) translate(-40%, 100%);
 			opacity: 0;
+			filter: blur(10px);
 		}
 	}
 `
 
-// const cards = [
-//     'a',
-//     'b',
-//     'c'
-// ]
+const projects = [
+	{
+		type: 'APP',
+		name: 'IFBuddy',
+		tagline: 'A full-stack web app for tracking intermittent fasting goals.',
+		mainTechnologies: [ 'jQuery', 'Bootstrap', 'Ruby on Rails', 'PostgreSQL' ],
+		completed: true,
+		deployedMedium: 'Heroku',
+		githubLink: 'https://github.com/Jnavarr56/IFBuddy',
+		deployedLink: 'https://ifbuddy.herokuapp.com/'
+	}
+]
 
+const topOffset = 6.25
+const topInterval = 25
+const calculateTop = index => {
+	if (index === 0) {
+		return topOffset
+	} else {
+		return topOffset + (topInterval / 6) * index
+	}
+}
 const Projects = props => {
-	const [ cards, setCards ] = useState(
-		[ 'red', 'orange', 'yellow', 'green', 'blue', 'purple' ].map(color => ({
-			color,
-			nextOut: false,
-			nextIn: false
-		}))
-	)
+	const [ cards, setCards ] = useState([
+		'red',
+		'orange',
+		'yellow',
+		'green',
+		'blue',
+		'purple',
+		'black'
+	])
 
 	const [ nexting, setNexting ] = useState(false)
 	const widthInterval = 40
-	const topInterval = 25
 
 	return (
 		<ProjectsPage>
-			<CardContainer>
+			<MobileCards cards={cards} />
+			{/* <CardContainer>
 				{cards.map((card, i) => {
 					return (
 						<Card
-							color={card.color}
+							backgroundColor={card}
+							fontColor={'red'}
 							key={card.color}
 							nexting={nexting && i === cards.length - 1}
-							top={`${
-								i === 0 ? topInterval : topInterval + (topInterval / 6) * i
-							}%`}
+							top={`${calculateTop(i)}%`}
 							width={`${
 								i === 0
 									? widthInterval
-									: widthInterval + (widthInterval / 5) * i
+									: widthInterval + (widthInterval / 6) * i
 							}%`}
 						>
-							<p>{card.color}</p>
+							<p className="title">{card}</p>
 						</Card>
 					)
 				})}
-			</CardContainer>
-			<button
+			</CardContainer> */}
+			{/* <button
 				onClick={() => {
 					setNexting(true)
 					const lastCard = cards[cards.length - 1]
@@ -138,27 +114,7 @@ const Projects = props => {
 				}}
 			>
 				next
-			</button>
-			{/* <Cards onEnd={hi => console.log(hi)}>
-                {db.map(card => {
-                    return (
-                        <Card key={card.name}>
-                            <h1>{card.name}</h1>
-                        </Card>
-                    )
-                })}
-            </Cards> */}
-			{/* <CardContainer>
-                {db.map(card => {
-                    return (
-                        <TinderCard className={'swipe'} key={card.name}>
-                            <CardDiv>
-                                {card.name}
-                            </CardDiv>
-                        </TinderCard>
-                    )
-                })}
-            </CardContainer> */}
+			</button> */}
 		</ProjectsPage>
 	)
 }

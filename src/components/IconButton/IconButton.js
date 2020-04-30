@@ -30,7 +30,7 @@ const RippleWrapper = styled.div`
 `
 
 const IconButton = props => {
-	const { active, children, className, onClick } = props
+	const { active, children, className, onClick, rippleColor } = props
 	return (
 		<RippleWrapper
 			active={active}
@@ -38,6 +38,7 @@ const IconButton = props => {
 		>
 			<Ripples
 				className="icon-btn"
+				color={rippleColor}
 				onClick={onClick}
 			>
 				{children}
@@ -55,7 +56,8 @@ IconButton.propTypes = {
 	active: PropTypes.bool,
 	children: PropTypes.node,
 	className: PropTypes.string,
-	onClick: PropTypes.func
+	onClick: PropTypes.func,
+	rippleColor: PropTypes.string
 }
 
 export default IconButton
