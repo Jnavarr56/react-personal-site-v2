@@ -7,11 +7,10 @@ import Ripples from 'react-ripples'
 import { FullScreenModal } from 'components'
 import Tilt from 'react-tilt'
 
-const baseShadow =
-	'0 6px 20px -8px rgba(0,0,0,0.19), 0 3px 6px rgba(0,0,0,0.23)'
+const baseShadow = '0px 8px 14px 2px rgba(204,204,204,0.92)'
 
 const selectedShadow =
-	'0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)'
+	'0px 2px 4px -10px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)'
 const getTransitionMSLong = ({ fadeDuration }) => fadeDuration
 const getTransitionMSShort = ({ fadeDuration }) => fadeDuration / 2
 
@@ -38,54 +37,55 @@ const fadeIn = ({ fadeIn }) => {
 }
 
 const SkillCardDiv = styled.div`
-    cursor: pointer;
-    border-radius: 8px;
-    & .skill-card-ripple {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 32px 0px;
-    }
-    ${fadeIn} 
-    box-shadow: ${baseShadow};
-    & .skillCategory {
-        color: black;
-        &:after {    
-            bottom: -8px;
-            content: "";
-            display: block;
-            height: 2px;
-            left: 50%;
-            position: relative;
-            background: #fff;
-            transition: width 0.3s ease 0s, left 0.3s ease 0s;
-            width: 0;
-        }
-    }
-    &:hover {
-        background-color: ${getSelectedBgColor};
-        box-shadow: ${selectedShadow};
-        & .skillCategory { 
-            color: ${getSelectedFontColor}; 
-            &:after { 
-                width: 125%; 
-                left: -12.5%; 
-            }
-        }
-    }
-    transition: 
-        opacity ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms,
-        filter ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms, 
-        background-color ${getTransitionMSShort}ms ease,
-        box-shadow ${getTransitionMSShort}ms ease;
-    & .skillCategory { 
-        font-size: 12px;
-        transition: color ${getTransitionMSShort}ms ease; 
-    }
-    margin: 5px 0;
-    ${breakpoint('phone')`
+	cursor: pointer;
+	border-radius: 8px;
+	& .skill-card-ripple {
+		height: 100%;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 32px 0px;
+	}
+	${fadeIn}
+	box-shadow: 0px 8px 12px 1px rgba(204,204,204,0.92);
+	& .skillCategory {
+		color: black;
+		&:after {
+			bottom: -8px;
+			content: '';
+			display: block;
+			height: 2px;
+			left: 50%;
+			position: relative;
+			background: #fff;
+			transition: width 0.3s ease 0s, left 0.3s ease 0s;
+			width: 0;
+		}
+	}
+	&:hover {
+		background-color: ${getSelectedBgColor};
+
+		& .skillCategory {
+			color: ${getSelectedFontColor};
+			&:after {
+				width: 125%;
+				left: -12.5%;
+			}
+		}
+	}
+	transition: opacity ${getTransitionMSLong}ms ease
+			${({ fadeDelay }) => fadeDelay}ms,
+		filter ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms,
+		background-color ${getTransitionMSShort}ms ease,
+		box-shadow ${getTransitionMSShort}ms ease;
+	& .skillCategory {
+		font-size: 12px;
+		transition: color ${getTransitionMSShort}ms ease;
+	}
+	margin: 5px 0;
+
+	${breakpoint('phone')`
         margin: 7.5px 0;
         & .skillCategory { 
             font-size: 16px;
@@ -94,30 +94,34 @@ const SkillCardDiv = styled.div`
             padding: 44px 0px;
         }
     `}
-    ${breakpoint('tablet')`
+	${breakpoint('tablet')`
         margin: 10px 0;
         & .skillCategory { 
             font-size: 18px;
         }
         & .skill-card-ripple {
             padding: 64px 0px;
-        }
+		}
+		box-shadow: 0px 8px 14px 2px rgba(204,204,204,0.92);
     `}
 `
 
 const ScrollableListContainer = styled.div`
 	height: 100%;
 	width: 100%;
-	padding: 3.5rem;
+	padding: 3.5rem 1rem 1rem 3rem;
+	${breakpoint('tablet')`
+        padding: 3.5rem 2rem 2rem 3.5rem;
+    `}
 `
 
 const ScrollableList = styled.ul`
 	height: 100%;
 	width: 100%;
 	overflow: auto;
-	padding: 24px 16px 8px 0px;
+	padding: 32px 16px 8px 0px;
 	${breakpoint('tablet')`
-        padding: 24px 20px 16px 0px;
+        padding: 64px 20px 16px 0px;
     `}
 	&::-webkit-scrollbar {
 		border-radius: 4px;

@@ -47,7 +47,9 @@ const ViewsContainer = props => {
 	useEffect(() => {
 		Events.scrollEvent.register('begin', () => setScrolling(true))
 		window.addEventListener('resize', () => {
-			if (window.resizeHandler) window.resizeHandler(true)
+			if (window.resizeHandler) {
+				setTimeout(() => window.resizeHandler(true), 100)
+			}
 		})
 	}, [])
 

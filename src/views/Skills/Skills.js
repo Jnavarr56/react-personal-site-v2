@@ -10,6 +10,7 @@ import PropTypes from 'prop-types'
 import theme from 'theme'
 import { Waypoint } from 'react-waypoint'
 import { SkillCard } from './components'
+import breakpoint from 'styled-components-breakpoint'
 const Container = styled.div`
 	& * {
 		font-family: Raleway;
@@ -22,10 +23,11 @@ const GridShadow = styled.div`
 	border-radius: 4px;
 	height: 100%;
 	width: 100%;
-	padding: 0px 6px;
+	padding: 5% 6px;
 	display: flex;
 	align-items: flex-start;
 	overflow-y: auto;
+	overflow-x: hidden;
 	&::-webkit-scrollbar {
 		border-radius: 4px;
 		background-color: black;
@@ -35,6 +37,14 @@ const GridShadow = styled.div`
 		background-color: white;
 		border: 2px solid black;
 	}
+	& .col {
+		margin-bottom: 10px;
+	}
+	${breakpoint('tablet')`
+		& .col {
+			margin-bottom: 0;
+		}
+	`}
 `
 
 setConfiguration({
@@ -236,6 +246,7 @@ const Skills = props => {
 					<Row>
 						{categories.map((cat, i) => (
 							<Col
+								className="col"
 								key={cat.label.en}
 								lg={4}
 								md={6}
@@ -253,7 +264,7 @@ const Skills = props => {
 									skills={cat.skills}
 								/>
 							</Col>
-							))}
+						))}
 					</Row>
 				</GridContainer>
 			</GridShadow>
