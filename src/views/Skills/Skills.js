@@ -225,41 +225,39 @@ const Skills = props => {
 	}, [ fadeIn ])
 
 	return (
-		<>
-			<Container>
-				<GridShadow>
-					<GridContainer fluid>
-						<Row>
-							{categories.map((cat, i) => (
-								<Col
-									key={cat.label.en}
-									lg={4}
-									md={6}
-									sm={12}
-								>
-									<SkillCard
-										backgroundColor={backgroundColor}
-										engCategory={cat.label.en}
-										esCategory={cat.label.es}
-										fadeDelay={getMSDelay(i)}
-										fadeDuration={750}
-										fadeIn={fadeIn}
-										hoverable={hoverable}
-										index={i}
-										skills={cat.skills}
-									/>
-								</Col>
-							))}
-						</Row>
-					</GridContainer>
-				</GridShadow>
-			</Container>
+		<Container>
 			<Waypoint
 				scrollableAncestor={window}
 				onEnter={() => setFadeIn(true)}
 				onLeave={() => setFadeIn(false)}
 			/>
-		</>
+			<GridShadow>
+				<GridContainer fluid>
+					<Row>
+						{categories.map((cat, i) => (
+							<Col
+								key={cat.label.en}
+								lg={4}
+								md={6}
+								sm={12}
+							>
+								<SkillCard
+									backgroundColor={backgroundColor}
+									engCategory={cat.label.en}
+									esCategory={cat.label.es}
+									fadeDelay={getMSDelay(i)}
+									fadeDuration={750}
+									fadeIn={fadeIn}
+									hoverable={hoverable}
+									index={i}
+									skills={cat.skills}
+								/>
+							</Col>
+							))}
+					</Row>
+				</GridContainer>
+			</GridShadow>
+		</Container>
 	)
 }
 
