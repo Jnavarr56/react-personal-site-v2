@@ -6,6 +6,7 @@ import context from './context'
 import PropTypes from 'prop-types'
 
 const Title = styled.h3`
+	z-index: 1000;
 	display: flex;
 	overflow: hidden;
 	font-family: Raleway;

@@ -16,9 +16,9 @@ const SectionComp = styled.section`
 	width: 100vw;
 	position: relative;
 	background: ${({ backgroundColor }) => backgroundColor};
-	padding: 32px 24px;
+	${({ ignorePadding }) => `padding: ${ignorePadding ? 0 : '32px 24px'};`}
 	${breakpoint('tablet')`
-		padding: 56px;
+		${({ ignorePadding }) => `padding: ${ignorePadding ? 0 : 56}px;`}  
 	`}
 `
 
@@ -55,7 +55,8 @@ const Section = props => {
 		showTitle,
 		showParticles,
 		id,
-		fadeInContent
+		fadeInContent,
+		ignorePadding
 	} = props
 
 	const [ fadeIn, setFadeIn ] = useState(false)
@@ -71,6 +72,7 @@ const Section = props => {
 		<SectionComp
 			backgroundColor={backgroundColor}
 			id={id}
+			ignorePadding={ignorePadding}
 		>
 			{fadeInContent && (
 				<Waypoint
@@ -101,6 +103,7 @@ Section.propTypes = {
 	children: PropTypes.node,
 	fadeInContent: PropTypes.bool,
 	fontColor: PropTypes.string,
+	ignorePadding: PropTypes.bool,
 	showParticles: PropTypes.bool,
 	showTitle: PropTypes.bool,
 	title: PropTypes.shape({

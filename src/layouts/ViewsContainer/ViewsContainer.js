@@ -102,19 +102,22 @@ const ViewsContainer = props => {
 				isScrolling={scrolling}
 				ref={containerRef}
 			>
-				{children.map((view, i) => (
-					<Section
-						fadeInContent={view.fadeInContent}
-						id={view.path}
-						key={`${view.title.en}-i`}
-						showParticles={view.showParticles}
-						showTitle={view.showTitle}
-						title={view.title}
-						{...getSectionColors(i)}
-					>
-						{view.component}
-					</Section>
-				))}
+				{children.map((view, i) => {
+					return (
+						<Section
+							fadeInContent={view.fadeInContent}
+							id={view.path}
+							ignorePadding={view.ignorePadding}
+							key={`${view.title.en}-i`}
+							showParticles={view.showParticles}
+							showTitle={view.showTitle}
+							title={view.title}
+							{...getSectionColors(i)}
+						>
+							{view.component}
+						</Section>
+					)
+				})}
 			</RootDiv>
 		</>
 	)

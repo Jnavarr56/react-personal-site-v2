@@ -1,8 +1,21 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import theme from 'theme'
-import { MobileCards } from './components'
-import { StackerSlide, StackerSlider } from 'react-stacker'
+import AwesomeSlider from 'react-awesome-slider'
+import 'react-awesome-slider/dist/styles.css'
+// import AwesomeSliderStyles from 'react-awesome-slider/src/styles';
+import 'react-awesome-slider/dist/custom-animations/cube-animation.css'
+import 'react-awesome-slider/dist/custom-animations/fold-out-animation.css'
+import 'react-awesome-slider/dist/custom-animations/fall-animation.css'
+
+// import { MobileCards } from './components'
+// import { StackerSlide, StackerSlider } from 'react-stacker'
+
+const projects = [
+	{ name: 'IFBuddy', backgroundColor: 'blue' },
+	{ name: 'CommuteCompare', backgroundColor: 'green' },
+	{ name: 'GifizeMe', backgroundColor: 'purple' }
+]
 
 const ProjectsPage = styled.div`
 	height: 100%;
@@ -10,9 +23,44 @@ const ProjectsPage = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	& .awssld {
+		height: 100%;
+	}
+	& .awssld__container {
+		height: 100%;
+	}
+	& .awssld__content {
+		background-color: transparent;
+		& > div {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+			width: 100%;
+		}
+		${({ projects }) => {
+			let str = ''
+			projects.forEach((p, i) => {
+				str =
+					str +
+					`
+					& .${p.name} {
+						background-color: ${projects[i].backgroundColor};
+						& * {
+							color: white;
+						}
+					}
+				`
+			})
+			return str
+		}}
+	}
+	& .awssld__bullets {
+		bottom: 60px;
+	}
 `
 
-const projects = [
+const projects2 = [
 	{
 		type: 'APP',
 		name: 'IFBuddy',
@@ -24,33 +72,29 @@ const projects = [
 		deployedLink: 'https://ifbuddy.herokuapp.com/'
 	}
 ]
-
-const topOffset = 6.25
-const topInterval = 25
-const calculateTop = index => {
-	if (index === 0) {
-		return topOffset
-	} else {
-		return topOffset + (topInterval / 6) * index
-	}
-}
 const Projects = props => {
-	const [ cards, setCards ] = useState([
-		'red',
-		'orange',
-		'yellow',
-		'green',
-		'blue',
-		'purple',
-		'black'
-	])
-
-	const [ nexting, setNexting ] = useState(false)
-	const widthInterval = 40
-
 	return (
-		<ProjectsPage>
-			<MobileCards cards={cards} />
+		<ProjectsPage projects={projects}>
+			{/* <AwesomeSlider
+				animation="cubeAnimation"
+			>
+				<div>1</div>
+				<div>2</div>
+				<div>3</div>
+				<div>4</div>
+			</AwesomeSlider>	     */}
+
+			<AwesomeSlider animation="foldOutAnimation">
+				{projects.map((project, i) => (
+					<div
+						className={project.name}
+						key={`project-${i + 1}`}
+					>
+						<p>{project.name}</p>
+					</div>
+				))}
+			</AwesomeSlider>
+			{/* <MobileCards cards={cards} /> */}
 			{/* <StackerSlider
 				
                dots={true}
