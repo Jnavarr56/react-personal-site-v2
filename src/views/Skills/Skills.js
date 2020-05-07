@@ -1,60 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import {
-	Container as GridContainer,
-	Row,
-	Col,
-	setConfiguration
-} from 'react-grid-system'
 import PropTypes from 'prop-types'
-import theme from 'theme'
 import { Waypoint } from 'react-waypoint'
 import { SkillCard } from './components'
+import { Tabs, Tab } from '@material-ui/core'
 import breakpoint from 'styled-components-breakpoint'
-const Container = styled.div`
-	& * {
-		font-family: Raleway;
-	}
-	height: 100%;
-	width: 100%;
-	padding: 7.25% 0;
-`
-const GridShadow = styled.div`
-	border-radius: 4px;
-	height: 100%;
-	width: 100%;
-	padding: 5% 6px;
-	display: flex;
-	align-items: flex-start;
-	overflow-y: auto;
-	overflow-x: hidden;
-	&::-webkit-scrollbar {
-		border-radius: 4px;
-		background-color: black;
-	}
-	&::-webkit-scrollbar-thumb {
-		border-radius: 6px;
-		background-color: white;
-		border: 2px solid black;
-	}
-	& .col {
-		margin-bottom: 10px;
-	}
-	${breakpoint('tablet')`
-		& .col {
-			margin-bottom: 0;
-		}
-	`}
-`
-
-setConfiguration({
-	breakpoints: [
-		theme.breakpoints['phone'],
-		theme.breakpoints['tablet'],
-		theme.breakpoints['desktop'],
-		theme.breakpoints['large-desktop']
-	]
-})
+import theme from 'theme'
+import { useTrail, animated, config } from 'react-spring'
+import { Translateable } from 'components/Translateable'
 
 const categories = [
 	{
@@ -220,19 +173,84 @@ const categories = [
 		]
 	}
 ]
+const Container = styled.div`
+	& * {
+		font-family: Raleway;
+	}
+	height: 100%;
+	width: 100%;
+	padding: 7.25% 0;
+	& .MuiTabs-root {
+		& * {
+			max-width: none;
+			& .MuiTab-wrapper {
+				align-items: flex-end;
+			}
+		}
 
-const getMSDelay = idx => 250 + idx * 250
+		& .MuiButtonBase-root {
+			transition: background-color 500ms ease 0ms;
+			& {
+				transition: color 500ms ease 0ms;
+			}
+			&:hover {
+				background-color: rgba(255, 0, 0, 0.9) !important;
+				& {
+					color: white;
+				}
+			}
+		}
+	}
+`
+const GridShadow = styled.div`
+	height: 100%;
+	width: 100%;
+	display: flex;
+	overflow: auto;
+	&::-webkit-scrollbar {
+		border-radius: 4px;
+		background-color: black;
+	}
+	&::-webkit-scrollbar-thumb {
+		border-radius: 6px;
+		background-color: white;
+		border: 2px solid black;
+	}
+`
+
+const SkillCardGrid = styled.div`
+	height: 100%;
+	width: 40%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: column;
+`
 
 const Skills = props => {
 	const { backgroundColor } = props
 	const [ fadeIn, setFadeIn ] = useState(false)
 	const [ hoverable, setHoverable ] = useState(false)
+	const [ selectedTab, setSelectedTab ] = useState(categories[0].label.en)
+
+	const handleChangeTab = useCallback((e, val) => {
+		setSelectedTab(val)
+	}, [])
+
+	const [ trail, set, stop ] = useTrail(categories.length, () => ({
+		opacity: 0,
+		filter: `blur(10px)`,
+		onRest: () => setHoverable(true)
+	}))
 
 	useEffect(() => {
-		if (fadeIn)
-			setTimeout(() => setHoverable(true), getMSDelay(categories.length - 1))
-		else setHoverable(false)
-	}, [ fadeIn ])
+		if (fadeIn) {
+			set({ opacity: 1, filter: 'blur(0px)' })
+		} else {
+			set({ opacity: 0, filter: 'blur(10px)' })
+			setHoverable(false)
+		}
+	}, [ fadeIn, set ])
 
 	return (
 		<Container>
@@ -242,7 +260,7 @@ const Skills = props => {
 				onLeave={() => setFadeIn(false)}
 			/>
 			<GridShadow>
-				<GridContainer fluid>
+				{/* <GridContainer fluid>
 					<Row>
 						{categories.map((cat, i) => (
 							<Col
@@ -266,7 +284,45 @@ const Skills = props => {
 							</Col>
 						))}
 					</Row>
-				</GridContainer>
+				</GridContainer> */}
+				{/* <SkillCardGrid> */}
+				<Tabs
+					orientation="vertical"
+					value={selectedTab}
+					variant="scrollable"
+					onChange={handleChangeTab}
+					// centered={true}
+				>
+					{categories.map(cat => {
+						return (
+							<Tab
+								key={cat.label.en}
+								label={<Translateable
+									en={cat.label.en}
+									es={cat.label.es}
+								       />}
+								value={cat.label.en}
+								wrapped={false}
+							/>
+						)
+					})}
+					{/* {trail.map((props, i) => {
+						const cat = categories[i]
+						console.log(props)
+						return (<SkillCard 
+							style={props}
+							backgroundColor={backgroundColor}
+							engCategory={cat.label.en}
+							esCategory={cat.label.es}
+							hoverable={hoverable}
+							index={i}
+							skills={cat.skills}
+							
+						>
+						</SkillCard>)
+					})} */}
+				</Tabs>
+				{/* </SkillCardGrid> */}
 			</GridShadow>
 		</Container>
 	)

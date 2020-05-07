@@ -1,56 +1,59 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
-import theme from 'theme'
 import breakpoint from 'styled-components-breakpoint'
-import { Translateable } from 'components/Translateable'
 import Ripples from 'react-ripples'
-import { FullScreenModal } from 'components'
 import Tilt from 'react-tilt'
+import { animated } from 'react-spring'
+import { FullScreenModal } from 'components'
+import { Translateable } from 'components/Translateable'
+import theme from 'theme'
 
-const baseShadow = '0px 8px 14px 2px rgba(204,204,204,0.92)'
+// const getTransitionMSLong = ({ fadeDuration }) => fadeDuration
+// const getTransitionMSShort = ({ fadeDuration }) => fadeDuration / 2
 
-const selectedShadow =
-	'0px 2px 4px -10px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)'
-const getTransitionMSLong = ({ fadeDuration }) => fadeDuration
-const getTransitionMSShort = ({ fadeDuration }) => fadeDuration / 2
+const BASE_SHADOW =
+	'0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)'
+const SKILL_CARD_HOVER_TRANSITION_DURATION = 500
+const TILT_OPTIONS = {
+	max: 30,
+	scale: 1.15
+}
 
 const getSelectedBgColor = ({ backgroundColor }) => {
-	const {
-		colors: {
-			background: { white }
-		}
-	} = theme
-	return backgroundColor === white ? 'rgba(255,0,0, .75)' : white
-}
-const getSelectedFontColor = ({ backgroundColor }) => {
-	const {
-		colors: {
-			background: { red, white }
-		}
-	} = theme
-	return backgroundColor === white ? white : red
-}
-const fadeIn = ({ fadeIn }) => {
-	return fadeIn
-		? `filter: blur(0px); opacity: 1;`
-		: `filter: blur(10px); opacity: 0;`
+	const { colors } = theme
+	return backgroundColor === colors.background.white
+		? 'rgba(255, 0, 0, .75)'
+		: colors.background.white
 }
 
-const SkillCardDiv = styled.div`
+const getSelectedFontColor = ({ backgroundColor }) => {
+	const { colors } = theme
+	return backgroundColor === colors.background.white
+		? colors.font.white
+		: colors.font.red
+}
+
+const TiltWrapper = styled.div`
+	width: 75%;
+	pointer-events: ${({ hoverable }) => (hoverable ? 'all' : 'none')};
+`
+
+const SkillCardDiv = styled(animated.div)`
 	cursor: pointer;
 	border-radius: 8px;
+	box-shadow: ${BASE_SHADOW};
 	& .skill-card-ripple {
 		height: 100%;
 		width: 100%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		padding: 32px 0px;
+		padding: 12px 0px;
 	}
-	${fadeIn}
-	box-shadow: 0px 8px 12px 1px rgba(204,204,204,0.92);
 	& .skillCategory {
 		color: black;
+		font-size: 12px;
+		transition: color ${SKILL_CARD_HOVER_TRANSITION_DURATION}ms ease;
 		&:after {
 			bottom: -8px;
 			content: '';
@@ -59,13 +62,13 @@ const SkillCardDiv = styled.div`
 			left: 50%;
 			position: relative;
 			background: #fff;
-			transition: width 0.3s ease 0s, left 0.3s ease 0s;
+			transition: width ${SKILL_CARD_HOVER_TRANSITION_DURATION}ms ease 0s,
+				left ${SKILL_CARD_HOVER_TRANSITION_DURATION}ms ease 0s;
 			width: 0;
 		}
 	}
 	&:hover {
 		background-color: ${getSelectedBgColor};
-
 		& .skillCategory {
 			color: ${getSelectedFontColor};
 			&:after {
@@ -74,24 +77,15 @@ const SkillCardDiv = styled.div`
 			}
 		}
 	}
-	transition: opacity ${getTransitionMSLong}ms ease
-			${({ fadeDelay }) => fadeDelay}ms,
-		filter ${getTransitionMSLong}ms ease ${({ fadeDelay }) => fadeDelay}ms,
-		background-color ${getTransitionMSShort}ms ease,
-		box-shadow ${getTransitionMSShort}ms ease;
-	& .skillCategory {
-		font-size: 12px;
-		transition: color ${getTransitionMSShort}ms ease;
-	}
+	transition: background-color ${SKILL_CARD_HOVER_TRANSITION_DURATION}ms ease;
 	margin: 5px 0;
-
 	${breakpoint('phone')`
         margin: 7.5px 0;
         & .skillCategory { 
             font-size: 16px;
         }
         & .skill-card-ripple {
-            padding: 44px 0px;
+            padding: 0px 0px;
         }
     `}
 	${breakpoint('tablet')`
@@ -100,9 +94,8 @@ const SkillCardDiv = styled.div`
             font-size: 18px;
         }
         & .skill-card-ripple {
-            padding: 64px 0px;
+            padding: 32px 0px;
 		}
-		box-shadow: 0px 8px 14px 2px rgba(204,204,204,0.92);
     `}
 `
 
@@ -179,15 +172,6 @@ ${breakpoint('desktop')`
     `}
 `
 
-const TiltWrapper = styled.div`
-	pointer-events: ${({ hoverable }) => (hoverable ? 'all' : 'none')};
-`
-
-const tiltOptions = {
-	max: 25,
-	scale: 1.1
-}
-
 const SkillCard = props => {
 	const {
 		backgroundColor,
@@ -197,7 +181,8 @@ const SkillCard = props => {
 		fadeDelay,
 		fadeDuration,
 		hoverable,
-		skills
+		skills,
+		style
 	} = props
 
 	const [ open, setOpen ] = useState(false)
@@ -211,9 +196,7 @@ const SkillCard = props => {
 	const skillCard = (
 		<SkillCardDiv
 			backgroundColor={backgroundColor}
-			fadeDelay={fadeDelay}
-			fadeDuration={fadeDuration}
-			fadeIn={fadeInCard}
+			style={style}
 			onClickCapture={handleOpenModal}
 		>
 			<Ripples className="skill-card-ripple">
@@ -229,9 +212,12 @@ const SkillCard = props => {
 
 	return (
 		<>
-			<TiltWrapper hoverable={hoverable}>
-				<Tilt options={tiltOptions}>{skillCard}</Tilt>
-			</TiltWrapper>
+			{/* <TiltWrapper 
+				hoverable={hoverable}
+			> */}
+			{/* <Tilt options={TILT_OPTIONS}>{skillCard}</Tilt> */}
+			{skillCard}
+			{/* </TiltWrapper> */}
 			<FullScreenModal
 				open={open}
 				onClose={handleCloseModal}

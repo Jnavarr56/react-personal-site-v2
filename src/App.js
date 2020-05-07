@@ -11,12 +11,16 @@ import {
 	TranslateableContext,
 	LanguageSelector
 } from 'components/Translateable'
-import theme from './theme'
-import routes from './routes'
+import theme from 'theme'
+import routes from 'routes'
 import PropTypes from 'prop-types'
 
-const FADE_DELAY_MS = 1000
-const FADE_DURATION_MS = 1000
+const {
+	timing: {
+		loadingAnimation: { fadeOutTiming, fadeOutDelay, fadeOutDuration }
+	}
+} = theme
+
 const VISTED_COOKIE_AGE_MINS = 60 * 30
 const LANGUAGES = [ 'en', 'es' ]
 const DEFAULT_REDIRECT = <Redirect to={`/${routes[0].path}?lang=en`} />
@@ -29,8 +33,8 @@ const Main = styled.main`
 	& .loading-animation-fade-in {
 		opacity: 0;
 		filter: blur(10px);
-		animation: FadeIn ${FADE_DURATION_MS}ms ${theme.timing.loadingAnimation}
-			${FADE_DELAY_MS}ms 1 forwards;
+		animation: FadeIn ${fadeOutDuration}ms ${fadeOutTiming} ${fadeOutDuration}ms
+			1 forwards;
 	}
 	@keyframes FadeIn {
 		100% {
@@ -50,16 +54,18 @@ const App = props => {
 	const [ animationEnded, setAnimationEnded ] = useState(false)
 	const handleAnimationEnd = useCallback(() => {
 		setShowViews(true)
-		setTimeout(() => setAnimationEnded(true), FADE_DELAY_MS + FADE_DURATION_MS)
+		setTimeout(() => setAnimationEnded(true), fadeOutDelay + fadeOutDuration)
 	}, [])
 
 	const [ cookies, setCookie ] = useCookies([])
 	useEffect(() => {
-		if (!cookies.visited)
+		if (!cookies.visited) {
 			setCookie('visited', Date.now(), {
 				path: '/',
 				maxAge: VISTED_COOKIE_AGE_MINS
 			})
+		}
+
 		/*eslint-disable-next-line */
 	}, [])
 
@@ -79,9 +85,9 @@ const App = props => {
 		<Main>
 			{shouldRenderAnimation && (
 				<LandingAnimation
-					fadeOutDelay={FADE_DELAY_MS}
-					fadeOutDuration={FADE_DURATION_MS}
-					interval={37.5}
+					duration={5000}
+					fadeOutDelay={fadeOutDelay}
+					fadeOutDuration={fadeOutDuration}
 					onAnimationEnd={handleAnimationEnd}
 				/>
 			)}
@@ -93,9 +99,7 @@ const App = props => {
 							<MobileNav className="loading-animation-fade-in">
 								{routes}
 							</MobileNav>
-							<DesktopNav className="loading-animation-fade-in">
-								{routes}
-							</DesktopNav>
+							<DesktopNav className="loading-animation-fade-in" />
 							<ViewsContainer className="loading-animation-fade-in">
 								{routes}
 							</ViewsContainer>

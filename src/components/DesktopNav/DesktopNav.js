@@ -1,142 +1,168 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
 import { useHistory } from 'react-router-dom'
 import breakpoint from 'styled-components-breakpoint'
+import routes from 'routes'
 import theme from 'theme'
 import Ripples from 'react-ripples'
+
+const {
+	timing: {
+		desktopNav: { navigateDelay, toggleNavbarOpen, toggleNavbarItemOpen }
+	},
+	colors
+} = theme
+
 const CLOSED_NAV_WIDTH = 40
+const TOGGLE_NAVBAR_OPEN_CLOSE_DELAY = toggleNavbarOpen.getCloseDelay()
+
 const ICON_WIDTH = 20
 const ICON_HEIGHT = 15
+const ICON_BAR_OPEN_WIDTH = Math.pow(
+	Math.pow(ICON_HEIGHT, 2) + Math.pow(ICON_WIDTH, 2),
+	0.5
+)
+const ICON_BAR_OPEN_OFFSET = ICON_HEIGHT / 3 / 2
+
+const NAVIGATE_DELAY =
+	TOGGLE_NAVBAR_OPEN_CLOSE_DELAY + toggleNavbarOpen.duration + navigateDelay
+
+const transitionProps = (props, transition) =>
+	props.map(prop => `${prop} ${transition}`).join(', ')
+
+const setNavTransform = ({ open }) =>
+	open ? '0' : `calc(-100% + ${CLOSED_NAV_WIDTH}px)`
+const setNavTransition = ({ open }) => {
+	const { timing, duration } = toggleNavbarOpen
+	const delay = open ? 0 : TOGGLE_NAVBAR_OPEN_CLOSE_DELAY
+	return `transform ${duration}ms ${timing} ${delay}ms`
+}
 
 const Nav = styled.nav`
-	overflow: hidden;
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	background-color: black;
-	transition: 0.5s width cubic-bezier(0.645, 0.045, 0.355, 1);
-	cursor: ${({ open }) => (open ? 'auto' : 'pointer')};
-	width: ${({ open }) => (open ? '100%' : `${CLOSED_NAV_WIDTH}px`)};
 	z-index: 200;
+	background-color: black;
+	overflow: hidden;
 	display: none;
 	justify-content: center;
 	align-items: center;
 	${breakpoint('desktop')`
-		display: flex;
+		display: flex;	
 	`}
-`
-const NavList = styled.ul`
-	height: 100%;
-	width: 100%;
-	padding: 128px;
-	& li {
-		color: white;
-		font-size: 72px;
-		overflow: hidden;
-		margin-bottom: 56px;
-	}
-`
-const NavListItem = styled.li`
-	font-size: 72px;
-	overflow: hidden;
-	margin-bottom: 56px;
-`
-const NavItemText = styled.span`
-	& * {
-		color: ${({ selected }) => (selected ? 'red' : 'white')};
-	}
-	${({ selected }) => {
-		if (!selected) {
-			return `&:hover * {
-                color: #ff726f;
-                transition: .15s color ease;
-            }`
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 100vw;
+	transition: ${setNavTransition};
+	transform: translateX(${setNavTransform});
+	& .react-ripples {
+		cursor: pointer;
+		transition: background-color 250ms ease;
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.15);
 		}
-	}}
-	font-family: Raleway;
-	font-weight: 200;
-	position: relative;
-	cursor: ${({ selected }) => (selected ? 'auto' : 'pointer')};
-	bottom: ${({ open }) => (open ? '0' : '-128')}px;
-	opacity: ${({ open }) => (open ? '1' : '0')};
-	transition: 0.35s bottom
-			${({ open, index }) => (open ? 0.5 + index * 0.1 : 0)}s
-			cubic-bezier(0.645, 0.045, 0.355, 1),
-		0.35s opacity ${({ open, index }) => (open ? 0.5 + index * 0.1 : 0)}s
-			cubic-bezier(0.645, 0.045, 0.355, 1);
+		position: absolute !important;
+		top: 0;
+		right: 0;
+		height: 100%;
+		width: ${CLOSED_NAV_WIDTH}px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 `
+const NavList = styled.ul``
+
+const NavListItem = styled.li`
+	color: white;
+	font-size: 72px;
+	line-height: 1.1;
+	margin-bottom: 42px;
+	overflow: hidden;
+`
+
+const setSelectedNavItemTextOpacity = ({ open }) => (open ? '1' : '0')
+const setSelectedNavItemTextTransform = ({ open }) => (open ? '0' : '110%')
+const setSelectedNavItemPointerEvents = ({ selected }) =>
+	selected ? 'none' : 'all'
+const setSelectedNavItemTextColor = ({ selected }) =>
+	selected ? colors.font.red : colors.font.white
+const setSelectedNavItemTransition = ({ open, index }) => {
+	const { timing, duration, delayInterval } = toggleNavbarItemOpen
+	const { duration: baseDelay } = toggleNavbarOpen
+
+	const delay = (open ? baseDelay : 0) + index * delayInterval
+
+	return transitionProps(
+		[ 'opacity', 'transform' ],
+		`${duration}ms ${timing} ${delay}ms`
+	)
+}
+
+const NavItemText = styled.span`
+	cursor: pointer;
+	font-weight: 200;
+	font-family: Raleway;
+	color: ${setSelectedNavItemTextColor};
+	opacity: ${setSelectedNavItemTextOpacity};
+	&:hover {
+		color: ${colors.font.red};
+		transition: color 500ms ease;
+	}
+	display: inline-block;
+	pointer-events: ${setSelectedNavItemPointerEvents};
+	transform: translateY(${setSelectedNavItemTextTransform});
+	transition: ${setSelectedNavItemTransition};
+`
+
+const setNavIconBarTransition = open => {
+	const { duration } = toggleNavbarOpen
+	const delay = open ? 0 : TOGGLE_NAVBAR_OPEN_CLOSE_DELAY
+	return transitionProps(
+		[ 'width', 'bottom', 'top', 'transform', 'opacity' ],
+		`${duration}ms ease ${delay}ms`
+	)
+}
+
+const setNavIconBarWidth = ({ open }) =>
+	open ? ICON_BAR_OPEN_WIDTH + 'px' : '100%'
 
 const NavIcon = styled.div`
-    transform: translateY(-50%);
-    position: absolute;
-    top: 50%;
-    right: ${(CLOSED_NAV_WIDTH - ICON_WIDTH) / 2}px;
-    height: ${ICON_HEIGHT}px;
-    width: ${ICON_WIDTH}px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    & > .bar {
-        height: 20%;
-        width: 100%;
-        position: relative;
-        background-color: white;
-        flex-shrink;
-        &:nth-child(1) {
-            transition: 0.5s width ease, 0.5s bottom ease, 0.5s top ease, 0.5s transform ease;
-        }
-        &:nth-child(3) {
-            transition: 0.5s width ease, 0.5s bottom ease, 0.5s top ease, 0.5s transform ease;
-        }
-    }
-    ${({ open }) => {
-			if (open) {
-				return `
-                & > div:nth-child(1) {
-                    transform: rotate(45deg);
-                    transform-origin: left center;
-                    width:${Math.pow(
-											Math.pow(ICON_HEIGHT, 2) + Math.pow(ICON_WIDTH, 2),
-											0.5
-										)}px;
-                    bottom: ${ICON_HEIGHT / 3 / 2}px;
-                }
-                & > div:nth-child(2) {
-                    display: none;
-                }
-                & > div:nth-child(3) {
-                    transform: rotate(-45deg);
-                    transform-origin: left center;
-                    width: ${Math.pow(
-											Math.pow(ICON_HEIGHT, 2) + Math.pow(ICON_WIDTH, 2),
-											0.5
-										)}px;
-                    top: ${ICON_HEIGHT / 3 / 2}px;
-                }
-            `
-			}
+	position: relative;
+	right: ${({ open }) => (open ? -ICON_BAR_OPEN_OFFSET * 2 : 0)}px;
+	height: ${ICON_HEIGHT}px;
+	width: ${ICON_WIDTH}px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	& > .bar {
+		height: 20%;
+		position: relative;
+		background-color: white;
+		width: ${setNavIconBarWidth};
+		${({ open }) => {
+			const rotateDeg = open ? 45 : 0
+			const offsetPx = open ? ICON_BAR_OPEN_OFFSET : 0
+			const middleOpacity = open ? 0 : 1
+			return `
+				&:nth-child(1) {
+					transform: rotate(${rotateDeg}deg);
+					bottom: ${offsetPx}px;
+				}
+				&:nth-child(2) {
+					opacity: ${middleOpacity};
+				}
+				&:nth-child(3) {
+					transform: rotate(${-rotateDeg}deg);
+					top: ${offsetPx}px;
+				}
+			`
 		}}
-`
-
-const RippleArea = styled.div`
-	transition: background-color 0.25s ease;
-	&:hover {
-		background-color: rgba(255, 255, 255, 0.15);
-	}
-	cursor: pointer;
-	position: absolute;
-	top: 0;
-	right: 0;
-	height: 100%;
-	width: ${ICON_WIDTH * 2.25}px;
-	& .ripples {
-		height: 100%;
-		width: 100%;
+		transform-origin: left center;
+		transition: ${setNavIconBarTransition};
 	}
 `
 
@@ -148,12 +174,11 @@ const DesktopNav = props => {
 	const handleToggle = useCallback(() => setOpen(prev => !prev), [])
 
 	useEffect(() => {
-		window.addEventListener('resize', e => {
-			if (e.target.innerWidth < theme.breakpoints.desktop) {
-				setOpen(false)
-			}
+		window.addEventListener('resize', function() {
+			if (!open) return
+			this.innerWidth < theme.breakpoints.desktop && setOpen(false)
 		})
-	}, [])
+	}, [ open ])
 
 	return (
 		<Nav
@@ -161,51 +186,45 @@ const DesktopNav = props => {
 			open={open}
 		>
 			<NavList open={open}>
-				{children.map((view, i) => (
-					<NavListItem key={view.title.en}>
-						<NavItemText
-							index={i}
-							open={open}
-							selected={`/${view.path}` === location.pathname}
-							onClick={e => {
-								if (`/${view.path}` !== location.pathname) {
-									setOpen(false)
-									push(`/${view.path}${location.search}`)
-								}
-							}}
-						>
-							<Translateable {...view.title} />
-						</NavItemText>
-					</NavListItem>
-				))}
+				{routes.map((view, i) => {
+					const isSelectedNavItem = `/${view.path}` === location.pathname
+					const navigateToItemPath = () => {
+						setOpen(false)
+						setTimeout(
+							() => push(`/${view.path}${location.search}`),
+							NAVIGATE_DELAY
+						)
+					}
+					return (
+						<NavListItem key={view.title.en}>
+							<NavItemText
+								index={i}
+								open={open}
+								selected={isSelectedNavItem}
+								onClick={navigateToItemPath}
+							>
+								<Translateable {...view.title} />
+							</NavItemText>
+						</NavListItem>
+					)
+				})}
 			</NavList>
-			<RippleArea>
-				<Ripples
-					className="ripples"
-					color="white"
-					onClickCapture={handleToggle}
-				>
-					<NavIcon open={open}>
-						<div className="bar" />
-						<div className="bar" />
-						<div className="bar" />
-					</NavIcon>
-				</Ripples>
-			</RippleArea>
+			<Ripples
+				className="ripples"
+				color="white"
+				onClickCapture={handleToggle}
+			>
+				<NavIcon open={open}>
+					<div className="bar" />
+					<div className="bar" />
+					<div className="bar" />
+				</NavIcon>
+			</Ripples>
 		</Nav>
 	)
 }
 
 DesktopNav.propTypes = {
-	children: PropTypes.arrayOf(
-		PropTypes.shape({
-			title: { en: PropTypes.string, es: PropTypes.string },
-			showTitle: PropTypes.bool,
-			showParticles: PropTypes.bool,
-			component: PropTypes.node,
-			path: PropTypes.string
-		})
-	),
 	className: PropTypes.string
 }
 export default DesktopNav

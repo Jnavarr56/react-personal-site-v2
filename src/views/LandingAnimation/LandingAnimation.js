@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import theme from 'theme'
 import PieChart from 'react-minimal-pie-chart'
 import PropTypes from 'prop-types'
 import CONFIG from './ParticleConfig.json'
+import { useSpring, animated, config } from 'react-spring'
 
 const Container = styled.div`
 	height: 100%;
@@ -16,15 +16,16 @@ const Container = styled.div`
 	left: 0;
 	z-index: 1000;
 	transition: ${({ fadeOutDuration, fadeOutDelay }) => {
-		const { loadingAnimation } = theme.timing
 		return `
-				opacity ${fadeOutDuration}ms ${loadingAnimation} ${fadeOutDelay}ms,
-				filter ${fadeOutDuration}ms ${loadingAnimation} ${fadeOutDelay}ms
+				opacity ${fadeOutDuration}ms ${'ease'} ${fadeOutDelay}ms,
+				filter ${fadeOutDuration}ms ${'ease'} ${fadeOutDelay}ms
 			`
 	}};
 	opacity: ${({ pct }) => (pct < 100 ? 1 : 0)};
 	filter: blur(${({ pct }) => (pct < 100 ? 0 : 10)}px);
 `
+
+const AnimatedContainer = animated(Container)
 
 const ParticleDiv = styled.div`
 	height: 100%;
@@ -35,54 +36,65 @@ const ParticleDiv = styled.div`
 	z-index: 998;
 `
 
-const PercentCount = styled.p`
+const PercentCountStyled = styled.p`
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-family: Raleway;
-	font-size: 40px;
+	font-family: Poppins;
+	font-size: 72px;
 	font-weight: 200;
 	z-index: 999;
-	background-color: rgba(255, 255, 255, 0.75);
 `
+const PercentCount = animated(PercentCountStyled)
 
 const setSpeed = speed => (window.pJSDom[0].pJS.particles.move.speed = speed)
 const getSpeed = () => window.pJSDom[0].pJS.particles.move.speed
 
 const LandingAnimation = props => {
-	const { onAnimationEnd, interval, fadeOutDelay, fadeOutDuration } = props
+	const { onAnimationEnd, duration, fadeOutDelay, fadeOutDuration } = props
 
 	const [ pct, setPct ] = useState(0)
-	const handleIncrement = useCallback(() => {
-		setTimeout(() => setPct(prev => prev + 1), interval)
-	}, [ interval ])
 
 	useEffect(() => {
 		window.particlesJS('loading-particles', CONFIG)
-		handleIncrement()
-	}, [ handleIncrement ])
+	}, [])
 
 	useEffect(() => {
 		if (pct === 0) return
 		if (pct < 100) {
 			if (pct < 50) setSpeed(pct * 2)
 			else setSpeed(getSpeed() - getSpeed() / (100 - pct))
-			handleIncrement()
 		} else {
 			onAnimationEnd()
 		}
-	}, [ pct, interval, onAnimationEnd, handleIncrement ])
+	}, [ onAnimationEnd, pct ])
 
 	const loadingIndicatorData = useMemo(
 		() => [ { value: 1, key: 1, color: 'red' } ],
 		[]
 	)
+
+	const pctProps = useSpring({
+		number: 100,
+		from: { number: 0 },
+		config: {
+			duration: duration,
+			...config.wobbly
+		},
+		onFrame: ({ number }) => setPct(Math.floor(number))
+	})
+
+	const containerProps = useSpring({
+		opacity: pct === 100 ? 0 : 1,
+		filter: `blur(${pct === 100 ? 10 : 0}px)`,
+		delay: fadeOutDelay
+	})
+
 	return (
-		<Container
-			fadeOutDelay={fadeOutDelay}
-			fadeOutDuration={fadeOutDuration}
+		<AnimatedContainer
 			pct={pct}
+			style={containerProps}
 		>
 			<ParticleDiv id="loading-particles" />
 			<PieChart
@@ -90,11 +102,16 @@ const LandingAnimation = props => {
 				animationEasing="ease"
 				background="white"
 				data={loadingIndicatorData}
-				lineWidth={2.5}
+				lineWidth={3}
 				reveal={pct}
 			/>
-			<PercentCount>{pct}%</PercentCount>
-		</Container>
+			<PercentCount>
+				<animated.span>
+					{pctProps.number.interpolate(number => Math.floor(number))}
+				</animated.span>
+				%
+			</PercentCount>
+		</AnimatedContainer>
 	)
 }
 

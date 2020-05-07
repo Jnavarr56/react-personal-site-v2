@@ -27,7 +27,7 @@ const ChildrenContainer = styled.div`
 	width: 100%;
 	position: relative;
 	z-index: 100;
-	transition: all 500ms ease;
+	transition: all 750ms ease-in-out;
 	${({ fadeable, fadeIn }) => {
 		if (fadeable) {
 			return fadeIn

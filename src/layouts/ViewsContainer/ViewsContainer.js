@@ -4,14 +4,22 @@ import { Section } from 'components'
 import { useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import routes from 'routes'
 import theme from 'theme'
 import { scroller, Events } from 'react-scroll'
+
+const { fadeOutDelay, fadeOutDuration } = theme.timing.loadingAnimation
+
+const SCROLL_FROM_LANDING_DELAY = fadeOutDelay + fadeOutDuration
+
+const setRootDivOverflow = ({ isScrolling }) =>
+	isScrolling ? 'auto' : 'hidden'
 
 const RootDiv = styled.div`
 	height: 100%;
 	width: 100vw;
 	position: relative;
-	overflow: ${({ isScrolling }) => (isScrolling ? 'auto' : 'hidden')};
+	overflow: ${setRootDivOverflow};
 	&::-webkit-scrollbar {
 		height: 0 !important;
 		width: 0 !important;
@@ -39,35 +47,36 @@ const ViewsContainer = props => {
 
 	const { view: providedPath } = useParams()
 
-	const containerRef = useRef(null)
-
 	const [ scrolling, setScrolling ] = useState(false)
 	const [ lastSectionIndex, setLastSectionIndex ] = useState(null)
 
 	useEffect(() => {
 		Events.scrollEvent.register('begin', () => setScrolling(true))
-		window.addEventListener('resize', () => {
-			if (window.resizeHandler) {
+		window.addEventListener(
+			'resize',
+			() =>
+				window.resizeHandler &&
 				setTimeout(() => window.resizeHandler(true), 100)
-			}
-		})
+		)
 	}, [])
 
 	useEffect(() => {
-		const scrollToSection = resizeResponse => {
+		const scrollToSection = isResizeResponse => {
 			const currentScrollIndex = children.findIndex(
 				({ path }) => path === providedPath
 			)
 
-			if (currentScrollIndex === null && lastSectionIndex === 0) return
-
 			let delay, duration
-			if (resizeResponse) {
+			if (isResizeResponse) {
 				delay = 0
-				duration = 10
+				duration = 0
 			} else {
-				delay = lastSectionIndex === null ? 2250 : 750
-				duration = 1000
+				delay = lastSectionIndex === null ? SCROLL_FROM_LANDING_DELAY : 0
+
+				const numSectionsToScroll = Math.abs(
+					currentScrollIndex - lastSectionIndex
+				)
+				duration = 1000 + numSectionsToScroll * 250
 			}
 
 			Events.scrollEvent.register('end', () => {
@@ -79,7 +88,7 @@ const ViewsContainer = props => {
 			scroller.scrollTo(providedPath, {
 				duration,
 				delay,
-				smooth: true,
+				smooth: 'easeInOutQuart',
 				containerId: 'view-container',
 				ignoreCancelEvents: true
 			})
@@ -100,7 +109,6 @@ const ViewsContainer = props => {
 				className={className}
 				id="view-container"
 				isScrolling={scrolling}
-				ref={containerRef}
 			>
 				{children.map((view, i) => {
 					return (
@@ -124,15 +132,6 @@ const ViewsContainer = props => {
 }
 
 ViewsContainer.propTypes = {
-	children: PropTypes.arrayOf(
-		PropTypes.shape({
-			title: { en: PropTypes.string, es: PropTypes.string },
-			showTitle: PropTypes.bool,
-			showParticles: PropTypes.bool,
-			component: PropTypes.node,
-			path: PropTypes.string
-		})
-	),
 	className: PropTypes.string
 }
 

@@ -17,7 +17,7 @@ const Title = styled.h1`
 	background-color: rgba(255, 255, 255, .75);
 	margin-bottom: 16px;
 	font-family: Raleway;
-	font-color: black;
+	color: black;
 	font-size: 32px;
 	${breakpoint('phone')`
 		font-size: 42px;
@@ -36,7 +36,7 @@ const Subtitle = styled.h2`
 	text-transform: uppercase;
 	font-weight: 200;
 	font-family: Raleway;
-	font-color: black;
+	color: black;
 	letter-spacing: 4px;
 	text-align: center;
 	font-size: 16px;
