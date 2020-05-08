@@ -43,7 +43,7 @@ const PercentCountStyled = styled.p`
 	transform: translate(-50%, -50%);
 	font-family: Poppins;
 	font-size: 72px;
-	font-weight: 200;
+	font-weight: 100;
 	z-index: 999;
 `
 const PercentCount = animated(PercentCountStyled)
@@ -79,8 +79,7 @@ const LandingAnimation = props => {
 		number: 100,
 		from: { number: 0 },
 		config: {
-			duration: duration,
-			...config.wobbly
+			duration
 		},
 		onFrame: ({ number }) => setPct(Math.floor(number))
 	})

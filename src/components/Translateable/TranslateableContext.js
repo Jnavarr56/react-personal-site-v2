@@ -1,20 +1,23 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import Context from './context'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 const TranslateableContext = props => {
 	const { lang, children } = props
-	const { push } = useHistory()
-	const { params } = useRouteMatch()
-
 	const [ changed, setChanged ] = useState(false)
+
+	const history = useHistory()
 
 	const handleChangeLang = useCallback(
 		newLang => {
+			// eslint-disable-next-line
+			history.push({
+				pathname: `${window.location.pathname}`,
+				search: `?lang=${newLang}`
+			})
 			setChanged(true)
-			push({ pathname: `/${params.view}`, search: `?lang=${newLang}` })
 		},
-		[ push, params.view ]
+		[ history ]
 	)
 
 	const value = useMemo(

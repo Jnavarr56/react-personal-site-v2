@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
-import { ModalProvider } from 'styled-react-modal'
 import { useCookies } from 'react-cookie'
 import qs from 'querystring'
 import { Redirect } from 'react-router-dom'
 import { ViewsContainer } from 'layouts'
 import { LandingAnimation } from 'views'
-import { DesktopNav, MobileNav, ModalBackground } from 'components'
+import { DesktopNav, MobileNav } from 'components'
 import {
 	TranslateableContext,
 	LanguageSelector
@@ -14,6 +13,10 @@ import {
 import theme from 'theme'
 import routes from 'routes'
 import PropTypes from 'prop-types'
+import {
+	ThemeProvider as MuiThemeProvider,
+	createMuiTheme
+} from '@material-ui/core/styles'
 
 const {
 	timing: {
@@ -85,27 +88,27 @@ const App = props => {
 		<Main>
 			{shouldRenderAnimation && (
 				<LandingAnimation
-					duration={5000}
+					duration={8000}
 					fadeOutDelay={fadeOutDelay}
 					fadeOutDuration={fadeOutDuration}
 					onAnimationEnd={handleAnimationEnd}
 				/>
 			)}
 			{shouldRenderViews && (
-				<ThemeProvider theme={theme}>
-					<ModalProvider backgroundComponent={ModalBackground}>
+				<MuiThemeProvider theme={createMuiTheme({})}>
+					<ThemeProvider theme={theme}>
 						<TranslateableContext lang={lang}>
 							<LanguageSelector className="loading-animation-fade-in" />
+							<DesktopNav className="loading-animation-fade-in" />
 							<MobileNav className="loading-animation-fade-in">
 								{routes}
 							</MobileNav>
-							<DesktopNav className="loading-animation-fade-in" />
 							<ViewsContainer className="loading-animation-fade-in">
 								{routes}
 							</ViewsContainer>
 						</TranslateableContext>
-					</ModalProvider>
-				</ThemeProvider>
+					</ThemeProvider>
+				</MuiThemeProvider>
 			)}
 		</Main>
 	)

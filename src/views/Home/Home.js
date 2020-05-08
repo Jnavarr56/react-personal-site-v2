@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import { Translateable } from 'components/Translateable'
+import { ContactIcons } from './components'
 
 const Container = styled.div`
 	height: 100%;
@@ -54,7 +55,9 @@ const Subtitle = styled.h2`
 const Home = () => {
 	return (
 		<Container>
+			<ContactIcons />
 			<Title>Jorge Navarro</Title>
+
 			<Subtitle>
 				<Translateable
 					en="Full-Stack Developer"

@@ -6,7 +6,9 @@ import { useHistory } from 'react-router-dom'
 import breakpoint from 'styled-components-breakpoint'
 import routes from 'routes'
 import theme from 'theme'
-import Ripples from 'react-ripples'
+import clsx from 'clsx'
+import { Drawer, ButtonBase } from '@material-ui/core'
+import { makeStyles } from '@material-ui/styles'
 
 const {
 	timing: {
@@ -29,50 +31,42 @@ const ICON_BAR_OPEN_OFFSET = ICON_HEIGHT / 3 / 2
 const NAVIGATE_DELAY =
 	TOGGLE_NAVBAR_OPEN_CLOSE_DELAY + toggleNavbarOpen.duration + navigateDelay
 
+const useStyles = makeStyles(muiTheme => ({
+	drawer: {
+		'& .MuiDrawer-paperAnchorDockedLeft': {
+			width: '100vw',
+			backgroundColor: 'black',
+			display: 'flex',
+			justifyContent: 'center',
+			alignItems: 'center'
+		}
+	},
+	drawerClosed: {
+		'& .MuiDrawer-paperAnchorDockedLeft': {
+			transform: `translateX(calc(-100vw + ${CLOSED_NAV_WIDTH}px)) !important`,
+			visibility: 'visible !important',
+			transition:
+				muiTheme.transitions.create('transform', {
+					easing: muiTheme.transitions.easing.easeInOut,
+					duration: toggleNavbarOpen.duration,
+					delay: TOGGLE_NAVBAR_OPEN_CLOSE_DELAY
+				}) + '!important'
+		}
+	},
+	drawerOpen: {
+		'& .MuiDrawer-paperAnchorDockedLeft': {
+			transition:
+				muiTheme.transitions.create('transform', {
+					easing: muiTheme.transitions.easing.easeInOut,
+					duration: toggleNavbarOpen.duration
+				}) + '!important'
+		}
+	}
+}))
+
 const transitionProps = (props, transition) =>
 	props.map(prop => `${prop} ${transition}`).join(', ')
 
-const setNavTransform = ({ open }) =>
-	open ? '0' : `calc(-100% + ${CLOSED_NAV_WIDTH}px)`
-const setNavTransition = ({ open }) => {
-	const { timing, duration } = toggleNavbarOpen
-	const delay = open ? 0 : TOGGLE_NAVBAR_OPEN_CLOSE_DELAY
-	return `transform ${duration}ms ${timing} ${delay}ms`
-}
-
-const Nav = styled.nav`
-	z-index: 200;
-	background-color: black;
-	overflow: hidden;
-	display: none;
-	justify-content: center;
-	align-items: center;
-	${breakpoint('desktop')`
-		display: flex;	
-	`}
-	position: fixed;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	width: 100vw;
-	transition: ${setNavTransition};
-	transform: translateX(${setNavTransform});
-	& .react-ripples {
-		cursor: pointer;
-		transition: background-color 250ms ease;
-		&:hover {
-			background-color: rgba(255, 255, 255, 0.15);
-		}
-		position: absolute !important;
-		top: 0;
-		right: 0;
-		height: 100%;
-		width: ${CLOSED_NAV_WIDTH}px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-`
 const NavList = styled.ul``
 
 const NavListItem = styled.li`
@@ -109,19 +103,55 @@ const NavItemText = styled.span`
 	opacity: ${setSelectedNavItemTextOpacity};
 	&:hover {
 		color: ${colors.font.red};
-		transition: color 500ms ease;
 	}
 	display: inline-block;
 	pointer-events: ${setSelectedNavItemPointerEvents};
 	transform: translateY(${setSelectedNavItemTextTransform});
-	transition: ${setSelectedNavItemTransition};
+	transition: ${setSelectedNavItemTransition}, color 500ms ease 0ms;
 `
 
-const setNavIconBarTransition = open => {
+const getRippleStyles = makeStyles({
+	child: {
+		opacity: 1,
+		backgroundColor: 'white'
+	}
+})
+const ButtonBaseWithModifiedRipples = ({ ...props }) => {
+	const rippleClasses = getRippleStyles()
+	return (
+		<ButtonBase
+			centerRipple={false}
+			{...props}
+			TouchRippleProps={{ classes: rippleClasses }}
+		/>
+	)
+}
+
+const NavIconRipplePanel = styled(ButtonBaseWithModifiedRipples)`
+	cursor: pointer;
+	transition: background-color 250ms ease;
+	&:hover {
+		background-color: rgba(255, 255, 255, 0.15);
+		& .bar {
+			/* background-color: black; */
+		}
+	}
+	position: absolute !important;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: ${CLOSED_NAV_WIDTH}px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	pointer-events: ${({ cancelPointers }) => (cancelPointers ? 'none' : 'all')};
+`
+
+const setNavIconBarTransition = ({ open }) => {
 	const { duration } = toggleNavbarOpen
-	const delay = open ? 0 : TOGGLE_NAVBAR_OPEN_CLOSE_DELAY
+	const delay = open ? duration : TOGGLE_NAVBAR_OPEN_CLOSE_DELAY + duration
 	return transitionProps(
-		[ 'width', 'bottom', 'top', 'transform', 'opacity' ],
+		[ 'width', 'bottom', 'top', 'transform', 'opacity', 'left' ],
 		`${duration}ms ease ${delay}ms`
 	)
 }
@@ -131,7 +161,6 @@ const setNavIconBarWidth = ({ open }) =>
 
 const NavIcon = styled.div`
 	position: relative;
-	right: ${({ open }) => (open ? -ICON_BAR_OPEN_OFFSET * 2 : 0)}px;
 	height: ${ICON_HEIGHT}px;
 	width: ${ICON_WIDTH}px;
 	display: flex;
@@ -148,6 +177,7 @@ const NavIcon = styled.div`
 			const offsetPx = open ? ICON_BAR_OPEN_OFFSET : 0
 			const middleOpacity = open ? 0 : 1
 			return `
+				left: ${open ? ICON_WIDTH / 5 : 0}px;
 				&:nth-child(1) {
 					transform: rotate(${rotateDeg}deg);
 					bottom: ${offsetPx}px;
@@ -167,60 +197,76 @@ const NavIcon = styled.div`
 `
 
 const DesktopNav = props => {
-	const { children, className } = props
+	const { className } = props
 	const [ open, setOpen ] = useState(false)
+	const [ moving, setMoving ] = useState(false)
 	const { push, location } = useHistory()
 
-	const handleToggle = useCallback(() => setOpen(prev => !prev), [])
+	const handleToggle = useCallback(() => {
+		setMoving(true)
+		setOpen(prev => !prev)
+		setTimeout(
+			() => setMoving(false),
+			toggleNavbarOpen.duration + TOGGLE_NAVBAR_OPEN_CLOSE_DELAY
+		)
+	}, [])
 
 	useEffect(() => {
 		window.addEventListener('resize', function() {
 			if (!open) return
-			this.innerWidth < theme.breakpoints.desktop && setOpen(false)
+			if (this.innerWidth < theme.breakpoints.desktop) setOpen(false)
 		})
 	}, [ open ])
 
+	const classes = useStyles({ open })
+
 	return (
-		<Nav
-			className={className}
+		<Drawer
+			anchor="left"
+			classes={{
+				root: clsx({
+					[classes.drawer]: true,
+					[classes.drawerOpen]: open,
+					[classes.drawerClosed]: !open
+				}),
+				paper: className
+			}}
 			open={open}
+			variant="persistent"
 		>
 			<NavList open={open}>
-				{routes.map((view, i) => {
-					const isSelectedNavItem = `/${view.path}` === location.pathname
-					const navigateToItemPath = () => {
-						setOpen(false)
-						setTimeout(
-							() => push(`/${view.path}${location.search}`),
-							NAVIGATE_DELAY
-						)
-					}
-					return (
-						<NavListItem key={view.title.en}>
-							<NavItemText
-								index={i}
-								open={open}
-								selected={isSelectedNavItem}
-								onClick={navigateToItemPath}
-							>
-								<Translateable {...view.title} />
-							</NavItemText>
-						</NavListItem>
-					)
-				})}
+				{routes.map((view, i) => (
+					<NavListItem key={view.title.en}>
+						<NavItemText
+							index={i}
+							open={open}
+							selected={`/${view.path}` === location.pathname}
+							onClick={e => {
+								e.stopPropagation()
+								setOpen(false)
+								setTimeout(
+									() => push(`/${view.path}${location.search}`),
+									NAVIGATE_DELAY
+								)
+							}}
+						>
+							<Translateable {...view.title} />
+						</NavItemText>
+					</NavListItem>
+				))}
+				<NavIconRipplePanel
+					cancelPointers={moving && !open}
+					centerRipple={false}
+					onClick={handleToggle}
+				>
+					<NavIcon open={open}>
+						<div className="bar" />
+						<div className="bar" />
+						<div className="bar" />
+					</NavIcon>
+				</NavIconRipplePanel>
 			</NavList>
-			<Ripples
-				className="ripples"
-				color="white"
-				onClickCapture={handleToggle}
-			>
-				<NavIcon open={open}>
-					<div className="bar" />
-					<div className="bar" />
-					<div className="bar" />
-				</NavIcon>
-			</Ripples>
-		</Nav>
+		</Drawer>
 	)
 }
 

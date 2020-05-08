@@ -86,7 +86,7 @@ const SectionTitle = props => {
 					if (letter === ' ') {
 						currentDelay = 0
 					} else {
-						accDelay += 100
+						accDelay += 50
 						currentDelay = accDelay
 					}
 				}
