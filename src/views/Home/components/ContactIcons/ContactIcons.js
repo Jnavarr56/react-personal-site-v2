@@ -8,22 +8,32 @@ import {
 	Tooltip as ToolTipImport,
 	withStyles
 } from '@material-ui/core'
-import {
-	useTrail,
-	useSprings,
-	useTransition,
-	animated,
-	config,
-	useChain
-} from 'react-spring'
+import { useTrail, useSprings, animated } from 'react-spring'
 import { FaAngellist, FaCodepen, FaGithub, FaLinkedin } from 'react-icons/fa'
+import theme from 'theme'
 
 // add links and navigating
 const icons = [
-	{ platform: 'Angellist', icon: <FaAngellist /> },
-	{ platform: 'Codepen', icon: <FaCodepen /> },
-	{ platform: 'Github', icon: <FaGithub /> },
-	{ platform: 'Linkedin', icon: <FaLinkedin /> }
+	{
+		platform: 'Angellist',
+		icon: <FaAngellist />,
+		link: 'https://angel.co/u/jorge-navarro'
+	},
+	{
+		platform: 'Codepen',
+		icon: <FaCodepen />,
+		link: 'https://codepen.io/jnavarr56'
+	},
+	{
+		platform: 'Github',
+		icon: <FaGithub />,
+		link: 'https://github.com/Jnavarr56'
+	},
+	{
+		platform: 'LinkedIn',
+		icon: <FaLinkedin />,
+		link: 'https://www.linkedin.com/in/jnavarr5'
+	}
 ]
 
 const Container = styled.div`
@@ -129,6 +139,8 @@ const SpringIcons = props => {
 			<IconButton
 				key={icons[index].platform + index}
 				style={iconProps}
+				onClick={() =>
+					setTimeout(() => window.open(icons[index].link, '_blank'), 250)}
 				onMouseEnter={() => setHoveringIndex(index)}
 				onMouseLeave={handleMouseLeave}
 			>
@@ -139,7 +151,7 @@ const SpringIcons = props => {
 }
 
 const TrailIcons = props => {
-	const { onEnd } = props
+	const { onEnd, delay } = props
 
 	const config = {
 		mass: 3,
@@ -149,15 +161,19 @@ const TrailIcons = props => {
 
 	const trails = useTrail(icons.length, {
 		from: {
+			color: 'black',
 			opacity: 0,
+			filter: 'blur(2.5px)',
 			transform: 'translateY(100%)'
 		},
 		to: {
 			color: 'black',
 			opacity: 1,
+			filter: 'blur(0px)',
 			transform: 'translateY(0%)'
 		},
 		config,
+		delay: delay,
 		onRest: onEnd
 	})
 
@@ -175,9 +191,13 @@ const TrailIcons = props => {
 const HomeIcons = () => {
 	const [ inView, setInView ] = useState(false)
 	const [ fadedIn, setFadedIn ] = useState(false)
+	const [ delay, setDelay ] = useState(500)
 
 	const handleEndTrailIn = useCallback(() => {
-		setTimeout(() => setFadedIn(true), 750)
+		setTimeout(() => {
+			setFadedIn(true)
+			setDelay(0)
+		}, 750)
 	}, [])
 
 	return (
@@ -185,7 +205,10 @@ const HomeIcons = () => {
 			{fadedIn ? (
 				<SpringIcons />
 			) : (
-				inView && <TrailIcons onEnd={handleEndTrailIn} />
+				inView && <TrailIcons
+					delay={delay}
+					onEnd={handleEndTrailIn}
+				          />
 			)}
 			<Waypoint
 				fireOnRapidScroll={false}
