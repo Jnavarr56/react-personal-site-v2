@@ -1,28 +1,48 @@
 import React, { useState, useCallback, useContext } from 'react'
 import styled from 'styled-components'
-import context from './context'
-import englishIconSrc from './images/eng-icon.png'
-import espanolIconSrc from './images/esp-icon.png'
+import langContext from './context'
 import breakpoint from 'styled-components-breakpoint'
-import { Button } from '@material-ui/core'
+import { Button as ButtonBaseImport } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core'
-import theme from 'theme'
+import animContext from '../../initialAnimContext'
+import { animated, useSpring } from 'react-spring'
 
-const TRANSLATEABLE_FADE_DURATION = theme.timing.translateable.fadeDuration
 const SELECTOR_WIDTH = '5rem'
 const SELECTOR_HEIGHT = '2.5rem'
 const BUTTON_DIMENSION = '2rem'
 const SELECTOR_BORDER_RADIUS = '2rem'
 
-const getRippleStyles = makeStyles({
+const SelectorContainer = styled(animated.div)`
+	z-index: 10000;
+	position: fixed !important;
+	top: 4px;
+	right: 26px;
+	${breakpoint('tablet')`
+		top: 24px;
+		right: 48px;
+	`}
+	border-radius: ${SELECTOR_BORDER_RADIUS};
+	padding: 12px !important;
+`
+
+const ButtonBaseContainer = styled.div`
+	z-index: ${10000 - 4};
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	border-radius: ${SELECTOR_BORDER_RADIUS};
+	overflow: hidden;
+`
+
+const getRippleClasses = makeStyles({
 	rippleVisible: {
 		opacity: 1
 	},
 	child: {
 		opacity: 1,
-		backgroundColor: props => {
-			return props.rippleColor || 'white'
-		}
+		backgroundColor: ({ rippleColor }) => rippleColor
 	},
 	'@keyframes enter': {
 		'0%': {
@@ -36,116 +56,187 @@ const getRippleStyles = makeStyles({
 	}
 })
 
-const ButtonWithModifiedRipples = ({ rippleColor, ...rest }) => {
-	const rippleClasses = getRippleStyles({ rippleColor })
+const getButtonBaseClasses = makeStyles({
+	root: {
+		zIndex: `${10000 - 4}`,
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		height: '100%',
+		width: '100%'
+	}
+})
+
+const ButtonBase = ({ rippleColor, ...rest }) => {
+	const rippleClasses = getRippleClasses({ rippleColor })
+	const buttonClasses = getButtonBaseClasses()
 	return (
-		<Button
+		<ButtonBaseImport
 			{...rest}
+			classes={buttonClasses}
 			TouchRippleProps={{ classes: rippleClasses }}
 		/>
-)
+	)
 }
 
-const SelectorContainer = styled(ButtonWithModifiedRipples)`
-	z-index: 10000;
-	position: fixed !important;
-	top: 4px;
-	right: 26px;
-	${breakpoint('tablet')`
-		top: 24px;
-		right: 48px;
-	`}
-	border-radius: ${SELECTOR_BORDER_RADIUS} !important;
-	padding: 12px !important;
-`
-
-const setSelectorBoxShadow = ({ toggling, direction }) => {
-	if (toggling) {
-		return 'none'
-	} else {
-		const shadowDirection = direction === 'up' ? '' : '-'
-		return `0 ${shadowDirection}20px 20px rgba(0, 0, 0, .20)`
-	}
-}
-
-const setSelectorTransformRotate = ({ direction }) =>
-	direction === 'up' ? 0 : 180
-
-const Selector = styled.div`
+const Selector = styled(animated.div)`
+	position: relative;
 	background-color: black;
 	border-radius: ${SELECTOR_BORDER_RADIUS};
-	box-shadow: ${setSelectorBoxShadow};
-	transform: rotate(${setSelectorTransformRotate}deg);
-	transition: transform ${TRANSLATEABLE_FADE_DURATION}ms ease;
+
 	height: ${SELECTOR_HEIGHT};
 	width: ${SELECTOR_WIDTH};
 	border: white solid 1px;
 `
 
-const setToggleButtonBackgroundImage = ({ lang }) => {
-	if (lang === 'en') return englishIconSrc
-	if (lang === 'es') return espanolIconSrc
-}
-
-const setToggleButtonRotate = ({ direction }) =>
-	direction === 'up' ? '0' : '-360'
-const setToggleButtonTransformOrigin = ({ direction }) => {
-	const volatility = 60
-	const yOrigin = 60
-	const xOrigin = direction === 'up' ? 100 + volatility : 0 - volatility
-	return `${yOrigin}% ${xOrigin}%`
-}
-
-const ToggleButton = styled.div`
+const ToggleButton = styled(animated.div)`
 	height: ${BUTTON_DIMENSION};
 	width: ${BUTTON_DIMENSION};
 	position: absolute;
 	top: 50%;
 	left: calc((${SELECTOR_HEIGHT} - ${BUTTON_DIMENSION}) / 4);
-	background: transparent url("${setToggleButtonBackgroundImage}") no-repeat;
-	background-size: cover;
-	transition: transform ${TRANSLATEABLE_FADE_DURATION}ms ease-in-out;
-	transform: translateY(-50%) rotate(${setToggleButtonRotate}deg);
-	transform-origin: ${setToggleButtonTransformOrigin};
+	background-size: cover !important;
 	border-radius: 100%;
 `
 
-const LanguageSelector = props => {
-	const { className } = props
-	const { lang, handleChangeLang } = useContext(context)
-	const [ toggling, setToggling ] = useState(false)
-	const [ direction, setDirection ] = useState(lang === 'en' ? 'up' : 'down')
+const LANGS = {
+	en: {
+		color: 'blue',
+		direction: 'up',
+		deg: 0
+	},
+	es: {
+		color: 'red',
+		direction: 'down',
+		deg: 180
+	}
+}
+
+const getNewLangData = currLang => {
+	const newLangKey = Object.keys(LANGS).find(l => currLang !== l)
+	return { ...LANGS[newLangKey], newLang: newLangKey }
+}
+const formatAssetUrl = lang => `url("/flags-images/${lang}-icon.png") no-repeat`
+const getDegFromDir = direction => (direction === 'up' ? 0 : 360)
+
+const LanguageSelector = () => {
+	const FadeInDelay = useContext(animContext)
+	const { lang, handleChangeLang } = useContext(langContext)
+
+	const [ changed, setChanged ] = useState(false)
+	const [ hover, setHover ] = useState(false)
+	const [ direction, setDirection ] = useState(LANGS[lang].direction)
 
 	const handleToggle = useCallback(() => {
-		if (!toggling) {
-			setToggling(true)
+		setChanged(true)
+		const { newLang, direction } = getNewLangData(lang)
+		handleChangeLang(newLang)
+		setDirection(direction)
+	}, [ handleChangeLang, lang ])
 
-			const newLang = lang === 'en' ? 'es' : 'en'
-			const newDirection = direction === 'down' ? 'up' : 'down'
+	const handleHoverIn = useCallback(() => setHover(true), [])
+	const handleHoverOut = useCallback(() => setHover(false), [])
 
-			handleChangeLang(newLang)
-			setDirection(newDirection)
+	const FadeInOpacitySpring1 = useSpring({
+		from: {
+			opacity: 0
+			// filter: 'blur(10px)'
+		},
+		to: {
+			opacity: 1
+			// filter: 'blur(0px)'
+		},
+		delay: FadeInDelay * 1.5
+	})
 
-			setTimeout(() => setToggling(false), TRANSLATEABLE_FADE_DURATION)
+	const FadeInTransformSpring1 = useSpring({
+		from: {
+			transform: 'translateY(100%)'
+		},
+		to: {
+			transform: 'translateY(0%)'
+		},
+		config: {
+			mass: 6,
+			tension: 400,
+			friction: 10
+		},
+		delay: FadeInDelay * 1.5
+	})
+
+	const SelectorInteractSpring = useSpring({
+		to: {
+			transform: `rotate(${LANGS[lang].deg}deg) scale(${hover ? 1.2 : 1})`
+		},
+		config: {
+			mass: 8,
+			tension: 450,
+			friction: 35
 		}
-	}, [ toggling, lang, direction, handleChangeLang ])
+	})
+
+	const OpacitySpring2 = useSpring({
+		from: {
+			opacity: 0
+			// filter: 'blur(10px)'
+		},
+		to: {
+			opacity: 1
+			// filter: 'blur(0px)'
+		},
+		delay: FadeInDelay * 1.75
+	})
+
+	let toggleButtonProps
+
+	if (changed) {
+		toggleButtonProps = {
+			to: {
+				transform: `rotate(${getDegFromDir(direction)}deg) translateY(-50%)`,
+				background: formatAssetUrl(lang)
+			},
+			config: {
+				mass: 15,
+				tension: 300,
+				friction: 40
+			}
+		}
+	} else {
+		toggleButtonProps = {
+			from: {
+				transform: `rotate(${getDegFromDir(direction)}deg) translateY(-150%)`,
+				background: formatAssetUrl(lang)
+			},
+			to: {
+				transform: `rotate(${getDegFromDir(direction)}deg) translateY(-50%)`,
+				background: formatAssetUrl(lang)
+			},
+			config: {
+				mass: 4,
+				tension: 500,
+				friction: 6
+			},
+			delay: FadeInDelay * 1.75
+		}
+	}
+
+	const ToggleButtonSpringProps = useSpring(toggleButtonProps)
 
 	return (
 		<SelectorContainer
-			center=""
-			centerRipple={false}
-			className={className}
-			rippleColor={lang === 'en' ? 'blue' : 'red'}
+			style={{ ...FadeInTransformSpring1, ...FadeInOpacitySpring1 }}
 			onClick={handleToggle}
+			onMouseEnter={handleHoverIn}
+			onMouseLeave={handleHoverOut}
 		>
-			<Selector
-				direction={direction}
-				toggling={toggling}
-			>
+			<ButtonBaseContainer>
+				<ButtonBase rippleColor={LANGS[lang].color}>
+					<div />
+				</ButtonBase>
+			</ButtonBaseContainer>
+			<Selector style={SelectorInteractSpring}>
 				<ToggleButton
-					direction={direction}
-					lang={lang}
-					toggling={toggling}
+					style={{ ...OpacitySpring2, ...ToggleButtonSpringProps }}
 				/>
 			</Selector>
 		</SelectorContainer>

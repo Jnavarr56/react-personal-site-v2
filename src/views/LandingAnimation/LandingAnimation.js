@@ -1,11 +1,14 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import PieChart from 'react-minimal-pie-chart'
-import PropTypes from 'prop-types'
-import CONFIG from './ParticleConfig.json'
+import ParticleConfig from './ParticleConfig.json'
+import { CircularProgress } from '@material-ui/core'
 import { useSpring, animated, config } from 'react-spring'
+import PropTypes from 'prop-types'
+import ParticleField from 'react-particles-webgl'
+import { useCountUp } from 'use-count-up'
+import TextTransition, { presets } from 'react-text-transition'
 
-const Container = styled.div`
+const Container = styled(animated.div)`
 	height: 100%;
 	width: 100%;
 	display: flex;
@@ -15,17 +18,11 @@ const Container = styled.div`
 	top: 0;
 	left: 0;
 	z-index: 1000;
-	transition: ${({ fadeOutDuration, fadeOutDelay }) => {
-		return `
-				opacity ${fadeOutDuration}ms ${'ease'} ${fadeOutDelay}ms,
-				filter ${fadeOutDuration}ms ${'ease'} ${fadeOutDelay}ms
-			`
-	}};
-	opacity: ${({ pct }) => (pct < 100 ? 1 : 0)};
-	filter: blur(${({ pct }) => (pct < 100 ? 0 : 10)}px);
+	& .MuiCircularProgress-colorPrimary {
+		z-index: 998;
+		color: rgba(0, 0, 0, 0.75) !important;
+	}
 `
-
-const AnimatedContainer = animated(Container)
 
 const ParticleDiv = styled.div`
 	height: 100%;
@@ -45,87 +42,144 @@ const PercentCountStyled = styled.p`
 	font-size: 72px;
 	font-weight: 100;
 	z-index: 999;
+	background-color: rgba(255, 255, 255, 0.4);
 `
-const PercentCount = animated(PercentCountStyled)
 
 const setSpeed = speed => (window.pJSDom[0].pJS.particles.move.speed = speed)
 const getSpeed = () => window.pJSDom[0].pJS.particles.move.speed
 
+const testConfig = {
+	// Display reference cube, useful for orienting the field
+	showCube: true,
+	// '2D' or '3D' particle field
+	dimension: '3D',
+	// 'bounce' or 'passthru'
+	// 'bounce' will make particles behave like balls thrown at a wall when hitting canvas boundaries
+	// 'passthru' particles will disappear after hitting canvas boundaries and be added back into the scene elsewhere
+	boundaryType: 'bounce',
+	// Maximum velocity of particles
+	velocity: 2,
+	// Toggles antialiasing -- must be set during construction, cannot be changed after initial render
+	// Slight performance optimization to set false, although lines will appear more jagged
+	antialias: false,
+	// Min/Max multipliers which constraint how particles move in each direction
+	// The default values here allow for particles to move in completely random x, y, z directions
+	// See the "Snowfall" preset for an example of how to use these values
+	direction: {
+		xMin: -1,
+		xMax: 1,
+		yMin: -1,
+		yMax: 1,
+		zMin: -1,
+		zMax: 1
+	},
+	lines: {
+		// 'rainbow' or 'solid' color of lines
+		colorMode: 'solid',
+		// Color of lines if colorMode: 'solid', must be hex color
+		color: '#351CCB',
+		// Transparency of lines
+		transparency: 0.9,
+		// true/false limit the maximum number of line connections per particle
+		limitConnections: true,
+		maxConnections: 20,
+		// Minimum distance needed to draw line between to particles
+		minDistance: 150,
+		// true/false render lines
+		visible: true
+	},
+	particles: {
+		// 'rainbow' or 'solid' color of particles
+		colorMode: 'solid',
+		// Color of lines if colorMode: 'solid', must be hex color
+		color: '#FF0000',
+		// Transparency of particles
+		transparency: 0.9,
+		// 'square' or 'circle' shape of particles
+		shape: 'square',
+		// The exact number of particles to render
+		count: 10,
+		// The minimum particle size
+		minSize: 10,
+		// The maximum particle size
+		maxSize: 75,
+		// true/false render particles
+		visible: true
+	},
+	/*
+	 * The camera rig is comprised of Three.js OrbitControls
+	 * Pass any valid OrbitControls properties, consult docs for more info
+	 *
+	 * https://threejs.org/docs/#examples/controls/OrbitControls
+	 */
+	cameraControls: {
+		// Enable or disable all camera interaction (click, drag, touch etc)
+		enabled: true,
+		// Enable or disable smooth dampening of camera movement
+		enableDamping: true,
+		dampingFactor: 0.2,
+		// Enable or disable zooming in/out of camera
+		enableZoom: true,
+		// Enable or disable constant rotation of camera around scene
+		autoRotate: true,
+		// Rotation speed -- higher is faster
+		autoRotateSpeed: 0.5,
+		// If true, camera position will be reset whenever any option changes (including this one)
+		// Useful when turning off autoRotate, the camera will return to FOV where scene fits to canvas
+		resetCameraFlag: false
+	}
+}
+
+const Wrapper = () => <ParticleField config={testConfig} />
+
+function easeInOutExpo(t, b, c, d) {
+	t /= d / 2
+	if (t < 1) return (c / 2) * Math.pow(2, 10 * (t - 1)) + b
+	t--
+	return (c / 2) * (-Math.pow(2, -10 * t) + 2) + b
+}
+
 const LandingAnimation = props => {
-	const { onAnimationEnd, duration, fadeOutDelay, fadeOutDuration } = props
-
-	const [ pct, setPct ] = useState(0)
-
+	const { onLoadingEnd, style } = props
 	useEffect(() => {
-		window.particlesJS('loading-particles', CONFIG)
+		window.particlesJS('loading-particles', ParticleConfig)
+		return () => {
+			window.pJSDom[0].pJS.fn.vendors.destroypJS()
+		}
 	}, [])
 
+	const value = useCountUp(true, {
+		start: 0,
+		end: 100,
+		duration: 10,
+		easing: easeInOutExpo
+	})
+
 	useEffect(() => {
-		if (pct === 0) return
-		if (pct < 100) {
-			if (pct < 50) setSpeed(pct * 2)
-			else setSpeed(getSpeed() - getSpeed() / (100 - pct))
-		} else {
-			onAnimationEnd()
-		}
-	}, [ onAnimationEnd, pct ])
-
-	const loadingIndicatorData = useMemo(
-		() => [ { value: 1, key: 1, color: 'red' } ],
-		[]
-	)
-
-	const pctProps = useSpring({
-		number: 100,
-		from: { number: 0 },
-		config: {
-			duration
-		},
-		onFrame: ({ number }) => setPct(Math.floor(number))
-	})
-
-	const containerProps = useSpring({
-		opacity: pct === 100 ? 0 : 1,
-		filter: `blur(${pct === 100 ? 10 : 0}px)`,
-		delay: fadeOutDelay
-	})
+		setSpeed(value < 50 ? value * 1.5 : (100 - value) * 1.5)
+		if (value === 100) onLoadingEnd()
+	}, [ onLoadingEnd, value ])
 
 	return (
-		<AnimatedContainer
-			pct={pct}
-			style={containerProps}
-		>
+		<Container style={style}>
 			<ParticleDiv id="loading-particles" />
-			<PieChart
-				animate
-				animationEasing="ease"
-				background="white"
-				data={loadingIndicatorData}
-				lineWidth={3}
-				reveal={pct}
+			<CircularProgress
+				size={300}
+				thickness={1}
+				value={value}
+				variant="determinate"
 			/>
-			<PercentCount>
-				<animated.span>
-					{pctProps.number.interpolate(number => Math.floor(number))}
-				</animated.span>
-				%
-			</PercentCount>
-		</AnimatedContainer>
+			<PercentCountStyled>{value}%</PercentCountStyled>
+		</Container>
 	)
 }
 
 LandingAnimation.propTypes = {
-	fadeOutDelay: PropTypes.number,
-	fadeOutDuration: PropTypes.number,
-	interval: PropTypes.number,
-	onAnimationEnd: PropTypes.func
+	onLoadingEnd: PropTypes.func
 }
 
 LandingAnimation.defaultProps = {
-	fadeOutDelay: 1000,
-	fadeOutDuration: 1000,
-	interval: 1000,
-	onAnimationEnd: () => null
+	onLoadingEnd: () => null
 }
 
 export default LandingAnimation

@@ -1,16 +1,23 @@
-import React, { useState, useCallback, useContext, useEffect } from 'react'
+import React, {
+	useState,
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo
+} from 'react'
 import { Waypoint } from 'react-waypoint'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import context from './context'
 import PropTypes from 'prop-types'
 import theme from 'theme'
+import { useTrail, useSpring, animated, config } from 'react-spring'
 
 const { fadeTiming, fadeDuration } = theme.timing.translateable
 
 const TitleContainer = styled.div`
 	z-index: 1000;
-	overflow: hidden;
+	/* overflow: hidden; */
 	position: absolute;
 	top: 0;
 	padding-top: 16px;
@@ -31,7 +38,7 @@ const Title = styled.h3`
 	font-size: 18px;
 	line-height: 1.15;
 	opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
-	filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
+	/* filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px); */
 	transition: opacity ${fadeDuration}ms ${fadeTiming} 0ms, filter ${fadeDuration}ms ${fadeTiming} 0ms;
 	${breakpoint('phone')`
 		font-size: 24px;
@@ -42,16 +49,19 @@ const Title = styled.h3`
 	${breakpoint('desktop')`
 		font-size: 42px;
 	`}	
+	& > p {
+		display: inline-block;
+	}
 `
 
-const Letter = styled.span`
-	display: block;
-	transition: transform 500ms cubic-bezier(0.645, 0.045, 0.355, 1)
-		${({ delay }) => delay}ms;
-	transform: translateY(
-		${({ inView }) => (inView ? '0' : 'calc(-105% - 16px)')}
-	);
-`
+// const Letter = styled.span`
+// 	display: block;
+// 	transition: transform 500ms cubic-bezier(0.645, 0.045, 0.355, 1)
+// 		${({ delay }) => delay}ms;
+// 	transform: translateY(
+// 		${({ inView }) => (inView ? '0' : 'calc(-105% - 16px)')}
+// 	);
+// `
 
 const SectionTitle = props => {
 	const { title, fontColor } = props
@@ -70,41 +80,45 @@ const SectionTitle = props => {
 		}, fadeDuration)
 	}, [ lang, title ])
 
-	const renderLetters = () => {
-		let accDelay = 0
-		let lastLetter = null
-		return text.split('').map((letter, i) => {
-			let currentDelay
+	const opacityTrail = useTrail(text.length, {
+		from: {
+			opacity: 0
+		},
+		to: {
+			opacity: inView ? 1 : 0
+		},
+		config: {
+			...config.wobbly,
+			clamp: true
+		}
+	})
 
-			if (!inView) {
-				currentDelay = 0
-			} else {
-				if (i === 0) {
-					currentDelay = 0
-					accDelay = 0
-				} else {
-					if (letter === ' ') {
-						currentDelay = 0
-					} else {
-						accDelay += 50
-						currentDelay = accDelay
-					}
-				}
+	const VertTrail = useTrail(text.length, {
+		from: {
+			transform: `translateY(-100%)`
+		},
+		to: {
+			transform: `translateY(${inView ? 0 : -100}%)`
+		},
+		config: {
+			mass: 1,
+			tension: 400,
+			friction: 27
+		}
+	})
 
-				lastLetter = letter
-			}
-
-			return (
-				<Letter
-					delay={currentDelay}
-					inView={inView}
-					key={`${title}-${i}`}
+	const letters = useMemo(
+		() =>
+			text.split('').map((l, i) => (
+				<animated.p
+					key={text + '-' + l + i}
+					style={{ ...opacityTrail[i], ...VertTrail[i] }}
 				>
-					{letter === ' ' ? <div>&nbsp;</div> : letter}
-				</Letter>
-			)
-		})
-	}
+					{l === ' ' ? <span>&nbsp;</span> : l}
+				</animated.p>
+			)),
+		[ VertTrail, opacityTrail, text ]
+	)
 
 	return (
 		<TitleContainer>
@@ -112,17 +126,21 @@ const SectionTitle = props => {
 				fadeIn={fadeIn}
 				fontColor={fontColor}
 			>
-				{renderLetters()}
+				{letters}
+				{/* {text.split('').map((l, i) => (
+					<animated.p
+						key={text + '-' + l + i}
+						style={{ ...opacityTrail[i], ...VertTrail[i] }}
+					>
+						{l === ' ' ? <span>&nbsp;</span> : l}
+					</animated.p>
+				))} */}
 			</Title>
 			<Waypoint
 				fireOnRapidScroll={false}
 				scrollableAncestor={window}
-				onEnter={() => {
-					setInView(true)
-				}}
-				onLeave={() => {
-					setInView(false)
-				}}
+				onEnter={() => setInView(true)}
+				onLeave={() => setInView(false)}
 			/>
 		</TitleContainer>
 	)

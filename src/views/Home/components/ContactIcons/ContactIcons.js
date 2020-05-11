@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
-import { Waypoint } from 'react-waypoint'
 import {
-	IconButton as MuiIconButton,
+	IconButton as IconButtonImport,
 	useTheme,
 	Tooltip as ToolTipImport,
 	withStyles
 } from '@material-ui/core'
 import { useTrail, useSprings, animated } from 'react-spring'
 import { FaAngellist, FaCodepen, FaGithub, FaLinkedin } from 'react-icons/fa'
-import theme from 'theme'
 
-// add links and navigating
 const icons = [
 	{
 		platform: 'Angellist',
@@ -37,18 +34,25 @@ const icons = [
 ]
 
 const Container = styled.div`
-	display: flex;
+	display: none;
 	position: absolute;
 	top: -32px;
 	left: 40px;
+	${breakpoint('tablet')`
+		display: flex;
+	`}
 `
 
-const IconButton = styled(animated(MuiIconButton))`
+const IconButton = styled(animated(IconButtonImport))`
 	&:not(:last-child) {
 		margin: 0 10px 0 0 !important;
 	}
 	& .MuiIconButton-label {
-		font-size: 48px;
+		font-size: 64px;
+	}
+	color: black !important;
+	&:hover {
+		color: red !important;
 	}
 `
 
@@ -78,46 +82,29 @@ const calcTooltipPlacement = index => {
 	return placement
 }
 
-const SpringIcons = props => {
+const SpringIcons = () => {
 	const [ hoveringIndex, setHoveringIndex ] = useState(null)
 	const handleMouseLeave = useCallback(() => setHoveringIndex(null), [])
-
-	const muiTheme = useTheme()
 
 	const springs = useSprings(
 		icons.length,
 		icons.map((icon, springIndex) => {
-			let transform,
-				boxShadow = muiTheme.shadows[0],
-				color = 'black'
-
+			let transform
 			if (hoveringIndex === null) {
 				transform = formatSpringVals()
-				boxShadow = muiTheme.shadows[0]
 			} else if (springIndex === hoveringIndex) {
 				transform = formatSpringVals(0, 1 + GROW_FACTOR)
-				boxShadow = muiTheme.shadows[icons.length]
-				color = 'red'
 			} else {
 				const diff = Math.abs(springIndex - hoveringIndex)
 				const adjFactor = adjustedGrowFactor(diff)
-
 				if (springIndex < hoveringIndex) {
 					transform = formatSpringVals(-100 * adjFactor, 1)
 				} else if (springIndex > hoveringIndex) {
 					transform = formatSpringVals(100 * adjFactor, 1)
 				}
-
-				boxShadow = muiTheme.shadows[Math.max(icons.length - diff, 0)]
 			}
-
-			const to = { transform, color }
-
 			return {
-				to: {
-					transform,
-					color
-				},
+				to: { transform },
 				config: {
 					mass: 2,
 					tension: 500,
@@ -127,98 +114,89 @@ const SpringIcons = props => {
 		})
 	)
 
-	return springs.map((iconProps, index) => (
-		<Tooltip
-			enterDelay={1000}
-			enterNextDelay={500}
-			key={icons[index].platform}
-			leaveDelay={0}
-			placement={calcTooltipPlacement(index)}
-			title={icons[index].platform}
-		>
-			<IconButton
-				key={icons[index].platform + index}
-				style={iconProps}
-				onClick={() =>
-					setTimeout(() => window.open(icons[index].link, '_blank'), 250)}
-				onMouseEnter={() => setHoveringIndex(index)}
-				onMouseLeave={handleMouseLeave}
+	return springs.map((springProps, index) => {
+		const { platform, link, icon } = icons[index]
+		const placement = calcTooltipPlacement(index)
+		const onClick = () => setTimeout(() => window.open(link, '_blank'), 250)
+		const onMouseEnter = () => setHoveringIndex(index)
+
+		return (
+			<Tooltip
+				enterDelay={1000}
+				enterNextDelay={500}
+				key={platform}
+				leaveDelay={0}
+				placement={placement}
+				title={platform}
 			>
-				{icons[index].icon}
-			</IconButton>
-		</Tooltip>
-	))
+				<IconButton
+					key={platform + index}
+					style={springProps}
+					onClick={onClick}
+					onMouseEnter={onMouseEnter}
+					onMouseLeave={handleMouseLeave}
+				>
+					{icon}
+				</IconButton>
+			</Tooltip>
+		)
+	})
 }
 
-const TrailIcons = props => {
-	const { onEnd, delay } = props
-
-	const config = {
-		mass: 3,
-		tension: 400,
-		friction: 30
-	}
-
-	const trails = useTrail(icons.length, {
+const TrailIcons = () => {
+	const OpacityTrails = useTrail(icons.length, {
 		from: {
-			color: 'black',
-			opacity: 0,
-			filter: 'blur(2.5px)',
+			opacity: 0
+		},
+		to: {
+			opacity: 1
+		}
+	})
+
+	const TransformTrails = useTrail(icons.length, {
+		from: {
 			transform: 'translateY(100%)'
 		},
 		to: {
-			color: 'black',
-			opacity: 1,
-			filter: 'blur(0px)',
-			transform: 'translateY(0%)'
+			transform: `translateY(0%)`
 		},
-		config,
-		delay: delay,
-		onRest: onEnd
+		config: {
+			mass: 4,
+			tension: 410,
+			friction: 30
+		}
 	})
 
-	return trails.map((iconProps, index) => (
+	return icons.map((icon, index) => (
 		<IconButton
 			disabled
-			key={icons[index].platform + index}
-			style={iconProps}
+			key={icon.platform + index}
+			style={{ ...TransformTrails[index], ...OpacityTrails[index] }}
 		>
-			{icons[index].icon}
+			{icon.icon}
 		</IconButton>
 	))
 }
 
-const HomeIcons = () => {
-	const [ inView, setInView ] = useState(false)
+const HomeIcons = ({ inView }) => {
 	const [ fadedIn, setFadedIn ] = useState(false)
-	const [ delay, setDelay ] = useState(500)
 
-	const handleEndTrailIn = useCallback(() => {
-		setTimeout(() => {
-			setFadedIn(true)
-			setDelay(0)
-		}, 750)
-	}, [])
+	useEffect(() => {
+		let timer
+		if (inView) {
+			let timer = setTimeout(() => {
+				setFadedIn(true)
+			}, 3000)
+		} else {
+			setFadedIn(false)
+		}
+
+		return () => clearTimeout(timer)
+	}, [ inView ])
 
 	return (
 		<Container>
-			{fadedIn ? (
-				<SpringIcons />
-			) : (
-				inView && <TrailIcons
-					delay={delay}
-					onEnd={handleEndTrailIn}
-				          />
-			)}
-			<Waypoint
-				fireOnRapidScroll={false}
-				scrollableAncestor={window}
-				onEnter={() => setInView(true)}
-				onLeave={() => {
-					setInView(false)
-					setFadedIn(false)
-				}}
-			/>
+			{inView && (fadedIn ? <SpringIcons /> : <TrailIcons />)}
 		</Container>
 	)
 }

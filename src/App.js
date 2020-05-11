@@ -4,7 +4,7 @@ import { useCookies } from 'react-cookie'
 import qs from 'querystring'
 import { Redirect } from 'react-router-dom'
 import { ViewsContainer } from 'layouts'
-import { LandingAnimation } from 'views'
+import { LandingAnimation as LoadingAnimation } from 'views'
 import { DesktopNav, MobileNav } from 'components'
 import {
 	TranslateableContext,
@@ -15,37 +15,32 @@ import routes from 'routes'
 import PropTypes from 'prop-types'
 import {
 	ThemeProvider as MuiThemeProvider,
-	createMuiTheme
+	createMuiTheme,
+	responsiveFontSizes
 } from '@material-ui/core/styles'
-
-const {
-	timing: {
-		loadingAnimation: { fadeOutTiming, fadeOutDelay, fadeOutDuration }
-	}
-} = theme
+import { useSpring, animated } from 'react-spring'
+import InitialAnimContext from './initialAnimContext'
 
 const VISTED_COOKIE_AGE_MINS = 60 * 30
 const LANGUAGES = [ 'en', 'es' ]
 const DEFAULT_REDIRECT = <Redirect to={`/${routes[0].path}?lang=en`} />
+const SWITCH_DELAY = 1000
 
 const Main = styled.main`
 	height: 100vh;
 	width: 100vw;
 	overflow: hidden;
 	position: relative;
-	& .loading-animation-fade-in {
-		opacity: 0;
-		filter: blur(10px);
-		animation: FadeIn ${fadeOutDuration}ms ${fadeOutTiming} ${fadeOutDuration}ms
-			1 forwards;
-	}
-	@keyframes FadeIn {
-		100% {
-			opacity: 1;
-			filter: blur(0px);
-		}
-	}
 `
+
+const Div = styled(animated.main)`
+	height: 100vh;
+	width: 100vw;
+	overflow: hidden;
+	position: relative;
+`
+
+const muiTheme = createMuiTheme({})
 
 const App = props => {
 	const { location, match } = props
@@ -53,24 +48,51 @@ const App = props => {
 	const { search: query } = location
 	const { view: providedPath } = match.params
 
-	const [ showViews, setShowViews ] = useState(false)
-	const [ animationEnded, setAnimationEnded ] = useState(false)
-	const handleAnimationEnd = useCallback(() => {
-		setShowViews(true)
-		setTimeout(() => setAnimationEnded(true), fadeOutDelay + fadeOutDuration)
-	}, [])
-
+	const [ renderViews, setRenderViews ] = useState(false)
+	const [ renderLoading, setRenderLoading ] = useState(false)
 	const [ cookies, setCookie ] = useCookies([])
+
+	const handleLoadingEnd = useCallback(() => setRenderViews(true), [])
+
+	const [
+		FadeInViewsSpring,
+		SetFadeInViewsSpring,
+		StopFadeInViewsSpring
+	] = useSpring(() => ({ opacity: 0 }))
+
+	const [
+		FadeOutLoadingSpring,
+		SetFadeOutLoadingSpring,
+		StopFadeOutLoadingSpring
+	] = useSpring(() => ({ opacity: 1 }))
+
 	useEffect(() => {
 		if (!cookies.visited) {
 			setCookie('visited', Date.now(), {
 				path: '/',
 				maxAge: VISTED_COOKIE_AGE_MINS
 			})
+			setRenderLoading(true)
+		} else {
+			setRenderViews(true)
 		}
+		/* eslint-disable-next-line */
+	}, [setCookie])
 
-		/*eslint-disable-next-line */
-	}, [])
+	useEffect(() => {
+		if (renderViews) {
+			SetFadeInViewsSpring({
+				opacity: 1
+				// delay: SWITCH_DELAY
+			})
+
+			SetFadeOutLoadingSpring({
+				opacity: 0,
+				// delay: SWITCH_DELAY,
+				onRest: () => setRenderLoading(false)
+			})
+		}
+	}, [ SetFadeInViewsSpring, SetFadeOutLoadingSpring, renderViews ])
 
 	const isInViews =
 		providedPath && routes.find(({ path }) => path === providedPath)
@@ -81,35 +103,30 @@ const App = props => {
 	else if (!LANGUAGES.includes(lang))
 		return <Redirect to={`/${providedPath}?lang=en`} />
 
-	const shouldRenderAnimation = !cookies.visited && !animationEnded
-	const shouldRenderViews = cookies.visited || showViews
-
 	return (
 		<Main>
-			{shouldRenderAnimation && (
-				<LandingAnimation
-					duration={8000}
-					fadeOutDelay={fadeOutDelay}
-					fadeOutDuration={fadeOutDuration}
-					onAnimationEnd={handleAnimationEnd}
-				/>
-			)}
-			{shouldRenderViews && (
-				<MuiThemeProvider theme={createMuiTheme({})}>
-					<ThemeProvider theme={theme}>
-						<TranslateableContext lang={lang}>
-							<LanguageSelector className="loading-animation-fade-in" />
-							<DesktopNav className="loading-animation-fade-in" />
-							<MobileNav className="loading-animation-fade-in">
-								{routes}
-							</MobileNav>
-							<ViewsContainer className="loading-animation-fade-in">
-								{routes}
-							</ViewsContainer>
-						</TranslateableContext>
-					</ThemeProvider>
-				</MuiThemeProvider>
-			)}
+			<MuiThemeProvider theme={muiTheme}>
+				<ThemeProvider theme={theme}>
+					<TranslateableContext lang={lang}>
+						{renderLoading && (
+							<LoadingAnimation
+								style={FadeOutLoadingSpring}
+								onLoadingEnd={handleLoadingEnd}
+							/>
+						)}
+						{renderViews && (
+							<Div style={FadeInViewsSpring}>
+								<InitialAnimContext.Provider value={0}>
+									<LanguageSelector />
+									<DesktopNav />
+									<MobileNav>{routes}</MobileNav>
+									<ViewsContainer>{routes}</ViewsContainer>
+								</InitialAnimContext.Provider>
+							</Div>
+						)}
+					</TranslateableContext>
+				</ThemeProvider>
+			</MuiThemeProvider>
 		</Main>
 	)
 }

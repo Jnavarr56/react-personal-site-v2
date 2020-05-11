@@ -1,12 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Waypoint } from 'react-waypoint'
 import { SkillCard } from './components'
-import { Tabs, Tab } from '@material-ui/core'
+import { Tabs, Tab, Divider } from '@material-ui/core'
 import breakpoint from 'styled-components-breakpoint'
 import theme from 'theme'
-import { useTrail, animated, config } from 'react-spring'
+import {
+	useTrail,
+	animated,
+	config,
+	useSpring,
+	useTransition,
+	useChain
+} from 'react-spring'
 import { Translateable } from 'components/Translateable'
 
 const categories = [
@@ -180,28 +187,56 @@ const Container = styled.div`
 	height: 100%;
 	width: 100%;
 	padding: 7.25% 0;
-	& .MuiTabs-root {
-		& * {
-			max-width: none;
-			& .MuiTab-wrapper {
-				align-items: flex-end;
-			}
-		}
+`
 
-		& .MuiButtonBase-root {
-			transition: background-color 500ms ease 0ms;
-			& {
-				transition: color 500ms ease 0ms;
-			}
-			&:hover {
-				background-color: rgba(255, 0, 0, 0.9) !important;
-				& {
-					color: white;
-				}
-			}
-		}
+const InnerContainer = styled.div`
+	height: 100%;
+	width: 100%;
+	padding: 2rem;
+`
+
+const SkillGridContainer = styled.div`
+	height: 100%;
+	width: 100%;
+	display: flex;
+	& > * {
+		height: 100%;
+	}
+	& > *:first-child {
+	}
+	& > *:last-child {
+		flex-grow: 1;
 	}
 `
+
+const SkillGridBoxContainer = styled.div`
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8px;
+	/* overflow: hidden; */
+	padding: 16px;
+`
+
+const SkillGridBox = styled(animated.div)`
+	position: relative;
+	display: grid;
+	grid-auto-rows: 1fr;
+	grid-template-columns: repeat(4, minmax(100px, 1fr));
+	grid-gap: 25px;
+	padding: 25px;
+	background: white;
+	cursor: pointer;
+	box-shadow: 0px 10px 10px -5px rgba(0, 0, 0, 0.05);
+	border-radius: 100%;
+	height: 200px;
+	width: 200px;
+	background: rgba(255, 0, 0, 1);
+	border-radius: 8px;
+`
+
 const GridShadow = styled.div`
 	height: 100%;
 	width: 100%;
@@ -218,7 +253,7 @@ const GridShadow = styled.div`
 	}
 `
 
-const SkillCardGrid = styled.div`
+const SkillCardGrid = styled(animated.div)`
 	height: 100%;
 	width: 40%;
 	display: flex;
@@ -227,73 +262,105 @@ const SkillCardGrid = styled.div`
 	flex-direction: column;
 `
 
-const Skills = props => {
-	const { backgroundColor } = props
-	const [ fadeIn, setFadeIn ] = useState(false)
-	const [ hoverable, setHoverable ] = useState(false)
-	const [ selectedTab, setSelectedTab ] = useState(categories[0].label.en)
+const Item = styled(animated.div)`
+	width: 100%;
+	height: 100%;
+	background: white;
+	border-radius: 5px;
+	will-change: transform, opacity;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`
 
-	const handleChangeTab = useCallback((e, val) => {
-		setSelectedTab(val)
-	}, [])
+// const OpenBox = ({ }) => {
 
-	const [ trail, set, stop ] = useTrail(categories.length, () => ({
-		opacity: 0,
-		filter: `blur(10px)`,
-		onRest: () => setHoverable(true)
-	}))
+// }
 
-	useEffect(() => {
-		if (fadeIn) {
-			set({ opacity: 1, filter: 'blur(0px)' })
-		} else {
-			set({ opacity: 0, filter: 'blur(10px)' })
-			setHoverable(false)
+const Grid = ({ entering, skills, onEnd }) => {
+	const springRef = useRef()
+	const SpringProps = useSpring({
+		ref: springRef,
+		config: config.stiff,
+		from: {
+			height: '30%',
+			width: '15%',
+			background: 'rgba(255, 0, 0, 1)',
+			transform: 'rotate(180deg)'
+		},
+		to: {
+			height: entering ? '100%' : '30%',
+			width: entering ? '100%' : '15%',
+			background: entering ? 'rgba(255, 0, 0, .5)' : 'rgba(255, 0, 0, 1)',
+			transform: entering ? 'rotate(0deg)' : 'rotate(180deg)'
+		},
+		onRest: onEnd
+	})
+
+	const transitionRef = useRef()
+	const TransitionProps = useTransition(
+		entering ? skills : [],
+		item => item.label,
+		{
+			ref: transitionRef,
+			trail: 400 / skills.length,
+			from: { opacity: 0, transform: 'scale(0)' },
+			enter: { opacity: 1, transform: 'scale(1)' },
+			leave: { opacity: 0, transform: 'scale(0)' }
 		}
-	}, [ fadeIn, set ])
+	)
+
+	useChain(entering ? [ springRef, transitionRef ] : [ transitionRef, springRef ], [
+		0,
+		0.5
+	])
 
 	return (
-		<Container>
-			<Waypoint
-				scrollableAncestor={window}
-				onEnter={() => setFadeIn(true)}
-				onLeave={() => setFadeIn(false)}
-			/>
-			<GridShadow>
-				{/* <GridContainer fluid>
-					<Row>
-						{categories.map((cat, i) => (
-							<Col
-								className="col"
-								key={cat.label.en}
-								lg={4}
-								md={6}
-								sm={12}
-							>
-								<SkillCard
-									backgroundColor={backgroundColor}
-									engCategory={cat.label.en}
-									esCategory={cat.label.es}
-									fadeDelay={getMSDelay(i)}
-									fadeDuration={750}
-									fadeIn={fadeIn}
-									hoverable={hoverable}
-									index={i}
-									skills={cat.skills}
-								/>
-							</Col>
-						))}
-					</Row>
-				</GridContainer> */}
-				{/* <SkillCardGrid> */}
+		<SkillGridBox style={SpringProps}>
+			{TransitionProps.map(({ item, key, props }) => {
+				return (
+					<Item
+						key={key}
+						style={{ ...props }}
+					>
+						<p>{item.label}</p>
+					</Item>
+				)
+			})}
+		</SkillGridBox>
+	)
+}
+
+const AnimatedSkillGrid = ({ inView }) => {
+	const [ lastCategory, setLastCategory ] = useState(0)
+	const [ selectedCategory, setSelectedCategory ] = useState(0)
+	const [ entering, setEntering ] = useState(false)
+
+	useEffect(() => {
+		let timer = setTimeout(() => {
+			setEntering(true)
+		}, 1000)
+		return () => clearTimeout(timer)
+	}, [ inView ])
+
+	const skills = !entering
+		? categories[lastCategory].skills
+		: categories[selectedCategory].skills
+
+	return (
+		<InnerContainer>
+			<SkillGridContainer>
 				<Tabs
 					orientation="vertical"
-					value={selectedTab}
+					value={selectedCategory}
 					variant="scrollable"
-					onChange={handleChangeTab}
-					// centered={true}
+					onChange={(e, val) => {
+						setEntering(false)
+						setLastCategory(selectedCategory)
+						setSelectedCategory(val)
+					}}
 				>
-					{categories.map(cat => {
+					{categories.map((cat, i) => {
 						return (
 							<Tab
 								key={cat.label.en}
@@ -301,29 +368,41 @@ const Skills = props => {
 									en={cat.label.en}
 									es={cat.label.es}
 								       />}
-								value={cat.label.en}
+								value={i}
 								wrapped={false}
 							/>
 						)
 					})}
-					{/* {trail.map((props, i) => {
-						const cat = categories[i]
-						console.log(props)
-						return (<SkillCard 
-							style={props}
-							backgroundColor={backgroundColor}
-							engCategory={cat.label.en}
-							esCategory={cat.label.es}
-							hoverable={hoverable}
-							index={i}
-							skills={cat.skills}
-							
-						>
-						</SkillCard>)
-					})} */}
 				</Tabs>
-				{/* </SkillCardGrid> */}
-			</GridShadow>
+				<Divider orientation="vertical" />
+				<div>
+					<SkillGridBoxContainer>
+						{inView && (
+							<Grid
+								entering={entering}
+								skills={skills}
+								onEnd={entering ? () => {} : () => setEntering(true)}
+							/>
+						)}
+					</SkillGridBoxContainer>
+				</div>
+			</SkillGridContainer>
+		</InnerContainer>
+	)
+}
+
+const Skills = props => {
+	const [ fadeIn, setFadeIn ] = useState(false)
+	return (
+		<Container>
+			<Waypoint
+				fireOnRapidScroll={false}
+				scrollableAncestor={window}
+				onEnter={() => setFadeIn(true)}
+				onLeave={() => setFadeIn(false)}
+			/>
+
+			<AnimatedSkillGrid inView={fadeIn} />
 		</Container>
 	)
 }

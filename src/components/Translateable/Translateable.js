@@ -8,10 +8,10 @@ const {
 } = theme
 
 const TranslateableWrapper = styled.span`
-	transition: opacity ${translateableFadeDuration}ms ${translateableFadeTiming},
-		filter ${translateableFadeDuration}ms ${translateableFadeTiming};
+	transition: opacity ${translateableFadeDuration}ms ${translateableFadeTiming};
+		/* filter ${translateableFadeDuration}ms ${translateableFadeTiming}; */
 	opacity: ${({ fadeIn }) => (fadeIn ? 1 : 0)};
-	filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px);
+	/* filter: blur(${({ fadeIn }) => (fadeIn ? 0 : 10)}px); */
 `
 const Translateable = props => {
 	const { lang, changed } = useContext(Context)

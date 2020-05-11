@@ -8,18 +8,14 @@ import routes from 'routes'
 import theme from 'theme'
 import { scroller, Events } from 'react-scroll'
 
-const { fadeOutDelay, fadeOutDuration } = theme.timing.loadingAnimation
-
-const SCROLL_FROM_LANDING_DELAY = fadeOutDelay + fadeOutDuration
-
-const setRootDivOverflow = ({ isScrolling }) =>
-	isScrolling ? 'auto' : 'hidden'
+const SCROLL_FROM_LANDING_DELAY = 2000
+const SCROLL_FROM_PAGE_DELAY = 500
 
 const RootDiv = styled.div`
 	height: 100%;
 	width: 100vw;
 	position: relative;
-	overflow: ${setRootDivOverflow};
+	overflow: hidden;
 	&::-webkit-scrollbar {
 		height: 0 !important;
 		width: 0 !important;
@@ -47,11 +43,9 @@ const ViewsContainer = props => {
 
 	const { view: providedPath } = useParams()
 
-	const [ scrolling, setScrolling ] = useState(false)
 	const [ lastSectionIndex, setLastSectionIndex ] = useState(null)
 
 	useEffect(() => {
-		Events.scrollEvent.register('begin', () => setScrolling(true))
 		window.addEventListener(
 			'resize',
 			() =>
@@ -71,16 +65,18 @@ const ViewsContainer = props => {
 				delay = 0
 				duration = 0
 			} else {
-				delay = lastSectionIndex === null ? SCROLL_FROM_LANDING_DELAY : 0
+				delay =
+					lastSectionIndex === null
+						? SCROLL_FROM_LANDING_DELAY
+						: SCROLL_FROM_PAGE_DELAY
 
 				const numSectionsToScroll = Math.abs(
 					currentScrollIndex - lastSectionIndex
 				)
-				duration = 1000 + numSectionsToScroll * 250
+				duration = 500 + numSectionsToScroll * 250
 			}
 
 			Events.scrollEvent.register('end', () => {
-				setScrolling(false)
 				setLastSectionIndex(currentScrollIndex)
 				Events.scrollEvent.remove('end')
 			})
@@ -108,7 +104,6 @@ const ViewsContainer = props => {
 			<RootDiv
 				className={className}
 				id="view-container"
-				isScrolling={scrolling}
 			>
 				{children.map((view, i) => {
 					return (

@@ -11,6 +11,10 @@ import PropTypes from 'prop-types'
 import { TranslateableSectionTitle } from 'components/Translateable'
 import getParticleConfig from './getParticleConfig'
 import { Waypoint } from 'react-waypoint'
+
+import { useSpring, animated, config } from 'react-spring'
+import ParticleField from 'react-particles-webgl'
+
 const SectionComp = styled.section`
 	height: 100vh;
 	width: 100vw;
@@ -20,21 +24,21 @@ const SectionComp = styled.section`
 	${breakpoint('tablet')`
 		${({ ignorePadding }) => `padding: ${ignorePadding ? 0 : 56}px;`}  
 	`}
+	& .particles {
+		height: 100%;
+		width: 100%;
+		z-index: 50;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
 `
 
-const ChildrenContainer = styled.div`
+const ChildrenContainer = styled(animated.div)`
 	height: 100%;
 	width: 100%;
 	position: relative;
 	z-index: 100;
-	transition: all 750ms ease-in-out;
-	${({ fadeable, fadeIn }) => {
-		if (fadeable) {
-			return fadeIn
-				? 'transform: scale(1); opacity: 1; filter: blur(0px)'
-				: 'transform: scale(.75); opacity: 0; filter: blur(10px);'
-		}
-	}}
 `
 
 const ParticleBackground = styled.div`
@@ -45,6 +49,51 @@ const ParticleBackground = styled.div`
 	top: 0;
 	left: 0;
 `
+
+const config2 = {
+	showCube: true,
+	dimension: '3D',
+	velocity: 2.5,
+	boundaryType: 'bounce',
+	antialias: true,
+	direction: {
+		xMin: -1,
+		xMax: 1,
+		yMin: -1,
+		yMax: 1,
+		zMin: -1,
+		zMax: 1
+	},
+	lines: {
+		colorMode: 'solid',
+		color: '#FF0000',
+		transparency: 0.9,
+		limitConnections: true,
+		maxConnections: 20,
+		minDistance: 60,
+		visible: true
+	},
+	particles: {
+		colorMode: 'solid',
+		color: '#FF0000',
+		transparency: 0.9,
+		shape: 'circle',
+		boundingBox: 'canvas',
+		count: 300,
+		minSize: 20,
+		maxSize: 50,
+		visible: true
+	},
+	cameraControls: {
+		enabled: false,
+		enableDamping: true,
+		dampingFactor: 0.2,
+		enableZoom: true,
+		autoRotate: true,
+		autoRotateSpeed: 5,
+		resetCameraFlag: true
+	}
+}
 
 const Section = props => {
 	const {
@@ -68,6 +117,27 @@ const Section = props => {
 			window.particlesJS(`${titleKey}-background`, getParticleConfig(fontColor))
 	}, [ titleKey, fontColor, showParticles ])
 
+	const FadeSpring = useSpring({
+		from: {
+			opacity: 0,
+			transform: 'scale(0.85) translateY(15%)'
+		},
+		to: {
+			opacity: fadeIn ? 1 : 0,
+			transform: fadeIn
+				? 'scale(1) translateY(0%)'
+				: 'scale(0.85) translateY(15%)'
+		},
+		config: {
+			mass: 1,
+			tension: 500,
+			friction: 100
+		}
+	})
+
+	const childProps = {}
+	if (fadeInContent) childProps.style = FadeSpring
+
 	return (
 		<SectionComp
 			backgroundColor={backgroundColor}
@@ -76,6 +146,7 @@ const Section = props => {
 		>
 			{fadeInContent && (
 				<Waypoint
+					fireOnRapidScroll={false}
 					scrollableAncestor={window}
 					onEnter={() => setFadeIn(true)}
 					onLeave={() => setFadeIn(false)}
@@ -87,10 +158,7 @@ const Section = props => {
 					title={title}
 				/>
 			)}
-			<ChildrenContainer
-				fadeable={fadeInContent}
-				fadeIn={fadeIn}
-			>
+			<ChildrenContainer {...childProps}>
 				{children && cloneElement(children, { fontColor, backgroundColor })}
 			</ChildrenContainer>
 			{showParticles && <ParticleBackground id={`${titleKey}-background`} />}

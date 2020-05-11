@@ -272,7 +272,7 @@ const MobileNav = props => {
 MobileNav.propTypes = {
 	children: PropTypes.arrayOf(
 		PropTypes.shape({
-			title: { en: PropTypes.string, es: PropTypes.string },
+			title: PropTypes.shape({ en: PropTypes.string, es: PropTypes.string }),
 			showTitle: PropTypes.bool,
 			showParticles: PropTypes.bool,
 			component: PropTypes.node,
