@@ -2,8 +2,21 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Waypoint } from 'react-waypoint'
-import { SkillCard } from './components'
-import { Tabs, Tab, Divider } from '@material-ui/core'
+import { SkillCard, MobileSkillButtons } from './components'
+import {
+	Tabs,
+	Tab,
+	Divider,
+	Button,
+	Fade,
+	Paper,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	IconButton,
+	Slide
+} from '@material-ui/core'
+import { MdClose as CloseIcon } from 'react-icons/md'
 import breakpoint from 'styled-components-breakpoint'
 import theme from 'theme'
 import {
@@ -15,6 +28,7 @@ import {
 	useChain
 } from 'react-spring'
 import { Translateable } from 'components/Translateable'
+import ParticleEffectButton from 'react-particle-effect-button'
 
 const categories = [
 	{
@@ -237,31 +251,6 @@ const SkillGridBox = styled(animated.div)`
 	border-radius: 8px;
 `
 
-const GridShadow = styled.div`
-	height: 100%;
-	width: 100%;
-	display: flex;
-	overflow: auto;
-	&::-webkit-scrollbar {
-		border-radius: 4px;
-		background-color: black;
-	}
-	&::-webkit-scrollbar-thumb {
-		border-radius: 6px;
-		background-color: white;
-		border: 2px solid black;
-	}
-`
-
-const SkillCardGrid = styled(animated.div)`
-	height: 100%;
-	width: 40%;
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	flex-direction: column;
-`
-
 const Item = styled(animated.div)`
 	width: 100%;
 	height: 100%;
@@ -272,10 +261,6 @@ const Item = styled(animated.div)`
 	justify-content: center;
 	align-items: center;
 `
-
-// const OpenBox = ({ }) => {
-
-// }
 
 const Grid = ({ entering, skills, onEnd }) => {
 	const springRef = useRef()
@@ -391,7 +376,7 @@ const AnimatedSkillGrid = ({ inView }) => {
 	)
 }
 
-const Skills = props => {
+const Skills = () => {
 	const [ fadeIn, setFadeIn ] = useState(false)
 	return (
 		<Container>
@@ -401,8 +386,10 @@ const Skills = props => {
 				onEnter={() => setFadeIn(true)}
 				onLeave={() => setFadeIn(false)}
 			/>
-
-			<AnimatedSkillGrid inView={fadeIn} />
+			<MobileSkillButtons
+				categories={categories}
+				fadeIn={fadeIn}
+			/>
 		</Container>
 	)
 }
