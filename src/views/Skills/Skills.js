@@ -1,34 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Waypoint } from 'react-waypoint'
-import { SkillCard, MobileSkillButtons } from './components'
-import {
-	Tabs,
-	Tab,
-	Divider,
-	Button,
-	Fade,
-	Paper,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	IconButton,
-	Slide
-} from '@material-ui/core'
-import { MdClose as CloseIcon } from 'react-icons/md'
-import breakpoint from 'styled-components-breakpoint'
-import theme from 'theme'
-import {
-	useTrail,
-	animated,
-	config,
-	useSpring,
-	useTransition,
-	useChain
-} from 'react-spring'
-import { Translateable } from 'components/Translateable'
-import ParticleEffectButton from 'react-particle-effect-button'
+import { MobileSkillButtons, AnimatedSkillGrid } from './components'
 
 const categories = [
 	{
@@ -188,9 +162,15 @@ const categories = [
 			es: 'Otro'
 		},
 		skills: [
-			{ label: 'Spanish Languag (native)', src: '' },
-			{ label: 'French Language (intermediate)', src: '' },
-			{ label: 'MS Excel', src: '' }
+			{
+				label: 'Spanish Language (native)',
+				src: '/skills-logos/other/spanish-language.png'
+			},
+			{
+				label: 'French Language (intermediate)',
+				src: '/skills-logos/other/french-language.png'
+			},
+			{ label: 'MS Excel', src: '/skills-logos/other/ms-excel.png' }
 		]
 	}
 ]
@@ -203,179 +183,6 @@ const Container = styled.div`
 	padding: 7.25% 0;
 `
 
-const InnerContainer = styled.div`
-	height: 100%;
-	width: 100%;
-	padding: 2rem;
-`
-
-const SkillGridContainer = styled.div`
-	height: 100%;
-	width: 100%;
-	display: flex;
-	& > * {
-		height: 100%;
-	}
-	& > *:first-child {
-	}
-	& > *:last-child {
-		flex-grow: 1;
-	}
-`
-
-const SkillGridBoxContainer = styled.div`
-	height: 100%;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 8px;
-	/* overflow: hidden; */
-	padding: 16px;
-`
-
-const SkillGridBox = styled(animated.div)`
-	position: relative;
-	display: grid;
-	grid-auto-rows: 1fr;
-	grid-template-columns: repeat(4, minmax(100px, 1fr));
-	grid-gap: 25px;
-	padding: 25px;
-	background: white;
-	cursor: pointer;
-	box-shadow: 0px 10px 10px -5px rgba(0, 0, 0, 0.05);
-	border-radius: 100%;
-	height: 200px;
-	width: 200px;
-	background: rgba(255, 0, 0, 1);
-	border-radius: 8px;
-`
-
-const Item = styled(animated.div)`
-	width: 100%;
-	height: 100%;
-	background: white;
-	border-radius: 5px;
-	will-change: transform, opacity;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`
-
-const Grid = ({ entering, skills, onEnd }) => {
-	const springRef = useRef()
-	const SpringProps = useSpring({
-		ref: springRef,
-		config: config.stiff,
-		from: {
-			height: '30%',
-			width: '15%',
-			background: 'rgba(255, 0, 0, 1)',
-			transform: 'rotate(180deg)'
-		},
-		to: {
-			height: entering ? '100%' : '30%',
-			width: entering ? '100%' : '15%',
-			background: entering ? 'rgba(255, 0, 0, .5)' : 'rgba(255, 0, 0, 1)',
-			transform: entering ? 'rotate(0deg)' : 'rotate(180deg)'
-		},
-		onRest: onEnd
-	})
-
-	const transitionRef = useRef()
-	const TransitionProps = useTransition(
-		entering ? skills : [],
-		item => item.label,
-		{
-			ref: transitionRef,
-			trail: 400 / skills.length,
-			from: { opacity: 0, transform: 'scale(0)' },
-			enter: { opacity: 1, transform: 'scale(1)' },
-			leave: { opacity: 0, transform: 'scale(0)' }
-		}
-	)
-
-	useChain(entering ? [ springRef, transitionRef ] : [ transitionRef, springRef ], [
-		0,
-		0.5
-	])
-
-	return (
-		<SkillGridBox style={SpringProps}>
-			{TransitionProps.map(({ item, key, props }) => {
-				return (
-					<Item
-						key={key}
-						style={{ ...props }}
-					>
-						<p>{item.label}</p>
-					</Item>
-				)
-			})}
-		</SkillGridBox>
-	)
-}
-
-const AnimatedSkillGrid = ({ inView }) => {
-	const [ lastCategory, setLastCategory ] = useState(0)
-	const [ selectedCategory, setSelectedCategory ] = useState(0)
-	const [ entering, setEntering ] = useState(false)
-
-	useEffect(() => {
-		let timer = setTimeout(() => {
-			setEntering(true)
-		}, 1000)
-		return () => clearTimeout(timer)
-	}, [ inView ])
-
-	const skills = !entering
-		? categories[lastCategory].skills
-		: categories[selectedCategory].skills
-
-	return (
-		<InnerContainer>
-			<SkillGridContainer>
-				<Tabs
-					orientation="vertical"
-					value={selectedCategory}
-					variant="scrollable"
-					onChange={(e, val) => {
-						setEntering(false)
-						setLastCategory(selectedCategory)
-						setSelectedCategory(val)
-					}}
-				>
-					{categories.map((cat, i) => {
-						return (
-							<Tab
-								key={cat.label.en}
-								label={<Translateable
-									en={cat.label.en}
-									es={cat.label.es}
-								       />}
-								value={i}
-								wrapped={false}
-							/>
-						)
-					})}
-				</Tabs>
-				<Divider orientation="vertical" />
-				<div>
-					<SkillGridBoxContainer>
-						{inView && (
-							<Grid
-								entering={entering}
-								skills={skills}
-								onEnd={entering ? () => {} : () => setEntering(true)}
-							/>
-						)}
-					</SkillGridBoxContainer>
-				</div>
-			</SkillGridContainer>
-		</InnerContainer>
-	)
-}
-
 const Skills = () => {
 	const [ fadeIn, setFadeIn ] = useState(false)
 	return (
@@ -387,6 +194,10 @@ const Skills = () => {
 				onLeave={() => setFadeIn(false)}
 			/>
 			<MobileSkillButtons
+				categories={categories}
+				fadeIn={fadeIn}
+			/>
+			<AnimatedSkillGrid
 				categories={categories}
 				fadeIn={fadeIn}
 			/>

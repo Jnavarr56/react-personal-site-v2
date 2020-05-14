@@ -34,6 +34,9 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+	${breakpoint('tablet')`
+        display: none;
+    `}
 `
 
 const CategoryButtonContainer = styled(animated.div)`
