@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import Context from './context'
 import { useHistory } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 const TranslateableContext = props => {
 	const { lang, children } = props
@@ -30,6 +31,11 @@ const TranslateableContext = props => {
 	)
 
 	return <Context.Provider value={value}>{children}</Context.Provider>
+}
+
+TranslateableContext.propTypes = {
+	children: PropTypes.node,
+	lang: PropTypes.string
 }
 
 export default TranslateableContext

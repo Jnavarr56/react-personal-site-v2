@@ -171,6 +171,7 @@ Section.propTypes = {
 	children: PropTypes.node,
 	fadeInContent: PropTypes.bool,
 	fontColor: PropTypes.string,
+	id: PropTypes.string,
 	ignorePadding: PropTypes.bool,
 	showParticles: PropTypes.bool,
 	showTitle: PropTypes.bool,

@@ -15,8 +15,7 @@ import routes from 'routes'
 import PropTypes from 'prop-types'
 import {
 	ThemeProvider as MuiThemeProvider,
-	createMuiTheme,
-	responsiveFontSizes
+	createMuiTheme
 } from '@material-ui/core/styles'
 import { useSpring, animated } from 'react-spring'
 import InitialAnimContext from './initialAnimContext'
@@ -24,7 +23,6 @@ import InitialAnimContext from './initialAnimContext'
 const VISTED_COOKIE_AGE_MINS = 60 * 30
 const LANGUAGES = [ 'en', 'es' ]
 const DEFAULT_REDIRECT = <Redirect to={`/${routes[0].path}?lang=en`} />
-const SWITCH_DELAY = 1000
 
 const Main = styled.main`
 	height: 100vh;
@@ -54,17 +52,13 @@ const App = props => {
 
 	const handleLoadingEnd = useCallback(() => setRenderViews(true), [])
 
-	const [
-		FadeInViewsSpring,
-		SetFadeInViewsSpring,
-		StopFadeInViewsSpring
-	] = useSpring(() => ({ opacity: 0 }))
+	const [ FadeInViewsSpring, SetFadeInViewsSpring ] = useSpring(() => ({
+		opacity: 0
+	}))
 
-	const [
-		FadeOutLoadingSpring,
-		SetFadeOutLoadingSpring,
-		StopFadeOutLoadingSpring
-	] = useSpring(() => ({ opacity: 1 }))
+	const [ FadeOutLoadingSpring, SetFadeOutLoadingSpring ] = useSpring(() => ({
+		opacity: 1
+	}))
 
 	useEffect(() => {
 		if (!cookies.visited) {
@@ -102,7 +96,6 @@ const App = props => {
 	if (!lang) return DEFAULT_REDIRECT
 	else if (!LANGUAGES.includes(lang))
 		return <Redirect to={`/${providedPath}?lang=en`} />
-
 	return (
 		<Main>
 			<MuiThemeProvider theme={muiTheme}>
@@ -119,8 +112,8 @@ const App = props => {
 								<InitialAnimContext.Provider value={0}>
 									<LanguageSelector />
 									<DesktopNav />
-									<MobileNav>{routes}</MobileNav>
-									<ViewsContainer>{routes}</ViewsContainer>
+									<MobileNav />
+									<ViewsContainer />
 								</InitialAnimContext.Provider>
 							</Div>
 						)}

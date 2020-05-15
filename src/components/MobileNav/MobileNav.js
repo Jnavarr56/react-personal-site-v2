@@ -2,11 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import { FaTimes, FaPlus } from 'react-icons/fa'
-import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
 import theme from 'theme'
 import { useHistory, useLocation } from 'react-router-dom'
 import Ripples from 'react-ripples'
+import { useTrail, config, animated } from 'react-spring'
+import routes from 'routes'
 
 const calcDimensions = (open, size) => {
 	const dimensions = {
@@ -64,36 +65,32 @@ const calcDimensions = (open, size) => {
 		: dimensions[size]
 }
 
-const Nav = styled.nav`
+const openDuration = 500
+const openQualities = [
+	'border-radius',
+	'height',
+	'width',
+	'right',
+	'padding',
+	'bottom'
+]
+const genWillChange = qualities => qualities.join(', ')
+const genTransitions = (qualities, duration, open) =>
+	qualities
+		.map(q => `${q} ${duration}ms cubic-bezier(0.645, 0.045, 0.355, 1)`)
+		.join(', ')
 
+const Nav = styled.nav`
+	z-index: 1000;
+	position: fixed;
 	overflow: hidden;
 	box-sizing: border-box;
 	background-color: black;
-	@media (hover: hover) {
-		&:hover {
-			${({ open }) => {
-				if (!open) {
-					return `
-						background-color: rgba(0, 0, 0, .75);
-					`
-				}
-			}}
-		}
-	}
-
-
-	z-index: 100;
-	position: fixed;
-	cursor: ${({ open }) => (open ? 'auto' : 'pointer')};
-	box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-	transition: 
-		border-radius .5s cubic-bezier(0.645, 0.045, 0.355, 1),
-		height .5s cubic-bezier(0.645, 0.045, 0.355, 1),
-		width .5s cubic-bezier(0.645, 0.045, 0.355, 1),
-		right .5s cubic-bezier(0.645, 0.045, 0.355, 1),
-		padding .5s cubic-bezier(0.645, 0.045, 0.355, 1),
-		bottom .5s cubic-bezier(0.645, 0.045, 0.355, 1),
-		background-color .25s ease;
+	will-change: ${genWillChange(openQualities)}, background-color;
+	transition: ${genTransitions(
+		openQualities,
+		openDuration
+	)}, background-color 2500ms ease;
 	${({ open }) => calcDimensions(open, 'small')}
 	${breakpoint('phone')`
         ${({ open }) => calcDimensions(open, 'medium')}
@@ -101,23 +98,26 @@ const Nav = styled.nav`
 	${breakpoint('tablet')`
 		${({ open }) => calcDimensions(open, 'large')}
 	`}
+
+	${breakpoint('phone')`
+        ${({ open }) => calcDimensions(open, 'medium')}
+	`}
     display: flex;
 	justify-content: center;
 	align-items: center;
 	${breakpoint('desktop')`
         display: none;
 	`}
-
 	& .ripples {
+		cursor: pointer;
 		position: absolute !important;
 		border-radius: 100%;
 		padding: 16px 18px;
 		overflow: hidden !important;
-		
-
 		${({ open }) => {
 			if (!open) {
-				return `height: 100%;
+				return `
+					height: 100%;
 					width: 100%;
 				`
 			} else {
@@ -133,42 +133,23 @@ const Nav = styled.nav`
 `
 
 const NavList = styled.ul`
-	height: 100%;
+	box-sizing: border-box;
 	max-height: 600px;
+	height: 100%;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	box-sizing: border-box;
 `
-const NavListItem = styled.li`
-	overflow: hidden;
-`
-const NavListItemText = styled.span`
+const NavListItemText = styled(animated.span)`
+	cursor: pointer;
 	display: inline-block;
-
-	transform: translateY(${({ open }) => (open ? '0' : '200%')});
-	${({ open, delay }) => {
-		return open
-			? `transition: 0.35s transform ${delay}ms cubic-bezier(0.645, 0.045, 0.355, 1);`
-			: ''
-	}}
 	color: white;
 	font-weight: 200;
 	font-family: Raleway;
-	${({ selected }) => {
-		if (!selected) {
-			return `
-				cursor: pointer;
-				&:hover * {
-					color: #ff726f;
-					transition: .15s color ease;
-				}
-			`
-		} else {
-			return 'color: red;'
-		}
-	}}
+	pointer-events: ${({ selected }) => (selected ? 'none' : 'all')};
+	color: ${({ selected }) => (selected ? 'red' : 'white')};
+	transition: 0.15s color ease;
 `
 
 const calcIconPosition = size => {
@@ -184,12 +165,17 @@ const calcIconPosition = size => {
 	}
 	return iconPosition[size]
 }
+
 const Icon = styled.span`
 	z-index: 101;
 	color: white;
 	display: inline-block;
-
 	transition: all 0.3s;
+	will-change: top, left, transform;
+	font-size: 16px;
+	${breakpoint('tablet')`
+        font-size: 28px;
+    `}
 	${({ open }) => {
 		if (!open) {
 			return `
@@ -200,26 +186,29 @@ const Icon = styled.span`
 			`
 		}
 	}}
-	cursor: pointer;
-	font-size: 16px;
-	${breakpoint('tablet')`
-        font-size: 28px;
-    `}
 `
 
 const RIPPLE_DELAY = 250
 
-const MobileNav = props => {
-	const { children: views, className } = props
-	const location = useLocation()
+const MobileNav = () => {
 	const history = useHistory()
+	const location = useLocation()
 	const [ open, setOpen ] = useState(false)
-	const handleOpenNav = useCallback(() => {
-		if (!open) setTimeout(() => setOpen(true), RIPPLE_DELAY)
-	}, [ open ])
-	const handleCloseNav = useCallback(() => {
-		if (open) setTimeout(() => setOpen(false), RIPPLE_DELAY)
-	}, [ open ])
+	const [ showItems, setShowItems ] = useState(false)
+
+	const handleToggleNav = () => {
+		if (open) {
+			setShowItems(false)
+			setTimeout(() => {
+				setTimeout(() => setOpen(false), 500)
+			}, RIPPLE_DELAY)
+		} else {
+			setOpen(true)
+			setTimeout(() => {
+				setTimeout(() => setShowItems(true), 500)
+			}, RIPPLE_DELAY)
+		}
+	}
 
 	useEffect(() => {
 		window.addEventListener('resize', e => {
@@ -228,25 +217,45 @@ const MobileNav = props => {
 			}
 		})
 	}, [])
+
+	const opacitySpring = useTrail(routes.length, {
+		from: {
+			opacity: 0
+		},
+		to: {
+			opacity: showItems ? 1 : 0
+		},
+		config: {
+			...config.wobbly,
+			clamp: true
+		}
+	})
+
+	const NavItemSprings = useTrail(routes.length, {
+		from: {
+			transform: 'translateY(100%)'
+		},
+		to: {
+			transform: showItems ? 'translateY(0)' : 'translateY(100%)'
+		},
+		config: config.wobbly
+	})
+
 	return (
-		<Nav
-			className={className}
-			open={open}
-		>
+		<Nav open={open}>
 			<NavList>
-				{views.map((view, i) => {
-					const selected = `/${view.path}` === location.pathname
+				{routes.map((view, i) => {
 					return (
-						<NavListItem key={view.title.en}>
+						<li key={view.title.en}>
 							<NavListItemText
-								delay={500 + i * 100}
-								open={open}
-								selected={selected}
+								selected={`/${view.path}` === location.pathname}
+								style={{ ...opacitySpring[i], ...NavItemSprings[i] }}
 								onClick={() => {
-									if (!selected) {
-										setOpen(false)
-										history.push(`${view.path}${location.search}`)
-									}
+									history.push(`${view.path}${location.search}`)
+									setShowItems(true)
+									setTimeout(() => {
+										setTimeout(() => setOpen(false), 500)
+									}, RIPPLE_DELAY)
 								}}
 							>
 								<Translateable
@@ -254,30 +263,18 @@ const MobileNav = props => {
 									es={view.title.es}
 								/>
 							</NavListItemText>
-						</NavListItem>
+						</li>
 					)
 				})}
 			</NavList>
 			<Ripples
 				className="ripples"
 				color="white"
-				onClick={open ? handleCloseNav : handleOpenNav}
+				onClick={handleToggleNav}
 			>
 				<Icon open={open}>{open ? <FaTimes /> : <FaPlus />}</Icon>
 			</Ripples>
 		</Nav>
-	)
-}
-
-MobileNav.propTypes = {
-	children: PropTypes.arrayOf(
-		PropTypes.shape({
-			title: PropTypes.shape({ en: PropTypes.string, es: PropTypes.string }),
-			showTitle: PropTypes.bool,
-			showParticles: PropTypes.bool,
-			component: PropTypes.node,
-			path: PropTypes.string
-		})
 	)
 }
 

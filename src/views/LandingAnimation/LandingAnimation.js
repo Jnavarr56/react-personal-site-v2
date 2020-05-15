@@ -6,7 +6,6 @@ import { useSpring, animated, config } from 'react-spring'
 import PropTypes from 'prop-types'
 import ParticleField from 'react-particles-webgl'
 import { useCountUp } from 'use-count-up'
-import TextTransition, { presets } from 'react-text-transition'
 
 const Container = styled(animated.div)`
 	height: 100%;
@@ -46,7 +45,6 @@ const PercentCountStyled = styled.p`
 `
 
 const setSpeed = speed => (window.pJSDom[0].pJS.particles.move.speed = speed)
-const getSpeed = () => window.pJSDom[0].pJS.particles.move.speed
 
 const testConfig = {
 	// Display reference cube, useful for orienting the field
@@ -130,7 +128,7 @@ const testConfig = {
 	}
 }
 
-const Wrapper = () => <ParticleField config={testConfig} />
+// const Wrapper = () => <ParticleField config={testConfig} />
 
 function easeInOutExpo(t, b, c, d) {
 	t /= d / 2
@@ -175,7 +173,10 @@ const LandingAnimation = props => {
 }
 
 LandingAnimation.propTypes = {
-	onLoadingEnd: PropTypes.func
+	onLoadingEnd: PropTypes.func,
+	style: PropTypes.shape({
+		opacity: PropTypes.number
+	})
 }
 
 LandingAnimation.defaultProps = {

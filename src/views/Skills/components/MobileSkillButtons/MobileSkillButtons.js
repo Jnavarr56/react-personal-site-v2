@@ -16,7 +16,7 @@ import ParticleEffectButton from 'react-particle-effect-button'
 import { MdClose as CloseIcon } from 'react-icons/md'
 import { Translateable } from 'components/Translateable'
 import theme from 'theme'
-
+import PropTypes from 'prop-types'
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return (
 		<Slide
@@ -175,7 +175,10 @@ const CategoryButton = ({ springProps, skills, category, fadeIn }) => {
 								style={fadeInTrails[i]}
 							>
 								<p>{skill.label}</p>
-								<img src={skill.src} />
+								<img
+									alt={skill.label}
+									src={skill.src}
+								/>
 							</ButtonItem>
 						))}
 					</ul>
@@ -213,6 +216,11 @@ const MobileSkillButtons = props => {
 			))}
 		</Container>
 	)
+}
+
+MobileSkillButtons.propTypes = {
+	categories: PropTypes.array,
+	fadeIn: PropTypes.bool
 }
 
 export default MobileSkillButtons

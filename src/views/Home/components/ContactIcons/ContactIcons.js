@@ -3,12 +3,12 @@ import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import {
 	IconButton as IconButtonImport,
-	useTheme,
 	Tooltip as ToolTipImport,
 	withStyles
 } from '@material-ui/core'
 import { useTrail, useSprings, animated } from 'react-spring'
 import { FaAngellist, FaCodepen, FaGithub, FaLinkedin } from 'react-icons/fa'
+import PropTypes from 'prop-types'
 
 const icons = [
 	{
@@ -199,6 +199,10 @@ const HomeIcons = ({ inView }) => {
 			{inView && (fadedIn ? <SpringIcons /> : <TrailIcons />)}
 		</Container>
 	)
+}
+
+HomeIcons.propTypes = {
+	inView: PropTypes.bool
 }
 
 export default HomeIcons

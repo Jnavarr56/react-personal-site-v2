@@ -1,22 +1,16 @@
-import React, {
-	useState,
-	useCallback,
-	useContext,
-	useEffect,
-	useMemo
-} from 'react'
+import React, { useState, useContext, useEffect, useMemo } from 'react'
 import { Waypoint } from 'react-waypoint'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import context from './context'
 import PropTypes from 'prop-types'
 import theme from 'theme'
-import { useTrail, useSpring, animated, config } from 'react-spring'
+import { useTrail, animated, config } from 'react-spring'
 
 const { fadeTiming, fadeDuration } = theme.timing.translateable
 
 const TitleContainer = styled.div`
-	z-index: 1000;
+	z-index: 999;
 	/* overflow: hidden; */
 	position: absolute;
 	top: 0;
@@ -53,15 +47,6 @@ const Title = styled.h3`
 		display: inline-block;
 	}
 `
-
-// const Letter = styled.span`
-// 	display: block;
-// 	transition: transform 500ms cubic-bezier(0.645, 0.045, 0.355, 1)
-// 		${({ delay }) => delay}ms;
-// 	transform: translateY(
-// 		${({ inView }) => (inView ? '0' : 'calc(-105% - 16px)')}
-// 	);
-// `
 
 const SectionTitle = props => {
 	const { title, fontColor } = props
@@ -127,14 +112,6 @@ const SectionTitle = props => {
 				fontColor={fontColor}
 			>
 				{letters}
-				{/* {text.split('').map((l, i) => (
-					<animated.p
-						key={text + '-' + l + i}
-						style={{ ...opacityTrail[i], ...VertTrail[i] }}
-					>
-						{l === ' ' ? <span>&nbsp;</span> : l}
-					</animated.p>
-				))} */}
 			</Title>
 			<Waypoint
 				fireOnRapidScroll={false}
@@ -148,7 +125,10 @@ const SectionTitle = props => {
 
 SectionTitle.propTypes = {
 	fontColor: PropTypes.string,
-	title: PropTypes.object
+	title: PropTypes.shape({
+		en: PropTypes.string,
+		es: PropTypes.string
+	})
 }
 
 export default SectionTitle

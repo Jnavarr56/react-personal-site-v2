@@ -1,29 +1,14 @@
-import React, {
-	useEffect,
-	useState,
-	useCallback,
-	useRef,
-	useContext
-} from 'react'
+import React, { useEffect, useState, useCallback, useContext } from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import context from 'components/Translateable/context'
-import { Translateable } from 'components/Translateable'
 import { ContactIcons } from './components'
-import animContext from '../../initialAnimContext'
 import Typist from 'react-typist'
 import 'react-typist/dist/Typist.css'
 
-import {
-	useSpring,
-	animated,
-	useTrail,
-	useChain,
-	config,
-	useTransition
-} from 'react-spring'
-import Typewriter from 'typewriter-effect'
+import { useSpring, animated, useTrail } from 'react-spring'
 import { Waypoint } from 'react-waypoint'
+import PropTypes from 'prop-types'
 
 const Container = styled.div`
 	height: 100%;
@@ -295,6 +280,10 @@ const Home = () => {
 			/>
 		</Container>
 	)
+}
+
+Home.propTypes = {
+	lang: PropTypes.string
 }
 
 export default Home

@@ -4,7 +4,6 @@ import breakpoint from 'styled-components-breakpoint'
 import { Translateable } from 'components/Translateable'
 import PropTypes from 'prop-types'
 import { Text } from './components'
-// import { MobileText, Text } from './components'
 
 const Container = styled.div`
 	height: 100%;
@@ -121,17 +120,11 @@ const AboutMe = props => {
 					/>
 				</Text>
 			</DesktopWrapper>
-			{/* <MobileText
-				englishText={englishText}
-				fontColor={fontColor}
-				spanishText={spanishText}
-			/> */}
 		</Container>
 	)
 }
 
 AboutMe.propTypes = {
-	backgroundColor: PropTypes.string,
 	fontColor: PropTypes.string
 }
 

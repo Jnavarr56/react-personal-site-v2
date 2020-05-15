@@ -1,23 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
-import {
-	Tabs,
-	Tab,
-	Divider,
-	Card,
-	Typography,
-	CardHeader,
-	CardContent,
-	Button,
-	Fade,
-	Paper,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	IconButton,
-	Slide
-} from '@material-ui/core'
-import { MdClose as CloseIcon } from 'react-icons/md'
+import { Tabs, Tab, Divider, Card, Typography } from '@material-ui/core'
 import breakpoint from 'styled-components-breakpoint'
 import theme from 'theme'
 import {
@@ -29,6 +12,7 @@ import {
 } from 'react-spring'
 import { Translateable } from 'components/Translateable'
 import Grid from '@material-ui/core/Grid'
+import PropTypes from 'prop-types'
 
 const categories = [
 	{
@@ -418,9 +402,11 @@ const AnimatedSkillGrid = props => {
 		: categories[selectedCategory].skills
 
 	const onChangeTab = (e, val) => {
-		setEntering(false)
-		setLastCategory(selectedCategory)
-		setSelectedCategory(val)
+		if (val !== selectedCategory) {
+			setEntering(false)
+			setLastCategory(selectedCategory)
+			setSelectedCategory(val)
+		}
 	}
 
 	return (
@@ -454,6 +440,11 @@ const AnimatedSkillGrid = props => {
 			</SkillGridContainer>
 		</Container>
 	)
+}
+
+AnimatedSkillGrid.propTypes = {
+	categories: PropTypes.array,
+	fadeIn: PropTypes.bool
 }
 
 export default AnimatedSkillGrid

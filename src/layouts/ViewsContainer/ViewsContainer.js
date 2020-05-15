@@ -38,9 +38,7 @@ const getSectionNameFromPath = path => {
 		.join(' ')
 }
 
-const ViewsContainer = props => {
-	const { children, className } = props
-
+const ViewsContainer = () => {
 	const { view: providedPath } = useParams()
 
 	const [ lastSectionIndex, setLastSectionIndex ] = useState(null)
@@ -56,7 +54,7 @@ const ViewsContainer = props => {
 
 	useEffect(() => {
 		const scrollToSection = isResizeResponse => {
-			const currentScrollIndex = children.findIndex(
+			const currentScrollIndex = routes.findIndex(
 				({ path }) => path === providedPath
 			)
 
@@ -101,11 +99,8 @@ const ViewsContainer = props => {
 			<Helmet>
 				<title>{getSectionNameFromPath(providedPath)}</title>
 			</Helmet>
-			<RootDiv
-				className={className}
-				id="view-container"
-			>
-				{children.map((view, i) => {
+			<RootDiv id="view-container">
+				{routes.map((view, i) => {
 					return (
 						<Section
 							fadeInContent={view.fadeInContent}
@@ -124,10 +119,6 @@ const ViewsContainer = props => {
 			</RootDiv>
 		</>
 	)
-}
-
-ViewsContainer.propTypes = {
-	className: PropTypes.string
 }
 
 export default ViewsContainer
