@@ -77,12 +77,10 @@ const App = props => {
 		if (renderViews) {
 			SetFadeInViewsSpring({
 				opacity: 1
-				// delay: SWITCH_DELAY
 			})
 
 			SetFadeOutLoadingSpring({
 				opacity: 0,
-				// delay: SWITCH_DELAY,
 				onRest: () => setRenderLoading(false)
 			})
 		}

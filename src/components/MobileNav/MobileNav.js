@@ -252,7 +252,7 @@ const MobileNav = () => {
 								style={{ ...opacitySpring[i], ...NavItemSprings[i] }}
 								onClick={() => {
 									history.push(`${view.path}${location.search}`)
-									setShowItems(true)
+									setShowItems(false)
 									setTimeout(() => {
 										setTimeout(() => setOpen(false), 500)
 									}, RIPPLE_DELAY)

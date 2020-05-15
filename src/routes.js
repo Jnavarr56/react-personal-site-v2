@@ -29,7 +29,8 @@ const routes = [
 		showParticles: false,
 		component: <Projects />,
 		path: 'projects',
-		ignorePadding: true
+		ignorePadding: true,
+		fadeInContent: true
 	},
 	{
 		title: { en: 'Contact', es: 'Información de Contacto' },
