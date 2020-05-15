@@ -149,7 +149,7 @@ const LandingAnimation = props => {
 	const value = useCountUp(true, {
 		start: 0,
 		end: 100,
-		duration: 10,
+		duration: 5,
 		easing: easeInOutExpo
 	})
 
