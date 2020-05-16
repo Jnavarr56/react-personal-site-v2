@@ -1,5 +1,5 @@
 import React from 'react'
-import { Home, AboutMe, Skills, Projects } from 'views'
+import { Home, AboutMe, Skills, Projects, Contact } from 'views'
 const routes = [
 	{
 		title: { en: 'Home', es: 'Página de Inicio' },
@@ -36,7 +36,7 @@ const routes = [
 		title: { en: 'Contact', es: 'Información de Contacto' },
 		showTitle: true,
 		showParticles: false,
-		component: null,
+		component: <Contact />,
 		path: 'contact'
 	}
 ]

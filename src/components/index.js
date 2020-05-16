@@ -1,6 +1,3 @@
 export { default as Section } from './Section'
 export { default as DesktopNav } from './DesktopNav'
 export { default as MobileNav } from './MobileNav'
-export { default as FullScreenModal } from './FullScreenModal'
-export { default as IconButton } from './IconButton'
-export { default as ModalBackground } from './ModalBackground'

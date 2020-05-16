@@ -19,6 +19,7 @@ const SectionComp = styled.section`
 	height: 100vh;
 	width: 100vw;
 	position: relative;
+	overflow: hidden;
 	background: ${({ backgroundColor }) => backgroundColor};
 	${({ ignorePadding }) => `padding: ${ignorePadding ? 0 : '32px 24px'};`}
 	${breakpoint('tablet')`

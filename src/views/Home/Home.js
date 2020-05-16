@@ -21,7 +21,6 @@ const Container = styled.div`
 `
 
 const Title = styled(animated.h1)`
-	background-color: rgba(255, 255, 255, .75);
 	margin-bottom: 16px;
 	font-family: Raleway;
 	color: black;
@@ -46,12 +45,10 @@ const Title = styled(animated.h1)`
 
 `
 const Subtitle = styled(animated.h2)`
-	background-color: rgba(255, 255, 255, .75);
 	text-transform: uppercase;
 	font-weight: 200;
 	font-family: Raleway;
 	color: black;
-	
 	text-align: center;
 	font-size: .75rem;
 	${breakpoint('phone')`

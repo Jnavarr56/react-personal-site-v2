@@ -41,7 +41,6 @@ const PercentCountStyled = styled.p`
 	font-size: 72px;
 	font-weight: 100;
 	z-index: 999;
-	background-color: rgba(255, 255, 255, 0.4);
 `
 
 const setSpeed = speed => (window.pJSDom[0].pJS.particles.move.speed = speed)
