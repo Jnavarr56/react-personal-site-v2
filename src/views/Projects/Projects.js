@@ -23,12 +23,21 @@ const animations = [
 
 const projects = [
 	{
-		name: 'IFBuddy',
-		background: 'linear-gradient(to right, #56ccf2, #2f80ed)',
-		tagline: 'A full-stack web app for tracking intermittent fasting goals.',
-		tags: [ 'jQuery', 'Bootstrap', 'Ruby on Rails', 'PostgreSQL' ],
-		github: 'https://github.com/Jnavarr56/IFBuddy',
-		link: 'https://ifbuddy.herokuapp.com/'
+		name: 'Covid-19 Death Toll Comparison',
+		background: 'linear-gradient(to right, #0f2027, #203a43, #2c5364)',
+		tagline:
+			'Simple Dockerized Rails API aggregating Covid-19 death tolls feeding into a React UI.',
+		tags: [
+			'React',
+			'Material UI',
+			'Ruby on Rails',
+			'Redis',
+			'Docker-Compose',
+			'AWS EC2',
+			'Netlify'
+		],
+		github: 'https://github.com/Jnavarr56/covid-19-death-toll-comparison-ui',
+		link: 'http://coviddeathtollcomparison.com'
 	},
 	{
 		name: 'CommuteCompare',
@@ -52,7 +61,7 @@ const projects = [
 const genProjectsCSS = () =>
 	projects.reduce((css, project) => {
 		return `${css}
-		& .${project.name} {
+		& .${project.name.replace(/ /g, '')} {
 			background ${project.background};
 			& * { color: white; }
 		}
@@ -187,24 +196,11 @@ const ProjectsPage = styled.div`
 	`}
 `
 
-const projects2 = [
-	{
-		type: 'APP',
-		name: 'IFBuddy',
-		tagline: 'A full-stack web app for tracking intermittent fasting goals.',
-		mainTechnologies: [ 'jQuery', 'Bootstrap', 'Ruby on Rails', 'PostgreSQL' ],
-		completed: true,
-		deployedMedium: 'Heroku',
-		githubLink: 'https://github.com/Jnavarr56/IFBuddy',
-		deployedLink: 'https://ifbuddy.herokuapp.com/'
-	}
-]
-
 const Projects = () => {
 	const [ animIndex, setAnimIndex ] = useState(0)
 
 	const handleSwitchAnimation = useCallback(() => {
-		setAnimIndex(idx => (idx === animations.length ? 0 : idx + 1))
+		setAnimIndex(idx => (idx === animations.length - 1 ? 0 : idx + 1))
 	}, [])
 
 	return (
@@ -216,7 +212,7 @@ const Projects = () => {
 				{projects.map((project, i) => {
 					return (
 						<div
-							className={project.name}
+							className={project.name.replace(/ /g, '')}
 							key={project.name}
 						>
 							<Typography

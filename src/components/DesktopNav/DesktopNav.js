@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Translateable } from 'components/Translateable'
@@ -7,10 +7,10 @@ import breakpoint from 'styled-components-breakpoint'
 import routes from 'routes'
 import theme from 'theme'
 import clsx from 'clsx'
-import { ButtonBase, Drawer, useTheme } from '@material-ui/core'
+import { ButtonBase, Drawer } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import { HamburgerSpinReverse } from 'react-animated-burgers'
-import { useSpring, animated, useTrail, useChain, config } from 'react-spring'
+import { animated, useTrail, config } from 'react-spring'
 const { colors } = theme
 
 const CLOSED_NAV_WIDTH = 40

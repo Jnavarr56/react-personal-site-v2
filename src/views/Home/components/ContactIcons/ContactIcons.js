@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import {
@@ -184,7 +184,7 @@ const HomeIcons = ({ inView }) => {
 	useEffect(() => {
 		let timer
 		if (inView) {
-			let timer = setTimeout(() => {
+			timer = setTimeout(() => {
 				setFadedIn(true)
 			}, 3000)
 		} else {

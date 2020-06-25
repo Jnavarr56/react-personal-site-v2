@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { Tabs, Tab, Divider, Card, Typography } from '@material-ui/core'
 import breakpoint from 'styled-components-breakpoint'
-import theme from 'theme'
 import {
 	animated,
 	config,
@@ -13,177 +12,6 @@ import {
 import { Translateable } from 'components/Translateable'
 import Grid from '@material-ui/core/Grid'
 import PropTypes from 'prop-types'
-
-const categories = [
-	{
-		label: {
-			en: 'Programming Languages',
-			es: 'Lenguajes de Programación'
-		},
-		skills: [
-			{
-				label: 'JavaScript',
-				src: '/skills-logos/programming-languages/javascript.png'
-			},
-			{
-				label: 'Python',
-				src: '/skills-logos/programming-languages/python.png'
-			},
-			{ label: 'Ruby', src: '/skills-logos/programming-languages/ruby.png' },
-			{ label: 'Java', src: '/skills-logos/programming-languages/java.png' },
-			{ label: 'MATLAB', src: '/skills-logos/programming-languages/matlab.png' }
-		]
-	},
-	{
-		label: {
-			en: 'Front End Frameworks/Libraries',
-			es: 'Frameworks/Bibliotecas Front End'
-		},
-		skills: [
-			{
-				label: 'React.js',
-				src: '/skills-logos/front-end-frameworks-libraries/reactjs.png'
-			},
-			{
-				label: 'React-Native',
-				src: '/skills-logos/front-end-frameworks-libraries/reactjs.png'
-			},
-			{
-				label: 'Next.js',
-				src: '/skills-logos/front-end-frameworks-libraries/nextjs.png'
-			},
-			{
-				label: 'styled-components',
-				src:
-					'/skills-logos/front-end-frameworks-libraries/styled-components.png'
-			},
-			{
-				label: 'JSS',
-				src: '/skills-logos/front-end-frameworks-libraries/jss.png'
-			},
-			{
-				label: 'Material-UI',
-				src: '/skills-logos/front-end-frameworks-libraries/material-ui.png'
-			},
-			{
-				label: 'TailwindCSS',
-				src: '/skills-logos/front-end-frameworks-libraries/tailwindcss.png'
-			},
-			{
-				label: 'Bootstrap',
-				src: '/skills-logos/front-end-frameworks-libraries/bootstrap.png'
-			},
-			{
-				label: 'jQuery',
-				src: '/skills-logos/front-end-frameworks-libraries/jquery.gif'
-			}
-		]
-	},
-	{
-		label: {
-			en: 'Back End Frameworks/Libraries',
-			es: 'Frameworks/Bibliotecas Back End'
-		},
-		skills: [
-			{
-				label: 'Express.js',
-				src: '/skills-logos/back-end-frameworks-libraries/express.png'
-			},
-			{
-				label: 'Ruby on Rails',
-				src: '/skills-logos/back-end-frameworks-libraries/ruby-on-rails.png'
-			},
-			{
-				label: 'Flask',
-				src: '/skills-logos/back-end-frameworks-libraries/flask.png'
-			}
-		]
-	},
-	{
-		label: {
-			en: 'Databases',
-			es: 'Bases de Datos'
-		},
-		skills: [
-			{ label: 'PostgreSQL', src: '/skills-logos/databases/postgresql.png' },
-			{ label: 'MongoDB', src: '/skills-logos/databases/mongodb.png' },
-			{ label: 'Mongoose', src: '/skills-logos/databases/mongoose.png' },
-			{ label: 'node-postgres', src: '' }
-		]
-	},
-	{
-		label: {
-			en: 'DevOps/Cloud',
-			es: 'DevOps/Nube'
-		},
-		skills: [
-			{ label: 'Docker', src: '/skills-logos/devops-cloud/docker.png' },
-			{ label: 'Git', src: '/skills-logos/devops-cloud/git.png' },
-			{ label: 'GitHub', src: '/skills-logos/devops-cloud/github.png' },
-			{ label: 'Gitlab', src: '/skills-logos/devops-cloud/gitlab.png' },
-			{ label: 'NGINX', src: '/skills-logos/devops-cloud/nginx.png' },
-			{
-				label: 'AWS (S3/EC2/Cognito)',
-				src: '/skills-logos/devops-cloud/aws.png'
-			},
-			{
-				label: 'MongoDB Atlas',
-				src: '/skills-logos/devops-cloud/mongodb-atlas.png'
-			},
-			{ label: 'Netlify', src: '/skills-logos/devops-cloud/netlify.png' },
-			{ label: 'Heroku', src: '/skills-logos/devops-cloud/heroku.png' }
-		]
-	},
-	{
-		label: {
-			en: 'Tools',
-			es: 'Herramientas'
-		},
-		skills: [
-			{ label: 'iTerm2', src: '/skills-logos/tools/iterm2.png' },
-			{ label: 'Oh My Zsh', src: '/skills-logos/tools/oh-my-zsh.png' },
-			{ label: 'Visual Studio Code', src: '/skills-logos/tools/vs-code.png' },
-			{ label: 'Robo3T', src: '/skills-logos/tools/robo3t.png' },
-			{ label: 'Postico', src: '/skills-logos/tools/postico.png' },
-			{ label: 'Android Studio', src: '/skills-logos/tools/android-studio.png' }
-		]
-	},
-	{
-		label: {
-			en: 'Previously Used',
-			es: 'Usado Previamente'
-		},
-		skills: [
-			{
-				label: 'Apollo/GraphQL',
-				src: '/skills-logos/previously-used/apollo-graphql.png'
-			},
-			{ label: 'Vagrant', src: '/skills-logos/previously-used/vagrant.png' },
-			{
-				label: 'VirtualBox',
-				src: '/skills-logos/previously-used/virtualbox.png'
-			},
-			{ label: 'Ubuntu', src: '/skills-logos/previously-used/ubuntu.png' }
-		]
-	},
-	{
-		label: {
-			en: 'Other',
-			es: 'Otro'
-		},
-		skills: [
-			{
-				label: 'Spanish Language (native)',
-				src: '/skills-logos/other/spanish-language.png'
-			},
-			{
-				label: 'French Language (intermediate)',
-				src: '/skills-logos/other/french-language.png'
-			},
-			{ label: 'MS Excel', src: '/skills-logos/other/ms-excel.png' }
-		]
-	}
-]
 
 const Container = styled.div`
 	height: 100%;
@@ -340,7 +168,10 @@ const SkillGridBox = ({ entering, skills, onEnd }) => {
 							xs={4}
 						>
 							<Card>
-								{item.src && <img src={item.src} />}
+								{item.src && <img
+									alt={item.label}
+									src={item.src}
+								             />}
 								<Typography variant="subtitle1">{item.label}</Typography>
 							</Card>
 						</AnimatedGrid>

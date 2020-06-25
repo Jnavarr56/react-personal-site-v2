@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import breakpoint from 'styled-components-breakpoint'
 import { FaTimes, FaPlus } from 'react-icons/fa'
