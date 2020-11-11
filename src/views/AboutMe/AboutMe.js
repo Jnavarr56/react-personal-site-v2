@@ -52,23 +52,19 @@ const HTMLify = arrStr =>
 	))
 
 const englishText = [
-	`I'm an NYC-based full-stack developer with 2 software development internships
-	currently seeking a junior/entry software development role in the greater
-	New York area.`,
+	`I'm an NYC-based junior full stack developer that has completed 2 software engineering internships.
+	I'm currently seeking a junior or entry level software development role and am willing to relocate almost anywhere.`,
 
 	`I have experience with a variety of programming languages as well as 
-	several front-end and back-end frameworks but at the moment tend towards a full JavaScript stack, 
-	specifically React/Express/MongoDB.`,
+	several front end and back end frameworks. Most recently, I've been using React along with Express.js and MongoDB in some personal projects.`,
 
-	`I graduated in 2016 with a bachelor's degree from Binghamton University and afterwords worked
-	for about a year in corporate restructuring before shifting gears and completing a full stack
-	development bootcamp at the New York Academy of Code and Design, which led me to my software
-	development internships. I am working part-time on a Master's of Science in Computer Science
-	degree at Pace University's Seidenberg School of Computer Science and Information Systems.`,
+	`I have a bachelor's degree in Economics from Binghamton University and afterwords worked
+	for about a year in corporate restructuring before shifting gears and completing a
+	development bootcamp at the New York Academy of Code and Design, which led me to my internships. I have taken graduate courses in Computer Science
+	at Pace University's Seidenberg School of Computer Science and Information Systems.`,
 
-	`When I'm not developing my Spanish skills, reading about urban policy, or playing guitar I'm
-	probable building full stack apps, writing about programming or
-	answering questions on Stack Overflow.`,
+	`When I'm not developing my Spanish skills or reading about politics,  I'm
+	probably building full stack apps or writing and recording music.`,
 
 	`I'm highly adaptable and never shy away from a challenge or unfamiliar technology. 
 	Take a look a around this site to learn more. Think I could be your next great hire? 
