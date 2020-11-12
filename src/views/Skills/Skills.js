@@ -12,6 +12,10 @@ const categories = [
 		},
 		skills: [
 			{
+				label: 'TypeScript',
+				src: '/skills-logos/programming-languages/typescript.png'
+			},
+			{
 				label: 'JavaScript',
 				src: '/skills-logos/programming-languages/javascript.png'
 			},
@@ -26,8 +30,8 @@ const categories = [
 	},
 	{
 		label: {
-			en: 'Front End Frameworks/Libraries',
-			es: 'Frameworks/Bibliotecas Front End'
+			en: 'Front End',
+			es: 'Front End'
 		},
 		skills: [
 			{
@@ -71,8 +75,8 @@ const categories = [
 	},
 	{
 		label: {
-			en: 'Back End Frameworks/Libraries',
-			es: 'Frameworks/Bibliotecas Back End'
+			en: 'Back End',
+			es: 'Bibliotecas Back End'
 		},
 		skills: [
 			{
@@ -86,6 +90,10 @@ const categories = [
 			{
 				label: 'Flask',
 				src: '/skills-logos/back-end-frameworks-libraries/flask.png'
+			},
+			{
+				label: 'Spring Boot',
+				src: '/skills-logos/back-end-frameworks-libraries/spring-boot.png'
 			}
 		]
 	},
@@ -95,10 +103,10 @@ const categories = [
 			es: 'Bases de Datos'
 		},
 		skills: [
+			{ label: 'MySQL', src: '/skills-logos/databases/mysql.png' },
 			{ label: 'PostgreSQL', src: '/skills-logos/databases/postgresql.png' },
 			{ label: 'MongoDB', src: '/skills-logos/databases/mongodb.png' },
-			{ label: 'Mongoose', src: '/skills-logos/databases/mongoose.png' },
-			{ label: 'node-postgres', src: '' }
+			{ label: 'Redis', src: '/skills-logos/databases/redis.png' }
 		]
 	},
 	{
