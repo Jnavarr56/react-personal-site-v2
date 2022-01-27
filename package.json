@@ -39,7 +39,7 @@
 		"styled-components": "^5.1.0",
 		"styled-components-breakpoint": "^3.0.0-preview.20",
 		"styled-react-modal": "^2.0.1",
-		"three": "^0.116.1",
+		"three": "^0.137.0",
 		"typewriter-effect": "^2.13.1",
 		"use-count-up": "^1.0.4",
 		"use-easing": "0.0.2"
