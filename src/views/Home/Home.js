@@ -96,20 +96,24 @@ const Toggler = styled.div`
 
 const phrases = [
 	{
-		en: 'Full Stack Developer',
-		es: 'Desarollador Full Stack'
+		en: 'DevOps Engineer',
+		es: 'Ingeniero de DevOps'
 	},
 	{
-		en: 'Seeking Junior Dev Roles!',
-		es: 'Buscando Trabajos de Desarollo'
+		en: 'Azure Specialist',
+		es: 'Especialista en Azure'
 	},
 	{
-		en: 'Energy Drink Enthusiast',
-		es: 'Amante de Bebidas de Energia'
+		en: 'TypeScript Enthusiast',
+		es: 'Amante de TypeScript'
 	},
 	{
-		en: 'Hispanophone',
-		es: 'Hablohispante'
+		en: 'Developer at Heart',
+		es: 'Desarrollador de corazón'
+	},
+	{
+		en: 'Seeking New DevOps/SRE/Platform Roles!',
+		es: '¡Buscando Puestos de DevOps/SRE/Platform'
 	}
 ]
 

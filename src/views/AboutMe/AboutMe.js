@@ -52,19 +52,16 @@ const HTMLify = arrStr =>
 	))
 
 const englishText = [
-	`I'm an NYC-based junior full stack developer that has completed 2 software engineering internships.
-	I'm currently seeking a junior or entry level software development role and am willing to relocate almost anywhere.`,
+	`I'm an NYC-based DevOps Engineer going on 5 years of experience working in the legal space.
+	Currently looking for my next opportunity.`,
 
-	`I have experience with a variety of programming languages as well as 
-	several front end and back end frameworks. Most recently, I've been using React along with Express.js and MongoDB in some personal projects.`,
+	`I'm certified in Kubernetes, Terraform, and have recently done quite a bit of work around 
+	agentic AI, specifically with managing and monitoring Azure AI resources, including LLM deployment and observability (Datadog).`,
 
-	`I have a bachelor's degree in Economics from Binghamton University and afterwords worked
-	for about a year in corporate restructuring before shifting gears and completing a
-	development bootcamp at the New York Academy of Code and Design, which led me to my internships. I have taken graduate courses in Computer Science
-	at Pace University's Seidenberg School of Computer Science and Information Systems.`,
+	`I absolutely love developing with Python and Typescript and have recently authored my first open source project, which is a Terraform related Azure DevOps integration published on the Visual Studio marketplace`,
 
 	`When I'm not developing my Spanish skills or reading about politics,  I'm
-	probably building full stack apps or writing and recording music.`,
+	probably tinkering or writing and recording music.`,
 
 	`I'm highly adaptable and never shy away from a challenge or unfamiliar technology. 
 	Take a look a around this site to learn more. Think I could be your next great hire? 
@@ -74,20 +71,11 @@ const englishText = [
 ]
 
 const spanishText = [
-	`Soy un desarrollador full-stack con sede en Nueva York con 2 pasantías de desarrollo de 
-	software que actualmente busco un rol de desarrollo de software junior / de entrada en el
-	área metropolitana de Nueva York.`,
+	`Soy ingeniero de DevOps con sede en Nueva York y casi 5 años de experiencia trabajando en el sector legal. Actualmente estoy buscando mi próxima oportunidad.`,
 
-	`Tengo experiencia con una variedad de lenguajes de programación, así como con varios 
-	marcos front-end y back-end, pero en este momento tienden a una pila completa de JavaScript, 
-	específicamente React / Express / MongoDB.`,
+	`Tengo certificación en Kubernetes y Terraform, y recientemente he trabajado bastante en IA con agentes, específicamente en la gestión y monitorización de recursos de IA de Azure, incluyendo implementaciones de LLM.`,
 
-	`Me gradué en 2016 con una licenciatura de la Universidad de Binghamton y después trabajé
-	durante aproximadamente un año en la reestructuración corporativa antes de cambiar de marcha
-	y completar un campamento de desarrollo de pila completa en la Academia de Código y Diseño de
-	Nueva York, lo que me llevó a mis pasantías de desarrollo de software. Estoy trabajando a tiempo
-	parcial en una Maestría en Ciencias en Ciencias de la Computación en la Escuela de Ciencias de la
-	Computación y Sistemas de Información Seidenberg de la Universidad de Pace.`,
+	`Cuando no estoy mejorando mis conocimientos de español o leyendo sobre política, probablemente esté desarrollando aplicaciones full stack o escribiendo y grabando música.`,
 
 	`Cuando no estoy desarrollando mis habilidades en español, leyendo sobre política urbana o 
 	tocando la guitarra, es probable que construya aplicaciones full stack, escriba sobre 

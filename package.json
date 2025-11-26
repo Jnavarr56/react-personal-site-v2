@@ -45,8 +45,8 @@
 		"use-easing": "0.0.2"
 	},
 	"scripts": {
-		"start": "react-scripts start",
-		"build": "react-scripts build",
+		"start": "react-scripts  --openssl-legacy-provider start",
+		"build": "react-scripts  --openssl-legacy-provider build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"prettier": "prettier --write $npm_package_config_fixables",

@@ -23,9 +23,10 @@ const categories = [
 				label: 'Python',
 				src: '/skills-logos/programming-languages/python.png'
 			},
-			{ label: 'Ruby', src: '/skills-logos/programming-languages/ruby.png' },
 			{ label: 'Java', src: '/skills-logos/programming-languages/java.png' },
-			{ label: 'MATLAB', src: '/skills-logos/programming-languages/matlab.png' }
+			{ label: 'C#', src: '/skills-logos/programming-languages/csharp.png' }
+			// { label: 'Ruby', src: '/skills-logos/programming-languages/ruby.png' },
+			// { label: 'MATLAB', src: '/skills-logos/programming-languages/matlab.png' }
 		]
 	},
 	{
