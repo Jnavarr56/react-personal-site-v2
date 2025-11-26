@@ -46,7 +46,7 @@
 	},
 	"scripts": {
 		"start": "react-scripts  --openssl-legacy-provider start",
-		"build": "react-scripts  --openssl-legacy-provider build",
+		"build": "react-scripts  build",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject",
 		"prettier": "prettier --write $npm_package_config_fixables",
