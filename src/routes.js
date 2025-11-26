@@ -1,5 +1,7 @@
 import React from 'react'
-import { Home, AboutMe, Skills, Projects, Contact } from 'views'
+// import { Home, AboutMe, Skills, Projects, Contact } from 'views'
+import { Home, AboutMe, Contact } from 'views'
+
 const routes = [
 	{
 		title: { en: 'Home', es: 'Página de Inicio' },
