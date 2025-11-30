@@ -23,39 +23,33 @@ const animations = [
 
 const projects = [
 	{
-		name: 'Covid-19 Death Toll Comparison',
+		name: 'Azure Backend Terraform State Lock Waiter',
 		background: 'linear-gradient(to right, #0f2027, #203a43, #2c5364)',
 		tagline:
-			'Simple Dockerized Rails API aggregating Covid-19 death tolls feeding into a React UI.',
-		tags: [
-			'React',
-			'Material UI',
-			'Ruby on Rails',
-			'Redis',
-			'Docker-Compose',
-			'AWS EC2',
-			'Netlify'
-		],
-		github: 'https://github.com/Jnavarr56/covid-19-death-toll-comparison-ui',
-		link: 'http://coviddeathtollcomparison.com'
-	},
-	{
-		name: 'CommuteCompare',
-		background: 'linear-gradient(to right, #7f00ff, #e100ff)',
-		tagline: 'A full-stack web app for comparing apartment commutes.',
-		tags: [ 'React', 'Bootstrap', 'Ruby on Rails', 'PostgreSQL' ],
-		github: 'https://github.com/Jnavarr56/CommuteCompare',
-		link: 'https://CommuteCompare.herokuapp.com/'
-	},
-	{
-		name: 'GifizeMe',
-		background: 'linear-gradient(to right, #f953c6, #b91d73)',
-		tagline:
-			'A full-stack web app for creating and sharing gifs on FB messenger.',
-		tags: [ 'React', 'Bootstrap', 'Ruby on Rails', 'PostgreSQL' ],
-		github: 'https://github.com/Jnavarr56/GifizeMe',
-		link: 'https://GifizeMe.herokuapp.com/'
+			'Azure DevOps task extension published on the Visual Studio Marketplace',
+		tags: [ 'Azure DevOps', 'TypeScript', 'Terraform' ],
+		github:
+			'https://github.com/Jnavarr56/Azure-Backend-Terraform-State-Lock-Waiter-AZDO-Extension',
+		link:
+			'https://marketplace.visualstudio.com/items?itemName=jorge-codes.azure-backend-terraform-state-lock-waiter'
 	}
+	// {
+	// 	name: 'CommuteCompare',
+	// 	background: 'linear-gradient(to right, #7f00ff, #e100ff)',
+	// 	tagline: 'A full-stack web app for comparing apartment commutes.',
+	// 	tags: [ 'React', 'Bootstrap', 'Ruby on Rails', 'PostgreSQL' ],
+	// 	github: 'https://github.com/Jnavarr56/CommuteCompare',
+	// 	link: 'https://CommuteCompare.herokuapp.com/'
+	// },
+	// {
+	// 	name: 'GifizeMe',
+	// 	background: 'linear-gradient(to right, #f953c6, #b91d73)',
+	// 	tagline:
+	// 		'A full-stack web app for creating and sharing gifs on FB messenger.',
+	// 	tags: [ 'React', 'Bootstrap', 'Ruby on Rails', 'PostgreSQL' ],
+	// 	github: 'https://github.com/Jnavarr56/GifizeMe',
+	// 	link: 'https://GifizeMe.herokuapp.com/'
+	// }
 ]
 
 const genProjectsCSS = () =>

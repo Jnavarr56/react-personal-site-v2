@@ -1,6 +1,6 @@
 import React from 'react'
 // import { Home, AboutMe, Skills, Projects, Contact } from 'views'
-import { Home, AboutMe, Contact } from 'views'
+import { Home, AboutMe, Contact, Projects } from 'views'
 
 const routes = [
 	{
@@ -25,15 +25,15 @@ const routes = [
 	// 	component: <Skills />,
 	// 	path: 'skills'
 	// },
-	// {
-	// 	title: { en: 'Projects', es: 'Proyectos' },
-	// 	showTitle: true,
-	// 	showParticles: false,
-	// 	component: <Projects />,
-	// 	path: 'projects',
-	// 	ignorePadding: true,
-	// 	fadeInContent: true
-	// },
+	{
+		title: { en: 'Projects', es: 'Proyectos' },
+		showTitle: true,
+		showParticles: false,
+		component: <Projects />,
+		path: 'projects',
+		ignorePadding: true,
+		fadeInContent: true
+	},
 	{
 		title: { en: 'Contact', es: 'Información de Contacto' },
 		showTitle: true,
